@@ -1,39 +1,95 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatBadgeModule } from '@angular/material/badge';
-import { AuthService } from '../../core/services/auth.service';
-import { User } from '../../core/models/user.model';
+import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
+
+import { EditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
+import { CardSummaryComponent } from './card-summary/card-summary.component';
+import { ArticleListComponent } from './article-list/article-list.component';
+import { AdSubmissionListComponent } from './ad-submission-list/ad-submission-list.component';
+
+import { NewsApiService } from '../../core/services/news-api.service';
+import { AdApiService } from '../../core/services/ad-api.service';
+import { ArticleDetail } from '../../core/models/article-detail.model';
+import { AdSubmission } from '../../core/models/ad-submission.model';
 
 @Component({
   selector: 'app-editor-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatMenuModule,
-    MatBadgeModule
+    HttpClientModule,
+    EditorSidebarComponent,
+    CardSummaryComponent,
+    ArticleListComponent,
+    AdSubmissionListComponent
   ],
   templateUrl: './editor-dashboard.component.html',
   styleUrls: ['./editor-dashboard.component.scss']
 })
 export class EditorDashboardComponent implements OnInit {
-  private authService = inject(AuthService);
-  
-  currentUser: User | null = null;
+  private newsApi = inject(NewsApiService);
+  private adApi = inject(AdApiService);
+  private router = inject(Router);
 
-  ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
+  articles: ArticleDetail[] = [];
+  ads: AdSubmission[] = [];
+  selectedSection = 'news';
+
+  summaryCards = [
+    { label: 'Total News', value: 0, note: 'All articles', change: 0 },
+    { label: 'Active Ads', value: 0, note: 'Running campaigns', change: 0 },
+    { label: 'Pending Reviews', value: 0, note: 'Awaiting approval', change: 0 },
+    { label: 'Published Today', value: 0, note: 'Live articles', change: 0 }
+  ];
+
+  ngOnInit() {
+    this.loadSubmittedArticles();
   }
 
-  logout(): void {
-    this.authService.logout();
+  onSidebarSection(section: string) {
+    this.selectedSection = section;
+    console.log('Section changed to:', section);
+
+    if (section === 'news') {
+      this.loadSubmittedArticles();
+    } else if (section === 'ads') {
+      this.loadAds();
+    }
+  }
+
+  loadSubmittedArticles() {
+    this.newsApi.getSubmittedArticles().subscribe({
+      next: (data) => {
+        console.log('📰 Articles loaded:', data);
+        this.articles = data;
+        this.summaryCards[0].value = data.length || 0;
+      },
+      error: (error) => {
+        console.error('❌ Error loading articles:', error);
+      }
+    });
+  }
+
+  loadAds() {
+    this.adApi.getAds().subscribe({
+      next: (data) => {
+        console.log('📢 Ads loaded:', data);
+        this.ads = data;
+        this.summaryCards[1].value = data.length || 0;
+      },
+      error: (error) => {
+        console.error('❌ Error loading ads:', error);
+      }
+    });
+  }
+
+  checkWithAI() {
+    alert('🤖 AI Check clicked! (Coming soon)');
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 }

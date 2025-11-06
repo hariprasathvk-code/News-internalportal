@@ -1,0 +1,10 @@
+<div class="summary-card">
+  <div class="card-label">{{ label }}</div>
+  <div class="card-value">{{ value }}</div>
+  <div class="card-note">
+    {{ note }} 
+    <span class="card-change" [ngClass]="{'up': change>0, 'down': change<0}">
+      {{ change > 0 ? '+' : '' }}{{ change }}%
+    </span>
+  </div>
+</div>

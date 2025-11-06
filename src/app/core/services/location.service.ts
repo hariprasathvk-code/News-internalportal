@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Region, Country, State, City, Category, SubCategory, NewsType } from '../models/news.models';
 import { environment } from '../../../environments/environment';
@@ -14,9 +14,23 @@ export class LocationService {
 
   constructor(private http: HttpClient) { }
 
-  // Regions
+  // Get auth headers with IdToken
+  private getAuthHeaders(): HttpHeaders {
+    const idToken = localStorage.getItem('idToken');
+    
+    return new HttpHeaders({
+      'Authorization': `Bearer ${idToken}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  // ============ REGIONS ============
   getRegions(): Observable<Region[]> {
-    return this.http.get<Region[]>(`${this.apiUrl}/regions`).pipe(
+    return this.http.get<Region[]>(
+      `${this.apiUrl}/regions`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching regions:', error);
         return of([]);
@@ -24,9 +38,13 @@ export class LocationService {
     );
   }
 
-  // Countries by Region
+  // ============ COUNTRIES ============
   getCountriesByRegion(regionId: number): Observable<Country[]> {
-    return this.http.get<Country[]>(`${this.apiUrl}/countries?regionId=${regionId}`).pipe(
+    return this.http.get<Country[]>(
+      `${this.apiUrl}/countries?regionId=${regionId}`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching countries:', error);
         return of([]);
@@ -34,9 +52,13 @@ export class LocationService {
     );
   }
 
-  // States by Country
+  // ============ STATES ============
   getStatesByCountry(countryId: number): Observable<State[]> {
-    return this.http.get<State[]>(`${this.apiUrl}/states?countryId=${countryId}`).pipe(
+    return this.http.get<State[]>(
+      `${this.apiUrl}/states?countryId=${countryId}`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching states:', error);
         return of([]);
@@ -44,9 +66,13 @@ export class LocationService {
     );
   }
 
-  // Cities by State
+  // ============ CITIES ============
   getCitiesByState(stateId: number): Observable<City[]> {
-    return this.http.get<City[]>(`${this.apiUrl}/cities?stateId=${stateId}`).pipe(
+    return this.http.get<City[]>(
+      `${this.apiUrl}/cities?stateId=${stateId}`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching cities:', error);
         return of([]);
@@ -54,9 +80,13 @@ export class LocationService {
     );
   }
 
-  // Categories
+  // ============ CATEGORIES ============
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.apiUrl}/categories`).pipe(
+    return this.http.get<Category[]>(
+      `${this.apiUrl}/categories`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching categories:', error);
         return of([]);
@@ -64,9 +94,13 @@ export class LocationService {
     );
   }
 
-  // SubCategories by Category
+  // ============ SUBCATEGORIES ============
   getSubCategories(categoryId: number): Observable<SubCategory[]> {
-    return this.http.get<SubCategory[]>(`${this.apiUrl}/subcategories?categoryId=${categoryId}`).pipe(
+    return this.http.get<SubCategory[]>(
+      `${this.apiUrl}/subcategories?categoryId=${categoryId}`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching subcategories:', error);
         return of([]);
@@ -74,9 +108,13 @@ export class LocationService {
     );
   }
 
-  // News Types
+  // ============ NEWS TYPES ============
   getNewsTypes(): Observable<NewsType[]> {
-    return this.http.get<NewsType[]>(`${this.apiUrl}/newstypes`).pipe(
+    return this.http.get<NewsType[]>(
+      `${this.apiUrl}/newstypes`,
+      { headers: this.getAuthHeaders() }
+    ).pipe(
+      map(data => Array.isArray(data) ? data : []),
       catchError(error => {
         console.error('Error fetching news types:', error);
         return of([]);

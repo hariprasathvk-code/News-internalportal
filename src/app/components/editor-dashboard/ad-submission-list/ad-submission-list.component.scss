@@ -1,0 +1,203 @@
+.ad-list-section {
+  margin-top: 30px;
+  background: #f8f9fc;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px #eee;
+  padding: 20px 18px;
+
+  .ad-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+
+    span {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+
+  .view-btn {
+    background: #eceeff;
+    border: none;
+    color: #564bfa;
+    font-weight: 500;
+    border-radius: 5px;
+    padding: 5px 14px;
+    font-size: 0.97rem;
+    cursor: pointer;
+
+    &:hover {
+      background: #dedcfc;
+    }
+  }
+
+  .no-ads {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+  }
+}
+
+.ad-card {
+  display: flex;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px #eee;
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  gap: 22px;
+
+  .ad-media {
+    flex-shrink: 0;
+
+    .ad-thumb {
+      width: 85px;
+      height: 85px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #f7f7f7;
+    }
+
+    .noimg {
+      width: 85px;
+      height: 85px;
+      background: #f7f7f7;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+  }
+
+  .ad-info {
+    flex: 1;
+
+    .ad-title {
+      font-weight: 700;
+      font-size: 1.08em;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .ad-description {
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .ad-meta {
+      font-size: 0.97em;
+      color: #666;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      span {
+        b {
+          color: #333;
+        }
+      }
+    }
+
+    .ad-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+
+      button {
+        padding: 7px 14px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      .approve-btn {
+        background: #2dac5b;
+        color: #fff;
+      }
+
+      .edit-btn {
+        background: #5D5FEF;
+        color: #fff;
+      }
+
+      .target-link {
+        padding: 7px 14px;
+        border-radius: 5px;
+        background: #e3f2fd;
+        color: #1976d2;
+        text-decoration: none;
+        display: inline-block;
+      }
+    }
+  }
+}
+
+.edit-form {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 14px;
+
+  h4 {
+    margin-bottom: 12px;
+    color: #333;
+  }
+
+  label {
+    display: block;
+    margin: 8px 0 2px 0;
+    font-weight: 500;
+    color: #333;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+
+    &:focus {
+      outline: none;
+      border-color: #5D5FEF;
+      box-shadow: 0 0 0 3px rgba(93, 95, 239, 0.1);
+    }
+  }
+
+  .edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+
+    button {
+      padding: 7px 13px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .save-btn {
+      background: #44bc67;
+      color: #fff;
+    }
+
+    .cancel-btn {
+      background: #e4e4e4;
+      color: #212;
+    }
+  }
+}

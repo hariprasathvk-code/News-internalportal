@@ -1,0 +1,72 @@
+<div class="ad-list-section">
+  <div class="ad-list-header">
+    <span>Active Advertisements</span>
+    <button class="view-btn">View All Ads</button>
+  </div>
+
+  <div *ngIf="ads.length === 0; else hasAds" class="no-ads">
+    <p>📭 No advertisements found.</p>
+  </div>
+
+  <ng-template #hasAds>
+    <div *ngFor="let ad of ads" class="ad-card">
+      <!-- Media Column -->
+      <div class="ad-media">
+        <ng-container *ngIf="ad.MediaUrl; else noAdMedia">
+          <img *ngIf="isImage(ad.MediaUrl)" [src]="ad.MediaUrl" class="ad-thumb" alt="Ad media" />
+          <video *ngIf="isVideo(ad.MediaUrl)" [src]="ad.MediaUrl" class="ad-thumb" controls></video>
+        </ng-container>
+        <ng-template #noAdMedia>
+          <div class="ad-thumb noimg">No media</div>
+        </ng-template>
+      </div>
+
+      <!-- Info Column -->
+      <div class="ad-info">
+        <div class="ad-title"><b>{{ ad.Title }}</b></div>
+        <div class="ad-description" *ngIf="ad.Description">{{ ad.Description }}</div>
+
+        <div class="ad-meta">
+          <span><b>Status:</b> {{ ad.Status }}</span>
+          <span><b>Type:</b> {{ ad.AdType }}</span>
+          <span><b>Category:</b> {{ ad.CategoryName }}</span>
+          <span><b>Cost:</b> ${{ ad.TotalCost }}</span>
+        </div>
+
+        <div class="ad-meta">
+          <span *ngIf="ad.RegionName"><b>Region:</b> {{ ad.RegionName }}</span>
+          <span *ngIf="ad.CreatedAt"><b>Created:</b> {{ ad.CreatedAt }}</span>
+        </div>
+
+        <div class="ad-meta">
+          <span *ngIf="ad.StartTime"><b>Start:</b> {{ ad.StartTime }}</span>
+          <span *ngIf="ad.EndTime"><b>End:</b> {{ ad.EndTime }}</span>
+        </div>
+
+        <div class="ad-actions">
+          <button (click)="approveAd(ad)" class="approve-btn">✓ Approve</button>
+          <button class="edit-btn" (click)="startEdit(ad)">✏️ Edit</button>
+          <a *ngIf="ad.TargetUrl" [href]="ad.TargetUrl" target="_blank" class="target-link">
+            🔗 Visit
+          </a>
+        </div>
+
+        <!-- Inline Editor -->
+        <div *ngIf="editAd && editAd.AdId === ad.AdId" class="edit-form">
+          <h4>Edit Advertisement</h4>
+          <label>Title:</label><input [(ngModel)]="editAd.Title" />
+          <label>Description:</label><textarea [(ngModel)]="editAd.Description"></textarea>
+          <label>Status:</label><input [(ngModel)]="editAd.Status" />
+          <label>Type:</label><input [(ngModel)]="editAd.AdType" />
+          <label>Category:</label><input [(ngModel)]="editAd.CategoryName" />
+          <label>Total Cost:</label><input type="number" [(ngModel)]="editAd.TotalCost" />
+
+          <div class="edit-actions">
+            <button class="save-btn" (click)="saveEdit()">💾 Save</button>
+            <button class="cancel-btn" (click)="cancelEdit()">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

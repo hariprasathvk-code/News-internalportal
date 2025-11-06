@@ -1,0 +1,43 @@
+.article-list-section {
+  margin-top: 30px;
+  background: #f8f9fc;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px #eee;
+  padding: 20px 18px;
+
+  .article-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+
+    span {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+
+  .view-btn {
+    background: #eceeff;
+    border: none;
+    color: #564bfa;
+    font-weight: 500;
+    border-radius: 5px;
+    padding: 5px 14px;
+    font-size: 0.97rem;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #dedcfc;
+    }
+  }
+
+  .no-articles {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-size: 1rem;
+  }
+}

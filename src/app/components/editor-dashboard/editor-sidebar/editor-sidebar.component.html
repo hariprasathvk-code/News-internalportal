@@ -1,0 +1,27 @@
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-circle">📰</div>
+  </div>
+  <ul class="sidebar-menu">
+    <li [class.active]="selected === 'news'" (click)="setSection('news')">
+      <span class="icon">📰</span>
+      <span class="label">News Submissions</span>
+    </li>
+    <li [class.active]="selected === 'ads'" (click)="setSection('ads')">
+      <span class="icon">📢</span>
+      <span class="label">Ad Submissions</span>
+    </li>
+    <li [class.active]="selected === 'ai'" (click)="setSection('ai')">
+      <span class="icon">🤖</span>
+      <span class="label">AI Insights</span>
+    </li>
+    <li [class.active]="selected === 'category'" (click)="setSection('category')">
+      <span class="icon">📂</span>
+      <span class="label">Category</span>
+    </li>
+    <li [class.active]="selected === 'reports'" (click)="setSection('reports')">
+      <span class="icon">📊</span>
+      <span class="label">Reports</span>
+    </li>
+  </ul>
+</nav>
