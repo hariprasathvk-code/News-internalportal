@@ -1,0 +1,324 @@
+<div class="news-form-container">
+  <div class="form-header">
+    <h2>📝 Submit News Article</h2>
+    <p class="user-info">Logged in as: <strong>{{ currentUser?.FullName }}</strong></p>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    ✓ {{ successMessage }}
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    ✗ {{ errorMessage }}
+  </div>
+
+  <form [formGroup]="newsForm" (ngSubmit)="onSubmit()" (click)="closeAllDropdowns()" class="news-form">
+    
+    <!-- News Type Selection with Autocomplete -->
+    <div class="form-group">
+      <label for="newsType">News Type *</label>
+      <div class="autocomplete-container">
+        <input 
+          type="text" 
+          id="newsType"
+          placeholder="Search or type news type..."
+          [(ngModel)]="newsTypeSearch"
+          (ngModelChange)="onNewsTypeSearch($event)"
+          (focus)="showNewsTypeDropdown = true"
+          (click)="$event.stopPropagation()"
+          formControlName="newsType"
+          class="form-control"
+        >
+        <div *ngIf="showNewsTypeDropdown && filteredNewsTypes.length > 0" class="dropdown-menu">
+          <div *ngFor="let type of filteredNewsTypes" 
+               (click)="selectNewsType(type)"
+               class="dropdown-item">
+            {{ type.name }}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="submitted && f['newsType'].errors" class="text-danger">
+        News Type is required
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title">Title *</label>
+      <input 
+        type="text" 
+        id="title" 
+        formControlName="title" 
+        class="form-control"
+        placeholder="Enter news title (minimum 10 characters)"
+      >
+      <div *ngIf="submitted && f['title'].errors" class="text-danger">
+        <span *ngIf="f['title'].errors['required']">Title is required</span>
+        <span *ngIf="f['title'].errors['minlength']">Title must be at least 10 characters</span>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="form-group">
+      <label for="summary">Summary *</label>
+      <textarea 
+        id="summary" 
+        formControlName="summary" 
+        class="form-control"
+        rows="2"
+        placeholder="Enter brief summary (minimum 20 characters)"
+      ></textarea>
+      <div *ngIf="submitted && f['summary'].errors" class="text-danger">
+        <span *ngIf="f['summary'].errors['required']">Summary is required</span>
+        <span *ngIf="f['summary'].errors['minlength']">Summary must be at least 20 characters</span>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="form-group">
+      <label for="content">Full Content *</label>
+      <textarea 
+        id="content" 
+        formControlName="content" 
+        class="form-control"
+        rows="6"
+        placeholder="Enter full article content (minimum 100 characters)"
+      ></textarea>
+      <div *ngIf="submitted && f['content'].errors" class="text-danger">
+        <span *ngIf="f['content'].errors['required']">Content is required</span>
+        <span *ngIf="f['content'].errors['minlength']">Content must be at least 100 characters</span>
+      </div>
+    </div>
+
+    <!-- Category with Autocomplete -->
+    <div class="form-group">
+      <label for="category">Category *</label>
+      <div class="autocomplete-container">
+        <input 
+          type="text" 
+          id="category"
+          placeholder="Search or type category..."
+          [(ngModel)]="categorySearch"
+          (ngModelChange)="onCategorySearch($event)"
+          (focus)="showCategoryDropdown = true"
+          (click)="$event.stopPropagation()"
+          formControlName="category"
+          class="form-control"
+        >
+        <div *ngIf="showCategoryDropdown && filteredCategories.length > 0" class="dropdown-menu">
+          <div *ngFor="let cat of filteredCategories" 
+               (click)="selectCategory(cat)"
+               class="dropdown-item">
+            {{ cat.name }}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="submitted && f['category'].errors" class="text-danger">
+        Category is required
+      </div>
+    </div>
+
+    <!-- Sub Category with Autocomplete -->
+    <div class="form-group" *ngIf="f['category'].value">
+      <label for="subCategory">Sub Category *</label>
+      <div class="autocomplete-container">
+        <input 
+          type="text" 
+          id="subCategory"
+          placeholder="Search or type sub category..."
+          [(ngModel)]="subCategorySearch"
+          (ngModelChange)="onSubCategorySearch($event)"
+          (focus)="showSubCategoryDropdown = true"
+          (click)="$event.stopPropagation()"
+          formControlName="subCategory"
+          class="form-control"
+        >
+        <div *ngIf="showSubCategoryDropdown && filteredSubCategories.length > 0" class="dropdown-menu">
+          <div *ngFor="let subCat of filteredSubCategories" 
+               (click)="selectSubCategory(subCat)"
+               class="dropdown-item">
+            {{ subCat.name }}
+          </div>
+        </div>
+      </div>
+      <div *ngIf="submitted && f['subCategory'].errors" class="text-danger">
+        Sub Category is required
+      </div>
+    </div>
+
+    <!-- Location Section -->
+    <fieldset class="location-fieldset">
+      <legend>📍 Location Details *</legend>
+
+      <!-- Region with Autocomplete -->
+      <div class="form-group">
+        <label for="region">Region *</label>
+        <div class="autocomplete-container">
+          <input 
+            type="text" 
+            id="region"
+            placeholder="Search or type region..."
+            [(ngModel)]="regionSearch"
+            (ngModelChange)="onRegionSearch($event)"
+            (focus)="showRegionDropdown = true"
+            (click)="$event.stopPropagation()"
+            formControlName="region"
+            class="form-control"
+          >
+          <div *ngIf="showRegionDropdown && filteredRegions.length > 0" class="dropdown-menu">
+            <div *ngFor="let region of filteredRegions" 
+                 (click)="selectRegion(region)"
+                 class="dropdown-item">
+              {{ region.name }}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="submitted && f['region'].errors" class="text-danger">
+          Region is required
+        </div>
+      </div>
+
+      <!-- Country with Autocomplete -->
+      <div class="form-group" *ngIf="f['region'].value">
+        <label for="country">Country *</label>
+        <div class="autocomplete-container">
+          <input 
+            type="text" 
+            id="country"
+            placeholder="Search or type country..."
+            [(ngModel)]="countrySearch"
+            (ngModelChange)="onCountrySearch($event)"
+            (focus)="showCountryDropdown = true"
+            (click)="$event.stopPropagation()"
+            formControlName="country"
+            class="form-control"
+          >
+          <div *ngIf="showCountryDropdown && filteredCountries.length > 0" class="dropdown-menu">
+            <div *ngFor="let country of filteredCountries" 
+                 (click)="selectCountry(country)"
+                 class="dropdown-item">
+              {{ country.name }}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="submitted && f['country'].errors" class="text-danger">
+          Country is required
+        </div>
+      </div>
+
+      <!-- State with Autocomplete -->
+      <div class="form-group" *ngIf="f['country'].value">
+        <label for="state">State *</label>
+        <div class="autocomplete-container">
+          <input 
+            type="text" 
+            id="state"
+            placeholder="Search or type state..."
+            [(ngModel)]="stateSearch"
+            (ngModelChange)="onStateSearch($event)"
+            (focus)="showStateDropdown = true"
+            (click)="$event.stopPropagation()"
+            formControlName="state"
+            class="form-control"
+          >
+          <div *ngIf="showStateDropdown && filteredStates.length > 0" class="dropdown-menu">
+            <div *ngFor="let state of filteredStates" 
+                 (click)="selectState(state)"
+                 class="dropdown-item">
+              {{ state.name }}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="submitted && f['state'].errors" class="text-danger">
+          State is required
+        </div>
+      </div>
+
+      <!-- City with Autocomplete -->
+      <div class="form-group" *ngIf="f['state'].value">
+        <label for="city">City *</label>
+        <div class="autocomplete-container">
+          <input 
+            type="text" 
+            id="city"
+            placeholder="Search or type city..."
+            [(ngModel)]="citySearch"
+            (ngModelChange)="onCitySearch($event)"
+            (focus)="showCityDropdown = true"
+            (click)="$event.stopPropagation()"
+            formControlName="city"
+            class="form-control"
+          >
+          <div *ngIf="showCityDropdown && filteredCities.length > 0" class="dropdown-menu">
+            <div *ngFor="let city of filteredCities" 
+                 (click)="selectCity(city)"
+                 class="dropdown-item">
+              {{ city.name }}
+            </div>
+          </div>
+        </div>
+        <div *ngIf="submitted && f['city'].errors" class="text-danger">
+          City is required
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- File Upload -->
+    <div class="form-group">
+      <label for="mediaFiles">📎 Upload Media Files (Max 5 files, 10MB each)</label>
+      <input 
+        type="file" 
+        id="mediaFiles" 
+        (change)="onFileSelected($event)"
+        multiple
+        accept=".jpg,.jpeg,.png,.gif,.mp4,.pdf"
+        class="form-control"
+      >
+      <small class="form-text text-muted">Allowed: JPG, PNG, GIF, MP4, PDF</small>
+    </div>
+
+    <!-- File Preview -->
+    <div *ngIf="selectedFilesPreview.length > 0" class="file-preview">
+      <h5>Selected Files ({{ selectedFiles.length }}):</h5>
+      <div class="preview-grid">
+        <div *ngFor="let preview of selectedFilesPreview; let i = index" class="preview-item">
+          <div *ngIf="typeof preview === 'string' && preview.startsWith('data:')" class="preview-image">
+            <img [src]="preview" alt="Preview">
+          </div>
+          <div *ngIf="typeof preview === 'string' && !preview.startsWith('data:')" class="preview-file">
+            {{ preview }}
+          </div>
+          <button 
+            type="button" 
+            (click)="removeFile(i)"
+            class="btn btn-sm btn-danger remove-btn"
+          >
+            ✕ Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">📤 Submit News</span>
+        <span *ngIf="loading">⏳ Submitting...</span>
+      </button>
+      <button 
+        type="button" 
+        (click)="resetForm()"
+        class="btn btn-secondary"
+        [disabled]="loading"
+      >
+        🔄 Reset
+      </button>
+    </div>
+  </form>
+</div>

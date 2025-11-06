@@ -1,0 +1,70 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>News Portal Login</mat-card-title>
+      <mat-card-subtitle>Internal Portal for Editors & Journalists</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input 
+            matInput 
+            type="email" 
+            formControlName="Email"
+            placeholder="Enter your email"
+            autocomplete="email">
+          <mat-icon matPrefix>email</mat-icon>
+          @if (loginForm.get('Email')?.invalid && loginForm.get('Email')?.touched) {
+            <mat-error>{{ getEmailErrorMessage() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="Password"
+            placeholder="Enter your password"
+            autocomplete="current-password">
+          <mat-icon matPrefix>lock</mat-icon>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            type="button"
+            (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (loginForm.get('Password')?.invalid && loginForm.get('Password')?.touched) {
+            <mat-error>{{ getPasswordErrorMessage() }}</mat-error>
+          }
+        </mat-form-field>
+
+        @if (errorMessage) {
+          <div class="error-message">
+            <mat-icon>error</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          class="full-width login-button"
+          [disabled]="isLoading">
+          @if (isLoading) {
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Logging in...</span>
+          } @else {
+            <span>Login</span>
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
