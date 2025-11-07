@@ -44,6 +44,7 @@
     <div class="actions">
       <button (click)="approveArticle(article)" class="approve-btn">✓ Approve</button>
       <button (click)="editMode = !editMode" class="edit-btn">✏️ Edit</button>
+
     </div>
 
     <!-- Inline Editor -->
@@ -65,8 +66,9 @@
       <input [(ngModel)]="article.Status" />
 
       <div class="edit-actions">
-        <button (click)="editMode = false" class="save-btn">💾 Save</button>
+        <button (click)="saveEdit()" class="save-btn">💾 Save</button>
         <button (click)="editMode = false" class="cancel-btn">✕ Cancel</button>
+
       </div>
     </div>
   </div>

@@ -7,9 +7,11 @@
     <p>📭 No articles available.</p>
   </div>
   <div *ngIf="articles.length > 0">
-    <app-article-row
-      *ngFor="let article of articles"
-      [article]="article">
-    </app-article-row>
+   <app-article-row
+  *ngFor="let article of articles"
+  [article]="article"
+  (save)="onSaveArticle($event)">
+</app-article-row>
+
   </div>
 </div>
