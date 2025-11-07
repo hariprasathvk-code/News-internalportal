@@ -28,6 +28,9 @@
 //     return /\.(mp4|mov|webm|ogg)$/i.test(url.split('?')[0]);
 //   }
 // }
+
+
+
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
