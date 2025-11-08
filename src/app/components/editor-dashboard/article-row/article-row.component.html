@@ -18,7 +18,11 @@
       <span class="title"><b>{{ article.Title }}</b></span>
       <span class="category">{{ article.Category }}</span>
       <span class="subcategory">{{ article.SubCategory }}</span>
-      <span class="status">{{ article.Status }}</span>
+      <span class="status" [ngClass]="{
+        'status-submitted': article.Status === 'Submitted',
+        'status-approved': article.Status === 'Approved by AI' || article.Status === 'Approved',
+        'status-rejected': article.Status === 'Rejected by AI' || article.Status === 'Rejected'
+      }">{{ article.Status }}</span>
     </div>
 
     <div class="meta">
@@ -42,9 +46,28 @@
     <div class="content"><b>Content:</b> {{ article.Content }}</div>
 
     <div class="actions">
-      <button (click)="approveArticle(article)" class="approve-btn">✓ Approve</button>
-      <button (click)="editMode = !editMode" class="edit-btn">✏️ Edit</button>
-
+      <button 
+        (click)="approveArticle(article)" 
+        class="approve-btn"
+        [disabled]="isValidating">
+        ✓ Approve
+      </button>
+      
+      <!-- ✅ NEW: Check with AI button -->
+      <button 
+        (click)="checkArticleWithAI(article)" 
+        class="ai-btn"
+        [disabled]="isValidating || article.Status === 'Approved by AI' || article.Status === 'Rejected by AI'">
+        <span *ngIf="!isValidating">🤖 Check with AI</span>
+        <span *ngIf="isValidating">⏳ Checking...</span>
+      </button>
+      
+      <button 
+        (click)="editMode = !editMode" 
+        class="edit-btn"
+        [disabled]="isValidating">
+        ✏️ Edit
+      </button>
     </div>
 
     <!-- Inline Editor -->
@@ -68,7 +91,6 @@
       <div class="edit-actions">
         <button (click)="saveEdit()" class="save-btn">💾 Save</button>
         <button (click)="editMode = false" class="cancel-btn">✕ Cancel</button>
-
       </div>
     </div>
   </div>

@@ -8,7 +8,14 @@
         <div class="subtitle">Manage and review news articles and advertisements</div>
       </div>
       <div class="header-actions">
-        <button class="ai-btn" (click)="checkWithAI()">🤖 Check with AI</button>
+        <!-- ✅ UPDATED: Validate All button -->
+        <button 
+          class="ai-btn-all" 
+          (click)="checkAllWithAI()"
+          [disabled]="isValidatingAll">
+          <span *ngIf="!isValidatingAll">🤖 Check All with AI</span>
+          <span *ngIf="isValidatingAll">⏳ Validating All...</span>
+        </button>
         <button class="logout-btn" (click)="logout()">🚪 Logout</button>
       </div>
     </div>
@@ -23,9 +30,12 @@
       </app-card-summary>
     </div>
 
-    <!-- Conditional Content -->
+    <!-- ✅ UPDATED: Added validateArticle event handler -->
     <ng-container *ngIf="selectedSection === 'news'">
-      <app-article-list [articles]="articles"></app-article-list>
+      <app-article-list 
+        [articles]="articles"
+        (validateArticle)="onValidateSingleArticle($event)">
+      </app-article-list>
     </ng-container>
 
     <ng-container *ngIf="selectedSection === 'ads'">

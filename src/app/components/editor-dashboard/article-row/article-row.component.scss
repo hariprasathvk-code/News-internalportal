@@ -202,3 +202,83 @@
 }
 
 
+
+
+// ... existing styles ...
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  button {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .approve-btn {
+    background: #44bc67;
+    color: #fff;
+  }
+
+  .edit-btn {
+    background: #5D5FEF;
+    color: #fff;
+  }
+
+  // ✅ NEW: AI button styling
+  .ai-btn {
+    background: #ff9800;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #f57c00;
+    }
+
+    &:disabled {
+      background: #ffcc80;
+      color: #fff;
+    }
+  }
+}
+
+// ✅ NEW: Status badge colors
+.status {
+  text-transform: capitalize;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+
+  &.status-submitted {
+    background: #ffd700;
+    color: #8b6914;
+  }
+
+  &.status-approved {
+    background: #4caf50;
+    color: #fff;
+  }
+
+  &.status-rejected {
+    background: #f44336;
+    color: #fff;
+  }
+}
+
+

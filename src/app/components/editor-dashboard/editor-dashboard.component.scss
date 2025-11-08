@@ -139,3 +139,49 @@
     gap: 12px;
   }
 }
+
+
+// ... existing styles ...
+
+.ai-btn-all,
+.logout-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.ai-btn-all {
+  background: #ff9800;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: #f57c00;
+  }
+
+  &:disabled {
+    background: #ffcc80;
+  }
+}
+
+.logout-btn {
+  background: #ff6b6b;
+  color: #fff;
+
+  &:hover {
+    background: #ee5a52;
+  }
+}
