@@ -255,6 +255,7 @@ import { AdApiService } from '../../core/services/ad-api.service';
 import { AIValidationService } from '../../core/services/ai-validation.service';
 import { ArticleDetail } from '../../core/models/article-detail.model';
 import { AdSubmission } from '../../core/models/ad-submission.model';
+import { ReportsComponent } from '../reports/reports.component';
 
 @Component({
   selector: 'app-editor-dashboard',
@@ -265,7 +266,8 @@ import { AdSubmission } from '../../core/models/ad-submission.model';
     EditorSidebarComponent,
     CardSummaryComponent,
     ArticleListComponent,
-    AdSubmissionListComponent
+    AdSubmissionListComponent,
+    ReportsComponent
   ],
   templateUrl: './editor-dashboard.component.html',
   styleUrls: ['./editor-dashboard.component.scss']

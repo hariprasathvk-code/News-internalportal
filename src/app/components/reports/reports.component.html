@@ -1,0 +1,85 @@
+<div class="reports-section">
+  <div class="reports-header">
+    <h2>📊 Reports & Analytics</h2>
+    <p class="subtitle">Generate and view various reports</p>
+  </div>
+
+  <div class="reports-grid">
+    <!-- Finance Report Card -->
+    <div class="report-card">
+      <div class="report-icon finance">💰</div>
+      <h3>Finance Report</h3>
+      <p>View financial analytics, revenue, and transaction data</p>
+      <button 
+        class="report-btn finance-btn"
+        (click)="fetchFinanceReport()"
+        [disabled]="isLoadingFinance">
+        <span *ngIf="!isLoadingFinance">📈 Generate Finance Report</span>
+        <span *ngIf="isLoadingFinance">⏳ Loading...</span>
+      </button>
+      
+      <div *ngIf="financeReport" class="report-result">
+        <div class="result-badge success">✓ Report Generated</div>
+        <p>{{ financeReport.message }}</p>
+      </div>
+    </div>
+
+    <!-- User Management Report Card -->
+    <div class="report-card">
+      <div class="report-icon users">👥</div>
+      <h3>User Management Report</h3>
+      <p>View user statistics, roles, and activity data</p>
+      <button 
+        class="report-btn users-btn"
+        (click)="fetchUserManagementReport()"
+        [disabled]="isLoadingUserManagement">
+        <span *ngIf="!isLoadingUserManagement">👤 Generate User Report</span>
+        <span *ngIf="isLoadingUserManagement">⏳ Loading...</span>
+      </button>
+      
+      <div *ngIf="userManagementReport" class="report-result">
+        <div class="result-badge success">✓ Report Generated</div>
+        <p>{{ userManagementReport.message }}</p>
+      </div>
+    </div>
+
+    <!-- History Report Card -->
+    <div class="report-card">
+      <div class="report-icon history">📜</div>
+      <h3>History Report</h3>
+      <p>View historical data, changes, and audit logs</p>
+      <button 
+        class="report-btn history-btn"
+        (click)="fetchHistoryReport()"
+        [disabled]="isLoadingHistory">
+        <span *ngIf="!isLoadingHistory">🕐 Generate History Report</span>
+        <span *ngIf="isLoadingHistory">⏳ Loading...</span>
+      </button>
+      
+      <div *ngIf="historyReport" class="report-result">
+        <div class="result-badge success">✓ Report Generated</div>
+        <p>{{ historyReport.message }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Data Display (Optional) -->
+  <div class="reports-data" *ngIf="financeReport || userManagementReport || historyReport">
+    <h3>📋 Report Details</h3>
+    
+    <div class="data-section" *ngIf="financeReport">
+      <h4>💰 Finance Report Data</h4>
+      <pre>{{ financeReport | json }}</pre>
+    </div>
+
+    <div class="data-section" *ngIf="userManagementReport">
+      <h4>👥 User Management Report Data</h4>
+      <pre>{{ userManagementReport | json }}</pre>
+    </div>
+
+    <div class="data-section" *ngIf="historyReport">
+      <h4>📜 History Report Data</h4>
+      <pre>{{ historyReport | json }}</pre>
+    </div>
+  </div>
+</div>
