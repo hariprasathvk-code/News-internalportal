@@ -1,85 +1,127 @@
 <div class="reports-section">
   <div class="reports-header">
     <h2>📊 Reports & Analytics</h2>
-    <p class="subtitle">Generate and view various reports</p>
+    <p class="subtitle">Generate comprehensive reports for subscriptions, news, and advertisements</p>
   </div>
 
   <div class="reports-grid">
-    <!-- Finance Report Card -->
+    <!-- Subscription Report Card -->
     <div class="report-card">
-      <div class="report-icon finance">💰</div>
-      <h3>Finance Report</h3>
-      <p>View financial analytics, revenue, and transaction data</p>
+      <div class="report-icon subscription">📊</div>
+      <h3>Subscription Report</h3>
+      <p>Generate detailed subscription analytics including active users, revenue, and trends</p>
       <button 
-        class="report-btn finance-btn"
-        (click)="fetchFinanceReport()"
-        [disabled]="isLoadingFinance">
-        <span *ngIf="!isLoadingFinance">📈 Generate Finance Report</span>
-        <span *ngIf="isLoadingFinance">⏳ Loading...</span>
+        class="report-btn subscription-btn"
+        (click)="generateSubscriptionReport()"
+        [disabled]="isLoadingSubscription">
+        <span *ngIf="!isLoadingSubscription">📈 Generate Report</span>
+        <span *ngIf="isLoadingSubscription">⏳ Generating...</span>
       </button>
       
-      <div *ngIf="financeReport" class="report-result">
-        <div class="result-badge success">✓ Report Generated</div>
-        <p>{{ financeReport.message }}</p>
+      <div *ngIf="subscriptionReport" class="report-result">
+        <div class="result-badge success">✓ Generated</div>
+        <p class="result-message">{{ subscriptionReport.message }}</p>
+        <div class="result-stats" *ngIf="subscriptionReport.totalRecords">
+          <span class="stat-label">Total Records:</span>
+          <span class="stat-value">{{ subscriptionReport.totalRecords }}</span>
+        </div>
+        <button 
+          class="download-btn"
+          (click)="downloadReport(subscriptionReport, 'subscription-report')">
+          📄 Download TXT
+        </button>
       </div>
     </div>
 
-    <!-- User Management Report Card -->
+    <!-- News Report Card -->
     <div class="report-card">
-      <div class="report-icon users">👥</div>
-      <h3>User Management Report</h3>
-      <p>View user statistics, roles, and activity data</p>
+      <div class="report-icon news">📰</div>
+      <h3>News Report</h3>
+      <p>Generate comprehensive news articles report with status, categories, and author statistics</p>
       <button 
-        class="report-btn users-btn"
-        (click)="fetchUserManagementReport()"
-        [disabled]="isLoadingUserManagement">
-        <span *ngIf="!isLoadingUserManagement">👤 Generate User Report</span>
-        <span *ngIf="isLoadingUserManagement">⏳ Loading...</span>
+        class="report-btn news-btn"
+        (click)="generateNewsReport()"
+        [disabled]="isLoadingNews">
+        <span *ngIf="!isLoadingNews">📄 Generate Report</span>
+        <span *ngIf="isLoadingNews">⏳ Generating...</span>
       </button>
       
-      <div *ngIf="userManagementReport" class="report-result">
-        <div class="result-badge success">✓ Report Generated</div>
-        <p>{{ userManagementReport.message }}</p>
+      <div *ngIf="newsReport" class="report-result">
+        <div class="result-badge success">✓ Generated</div>
+        <p class="result-message">{{ newsReport.message }}</p>
+        <div class="result-stats" *ngIf="newsReport.totalRecords">
+          <span class="stat-label">Total Records:</span>
+          <span class="stat-value">{{ newsReport.totalRecords }}</span>
+        </div>
+        <button 
+          class="download-btn"
+          (click)="downloadReport(newsReport, 'news-report')">
+          📄 Download TXT
+        </button>
       </div>
     </div>
 
-    <!-- History Report Card -->
+    <!-- Ad Report Card -->
     <div class="report-card">
-      <div class="report-icon history">📜</div>
-      <h3>History Report</h3>
-      <p>View historical data, changes, and audit logs</p>
+      <div class="report-icon ad">📢</div>
+      <h3>Ad Report</h3>
+      <p>Generate advertisement performance report including impressions, clicks, and revenue data</p>
       <button 
-        class="report-btn history-btn"
-        (click)="fetchHistoryReport()"
-        [disabled]="isLoadingHistory">
-        <span *ngIf="!isLoadingHistory">🕐 Generate History Report</span>
-        <span *ngIf="isLoadingHistory">⏳ Loading...</span>
+        class="report-btn ad-btn"
+        (click)="generateAdReport()"
+        [disabled]="isLoadingAd">
+        <span *ngIf="!isLoadingAd">📊 Generate Report</span>
+        <span *ngIf="isLoadingAd">⏳ Generating...</span>
       </button>
       
-      <div *ngIf="historyReport" class="report-result">
-        <div class="result-badge success">✓ Report Generated</div>
-        <p>{{ historyReport.message }}</p>
+      <div *ngIf="adReport" class="report-result">
+        <div class="result-badge success">✓ Generated</div>
+        <p class="result-message">{{ adReport.message }}</p>
+        <div class="result-stats" *ngIf="adReport.totalRecords">
+          <span class="stat-label">Total Records:</span>
+          <span class="stat-value">{{ adReport.totalRecords }}</span>
+        </div>
+        <button 
+          class="download-btn"
+          (click)="downloadReport(adReport, 'ad-report')">
+          📄 Download TXT
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Reports Data Display (Optional) -->
-  <div class="reports-data" *ngIf="financeReport || userManagementReport || historyReport">
+  <!-- Reports Data Display -->
+  <div class="reports-data" *ngIf="subscriptionReport || newsReport || adReport">
     <h3>📋 Report Details</h3>
     
-    <div class="data-section" *ngIf="financeReport">
-      <h4>💰 Finance Report Data</h4>
-      <pre>{{ financeReport | json }}</pre>
+    <div class="data-section" *ngIf="subscriptionReport">
+      <div class="section-header">
+        <h4>📊 Subscription Report Data</h4>
+        <span class="generated-time" *ngIf="subscriptionReport.generatedAt">
+          Generated: {{ subscriptionReport.generatedAt }}
+        </span>
+      </div>
+      <pre>{{ subscriptionReport.data | json }}</pre>
     </div>
 
-    <div class="data-section" *ngIf="userManagementReport">
-      <h4>👥 User Management Report Data</h4>
-      <pre>{{ userManagementReport | json }}</pre>
+    <div class="data-section" *ngIf="newsReport">
+      <div class="section-header">
+        <h4>📰 News Report Data</h4>
+        <span class="generated-time" *ngIf="newsReport.generatedAt">
+          Generated: {{ newsReport.generatedAt }}
+        </span>
+      </div>
+      <pre>{{ newsReport.data | json }}</pre>
     </div>
 
-    <div class="data-section" *ngIf="historyReport">
-      <h4>📜 History Report Data</h4>
-      <pre>{{ historyReport | json }}</pre>
+    <div class="data-section" *ngIf="adReport">
+      <div class="section-header">
+        <h4>📢 Ad Report Data</h4>
+        <span class="generated-time" *ngIf="adReport.generatedAt">
+          Generated: {{ adReport.generatedAt }}
+        </span>
+      </div>
+      <pre>{{ adReport.data | json }}</pre>
     </div>
   </div>
 </div>
