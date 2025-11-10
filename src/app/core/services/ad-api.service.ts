@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment';
 })
 export class AdApiService {
   private http = inject(HttpClient);
-  private apiUrl = environment.apiUrl + '/ad';
+  private apiUrl = environment.apiUrl + '/ads';
 
   getAds(): Observable<AdSubmission[]> {
     const token = localStorage.getItem('accessToken');
