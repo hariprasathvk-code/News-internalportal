@@ -34,7 +34,9 @@
     <ng-container *ngIf="selectedSection === 'news'">
       <app-article-list 
         [articles]="articles"
-        (validateArticle)="onValidateSingleArticle($event)">
+        (validateArticle)="onValidateSingleArticle($event)"
+        (approveArticle)="onApproveArticle($event)"
+    (rejectArticle)="onRejectArticle($event)">
       </app-article-list>
     </ng-container>
 

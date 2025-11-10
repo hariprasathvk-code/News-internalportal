@@ -282,3 +282,75 @@
 }
 
 
+// ... existing styles ...
+
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+
+  button {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  .approve-btn {
+    background: #44bc67;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #3ba857;
+    }
+  }
+
+  // ✅ NEW: Reject button styling
+  .reject-btn {
+    background: #f44336;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #d32f2f;
+    }
+  }
+
+  .edit-btn {
+    background: #5D5FEF;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #4a3dd4;
+    }
+  }
+
+  .ai-btn {
+    background: #ff9800;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: #f57c00;
+    }
+
+    &:disabled {
+      background: #ffcc80;
+      color: #fff;
+    }
+  }
+}
+
+// ... rest of existing styles ...

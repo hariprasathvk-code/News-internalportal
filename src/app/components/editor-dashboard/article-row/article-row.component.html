@@ -46,11 +46,22 @@
     <div class="content"><b>Content:</b> {{ article.Content }}</div>
 
     <div class="actions">
+      <!-- ✅ Approve Button -->
       <button 
         (click)="approveArticle(article)" 
         class="approve-btn"
-        [disabled]="isValidating">
-        ✓ Approve
+        [disabled]="isValidating || isSaving || isApproving || isRejecting">
+        <span *ngIf="!isApproving">✓ Approve</span>
+        <span *ngIf="isApproving">⏳ Approving...</span>
+      </button>
+      
+      <!-- ✅ NEW: Reject Button -->
+      <button 
+        (click)="rejectArticle(article)" 
+        class="reject-btn"
+        [disabled]="isValidating || isSaving || isApproving || isRejecting">
+        <span *ngIf="!isRejecting">✗ Reject</span>
+        <span *ngIf="isRejecting">⏳ Rejecting...</span>
       </button>
       
       <!-- ✅ NEW: Check with AI button -->

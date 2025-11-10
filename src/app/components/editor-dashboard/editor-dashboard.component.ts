@@ -406,6 +406,62 @@ export class EditorDashboardComponent implements OnInit {
     });
   }
 
+  // ✅ NEW: Approve article
+  onApproveArticle(article: ArticleDetail) {
+    console.log('✅ Approving article:', article.NewsId);
+
+    const confirmed = confirm(
+      `✓ Approve this article?\n\n` +
+      `Title: ${article.Title}\n\n` +
+      `This will change the status to "Approved".`
+    );
+
+    if (!confirmed) return;
+
+    this.newsApi.approveArticle(article.NewsId, article.SubmittedDate).subscribe({
+      next: (response) => {
+        console.log('✅ Article approved successfully:', response);
+        
+        alert(`✅ Article Approved!\n\nTitle: ${article.Title}`);
+
+        // Reload articles to see updated status
+        this.loadSubmittedArticles();
+      },
+      error: (error) => {
+        console.error('❌ Approve error:', error);
+        alert(`❌ Approval Failed: ${error.message}`);
+      }
+    });
+  }
+
+  // ✅ NEW: Reject article
+  onRejectArticle(article: ArticleDetail) {
+    console.log('❌ Rejecting article:', article.NewsId);
+
+    const confirmed = confirm(
+      `✗ Reject this article?\n\n` +
+      `Title: ${article.Title}\n\n` +
+      `This will change the status to "Rejected".`
+    );
+
+    if (!confirmed) return;
+
+    this.newsApi.rejectArticle(article.NewsId, article.SubmittedDate).subscribe({
+      next: (response) => {
+        console.log('✅ Article rejected successfully:', response);
+        
+        alert(`✓ Article Rejected\n\nTitle: ${article.Title}`);
+
+        // Reload articles to see updated status
+        this.loadSubmittedArticles();
+      },
+      error: (error) => {
+        console.error('❌ Reject error:', error);
+        alert(`❌ Rejection Failed: ${error.message}`);
+      }
+    });
+  }
+
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);

@@ -29,7 +29,9 @@
       *ngFor="let article of articles"
       [article]="article"
       (save)="onSaveArticle($event)"
-      (validateWithAI)="onValidateWithAI($event)">
+      (validateWithAI)="onValidateWithAI($event)"
+      (approve)="onApproveArticle($event)"
+      (reject)="onRejectArticle($event)">
     </app-article-row>
   </div>
 </div>
