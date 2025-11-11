@@ -20,30 +20,31 @@ export class NewsApiService {
     return this.http.get<ArticleDetail[]>(this.apiUrl, { headers });
   }
 
-  // ✅ FIXED: Correct URL format
-  approveArticle(newsId: string, submittedDate: number): Observable<any> {
-    const token = localStorage.getItem('accessToken');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
+  approveArticle(newsId: string, priority: number, lifecycle: number): Observable<any> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
 
-    // ✅ URL: /api/news/{newsId}/approve
-    return this.http.put(
-      `${this.apiUrl}/${newsId}/approve`,  // Correct format
-      { submittedDate: submittedDate.toString() },
-      { headers }
-    ).pipe(
-      catchError((error) => {
-        if (error.status === 200 || error.status === 204) {
-          return of({ success: true });
-        }
-        throw error;
-      })
-    );
-  }
+  return this.http.post(
+    `${this.apiUrl}/approve`,
+    {
+      newsId: newsId,
+      priority: priority,
+      lifecycle: lifecycle
+    },
+    { headers }
+  ).pipe(
+    catchError((error) => {
+      if (error.status === 200 || error.status === 204) {
+        return of({ success: true });
+      }
+      throw error;
+    })
+  );
+}
 
-  // ✅ FIXED: Correct URL format
   rejectArticle(newsId: string, submittedDate: number): Observable<any> {
     const token = localStorage.getItem('accessToken');
     const headers = {
@@ -51,9 +52,9 @@ export class NewsApiService {
       'Content-Type': 'application/json'
     };
 
-    // ✅ URL: /api/news/{newsId}/reject
+ 
     return this.http.put(
-      `${this.apiUrl}/${newsId}/reject`,  // Correct format
+      `${this.apiUrl}/${newsId}/reject`,  
       { submittedDate: submittedDate.toString() },
       { headers }
     ).pipe(
@@ -65,6 +66,19 @@ export class NewsApiService {
       })
     );
   }
+
+  getNewsByCategory(category: string): Observable<any[]> {
+    const token = localStorage.getItem('idToken');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+    return this.http.get<any[]>(
+      `${environment.apiUrl}/category?category=${category}`,
+      { headers }
+    );
+  }
+
 
   updateArticle(newsId: string, article: ArticleDetail): Observable<any> {
     const token = localStorage.getItem('accessToken');
