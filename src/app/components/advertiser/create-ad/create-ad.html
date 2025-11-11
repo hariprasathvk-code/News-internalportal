@@ -1,0 +1,62 @@
+<div class="create-ad-container">
+  <h2>Create Advertisement</h2>
+
+  <form (ngSubmit)="onSubmit()">
+
+    <label>Title *</label>
+    <input type="text" name="Title" [(ngModel)]="ad.Title" required />
+
+    <label>Description</label>
+    <textarea name="Description" [(ngModel)]="ad.Description"></textarea>
+
+    <label>Category *</label>
+    <select name="CategoryId" [(ngModel)]="ad.CategoryId" required>
+      <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+    </select>
+
+    <label>Region *</label>
+    <select name="RegionId" [(ngModel)]="ad.RegionId" (change)="onRegionChange($event)" required>
+      <option *ngFor="let r of regions" [value]="r.id">{{ r.name }}</option>
+    </select>
+
+    <label>Country *</label>
+    <select name="CountryId" [(ngModel)]="ad.CountryId" (change)="onCountryChange($event)" required>
+      <option *ngFor="let c of countries" [value]="c.id">{{ c.name }}</option>
+    </select>
+
+    <label>State *</label>
+    <select name="StateId" [(ngModel)]="ad.StateId" required>
+      <option *ngFor="let s of states" [value]="s.id">{{ s.name }}</option>
+    </select>
+
+    <label>Ad Type *</label>
+    <select name="AdType" [(ngModel)]="ad.AdType" required>
+      <option *ngFor="let t of adTypes" [value]="t">{{ t }}</option>
+    </select>
+
+    <label>Target URL</label>
+    <input type="url" name="TargetUrl" [(ngModel)]="ad.TargetUrl" />
+
+    <label>Media Upload *</label>
+    <input type="file" accept="image/*" (change)="onFileSelected($event)" required />
+
+    <label>Start Time *</label>
+    <input type="datetime-local" name="StartTime" [(ngModel)]="ad.StartTime" required />
+
+    <label>End Time *</label>
+    <input type="datetime-local" name="EndTime" [(ngModel)]="ad.EndTime" required />
+
+    <label>
+      <input type="checkbox" name="Activated" [(ngModel)]="ad.Activated" />
+      Activate after approval
+    </label>
+
+    <label>Ad Size *</label>
+    <select name="sizePreset" [(ngModel)]="ad.sizePreset" (change)="onSizeChange($event)" required>
+      <option *ngFor="let s of sizePresets" [value]="s.value">{{ s.label }}</option>
+    </select>
+
+    <button type="submit" [disabled]="uploading">Create Ad</button>
+
+  </form>
+</div>
