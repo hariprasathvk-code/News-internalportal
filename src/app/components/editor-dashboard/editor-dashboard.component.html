@@ -1,6 +1,6 @@
 <div class="app-layout">
   <app-editor-sidebar (sectionChange)="onSidebarSection($event)"></app-editor-sidebar>
-
+ 
   <div class="container">
     <div class="header-row">
       <div>
@@ -8,9 +8,8 @@
         <div class="subtitle">Manage and review news articles and advertisements</div>
       </div>
       <div class="header-actions">
-        <!-- ✅ UPDATED: Validate All button -->
-        <button 
-          class="ai-btn-all" 
+        <button
+          class="ai-btn-all"
           (click)="checkAllWithAI()"
           [disabled]="isValidatingAll">
           <span *ngIf="!isValidatingAll">🤖 Check All with AI</span>
@@ -19,7 +18,7 @@
         <button class="logout-btn" (click)="logout()">🚪 Logout</button>
       </div>
     </div>
-
+ 
     <div class="summary-row">
       <app-card-summary
         *ngFor="let card of summaryCards"
@@ -29,31 +28,59 @@
         [change]="card.change">
       </app-card-summary>
     </div>
-
-    <!-- ✅ UPDATED: Added validateArticle event handler -->
+ 
+    <!-- News Submissions Section -->
     <ng-container *ngIf="selectedSection === 'news'">
-      <app-article-list 
+      <app-article-list
         [articles]="articles"
         (validateArticle)="onValidateSingleArticle($event)"
+        
         (approveArticle)="onApproveArticle($event)"
-    (rejectArticle)="onRejectArticle($event)">
+        (rejectArticle)="onRejectArticle($event)">
       </app-article-list>
     </ng-container>
-
+ 
+    <!-- Ads Section -->
     <ng-container *ngIf="selectedSection === 'ads'">
       <app-ad-submission-list [ads]="ads"></app-ad-submission-list>
     </ng-container>
-
+ 
+    <!-- AI Insights Section -->
     <ng-container *ngIf="selectedSection === 'ai'">
       <div class="coming-soon">🤖 AI Insights - Coming Soon</div>
     </ng-container>
-
+ 
+    <!-- Category Section -->
     <ng-container *ngIf="selectedSection === 'category'">
-      <div class="coming-soon">📂 Category Management - Coming Soon</div>
+      <div class="category-boxes">
+        <button
+          *ngFor="let cat of categories"
+          (click)="onSelectCategory(cat.value)"
+          [class.active]="selectedCategory === cat.value"
+          class="category-btn">
+          {{ cat.label }}
+        </button>
+      </div>
+      <div *ngIf="selectedCategory">
+        <div *ngFor="let news of selectedCategoryNews">
+          <h4>{{ news.Title }}</h4>
+          <p>{{ news.Description }}</p>
+        </div>
+        <div *ngIf="selectedCategoryNews.length === 0">
+          No news found for selected category.
+        </div>
+      </div>
     </ng-container>
-
+ 
+    <!-- Reports Section -->
     <ng-container *ngIf="selectedSection === 'reports'">
       <app-reports></app-reports>
     </ng-container>
+
+    <!-- ✅ ADDED: User Management Section -->
+    <ng-container *ngIf="selectedSection === 'users'">
+      <app-user-management></app-user-management>
+    </ng-container>
+    
   </div>
 </div>

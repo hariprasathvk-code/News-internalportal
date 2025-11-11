@@ -31,6 +31,7 @@ export class ArticleListComponent {
    @Output() approveArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
   @Output() rejectArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
   @Output() validateArticle = new EventEmitter<ArticleDetail>();
+  
 
   onValidateWithAI(article: ArticleDetail) {
     this.validateArticle.emit(article);

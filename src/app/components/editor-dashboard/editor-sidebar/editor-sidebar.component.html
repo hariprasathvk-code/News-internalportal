@@ -15,6 +15,10 @@
       <span class="icon">🤖</span>
       <span class="label">AI Insights</span>
     </li>
+   <li [class.active]="selected === 'users'" (click)="selectSection('users')">
+      <span class="icon">👥</span>
+      <span class="label">User Management</span>
+    </li>
     <li [class.active]="selected === 'category'" (click)="setSection('category')">
       <span class="icon">📂</span>
       <span class="label">Category</span>

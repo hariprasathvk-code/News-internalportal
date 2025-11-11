@@ -17,4 +17,8 @@ export class EditorSidebarComponent {
     this.selected = section;
     this.sectionChange.emit(section);
   }
+
+  selectSection(section: string) {
+    this.setSection(section);
+  }
 }
