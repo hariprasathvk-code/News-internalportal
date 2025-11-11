@@ -18,3 +18,4 @@ export class CardSummaryComponent {
   // ✅ NEW: Array of cards (add this line)
   @Input() cards: any[] = [];
 }
+
