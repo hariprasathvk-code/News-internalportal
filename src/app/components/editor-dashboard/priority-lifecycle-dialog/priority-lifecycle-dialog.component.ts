@@ -38,6 +38,7 @@ export class PriorityLifecycleDialogComponent {
     }
   }
 
+  
   setLifecycle(minutes: number): void {
     this.priorityForm.patchValue({ lifecycle: minutes });
   }
