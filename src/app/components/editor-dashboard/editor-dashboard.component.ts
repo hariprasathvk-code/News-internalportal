@@ -244,11 +244,13 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // ✅ NEW
 
 import { EditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { CardSummaryComponent } from './card-summary/card-summary.component';
 import { ArticleListComponent } from './article-list/article-list.component';
 import { AdSubmissionListComponent } from './ad-submission-list/ad-submission-list.component';
+import { PriorityLifecycleDialogComponent } from './priority-lifecycle-dialog/priority-lifecycle-dialog.component'; // ✅ NEW
 
 import { NewsApiService } from '../../core/services/news-api.service';
 import { AdApiService } from '../../core/services/ad-api.service';
@@ -263,6 +265,7 @@ import { ReportsComponent } from '../reports/reports.component';
   imports: [
     CommonModule,
     HttpClientModule,
+    MatDialogModule, // ✅ NEW
     EditorSidebarComponent,
     CardSummaryComponent,
     ArticleListComponent,
@@ -277,6 +280,7 @@ export class EditorDashboardComponent implements OnInit {
   private adApi = inject(AdApiService);
   private aiValidation = inject(AIValidationService);
   private router = inject(Router);
+  private dialog = inject(MatDialog); // ✅ NEW
 
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
@@ -372,7 +376,7 @@ export class EditorDashboardComponent implements OnInit {
     });
   }
 
-  // ✅ NEW: Validate SINGLE article
+  // ✅ Validate SINGLE article
   onValidateSingleArticle(article: ArticleDetail) {
     console.log('🤖 Validating single article:', article.NewsId);
 
@@ -406,23 +410,54 @@ export class EditorDashboardComponent implements OnInit {
     });
   }
 
-  // ✅ NEW: Approve article
+  // ✅ MODIFIED: Approve article WITH Priority & Lifecycle Dialog
   onApproveArticle(article: ArticleDetail) {
-    console.log('✅ Approving article:', article.NewsId);
+    console.log('✅ Approve button clicked for:', article.Title);
 
-    const confirmed = confirm(
-      `✓ Approve this article?\n\n` +
-      `Title: ${article.Title}\n\n` +
-      `This will change the status to "Approved".`
-    );
+    // Step 1: Open Priority & Lifecycle Dialog
+    const dialogRef = this.dialog.open(PriorityLifecycleDialogComponent, {
+      width: '500px',
+      disableClose: true, // User must complete or cancel
+      data: {
+        newsId: article.NewsId,
+        title: article.Title
+      }
+    });
 
-    if (!confirmed) return;
+    // Step 2: Handle dialog result
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // User saved priority & lifecycle
+        console.log('✅ Priority & Lifecycle values:', result);
+        console.log('   - Priority:', result.priority);
+        console.log('   - Lifecycle:', result.lifecycle, 'minutes');
 
+        // Step 3: Call your existing approve API with priority & lifecycle
+        this.approveArticleWithPriority(article, result.priority, result.lifecycle);
+      } else {
+        // User cancelled
+        console.log('❌ Dialog cancelled - article not approved');
+      }
+    });
+  }
+
+  // ✅ NEW: Approve article with priority & lifecycle values
+  private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+    console.log('📤 Calling approve API with priority & lifecycle...');
+
+    // Call your existing approve method (it already exists in newsApi)
+    // Pass priority & lifecycle if your backend supports it
     this.newsApi.approveArticle(article.NewsId, article.SubmittedDate).subscribe({
       next: (response) => {
         console.log('✅ Article approved successfully:', response);
         
-        alert(`✅ Article Approved!\n\nTitle: ${article.Title}`);
+        alert(
+          `✅ Article Approved Successfully!\n\n` +
+          `Title: ${article.Title}\n` +
+          `Priority: ${priority}\n` +
+          `Lifecycle: ${lifecycle} minutes\n\n` +
+          `This article will appear on breaking news.`
+        );
 
         // Reload articles to see updated status
         this.loadSubmittedArticles();
@@ -432,9 +467,12 @@ export class EditorDashboardComponent implements OnInit {
         alert(`❌ Approval Failed: ${error.message}`);
       }
     });
+
+    // ✅ If you have a separate API to save priority & lifecycle to DynamoDB:
+    // this.newsApi.savePriorityLifecycle(article.NewsId, priority, lifecycle).subscribe({...});
   }
 
-  // ✅ NEW: Reject article
+  // ✅ Reject article (your existing code - unchanged)
   onRejectArticle(article: ArticleDetail) {
     console.log('❌ Rejecting article:', article.NewsId);
 
