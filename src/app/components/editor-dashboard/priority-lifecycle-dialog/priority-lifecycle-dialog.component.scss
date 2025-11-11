@@ -1,0 +1,297 @@
+.priority-dialog {
+  min-width: 500px;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    padding: 24px 28px;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    &::before {
+      content: '⚡';
+      font-size: 28px;
+      animation: pulse 2s infinite;
+    }
+  }
+
+  .dialog-content {
+    padding: 28px;
+    background: white;
+
+    .news-info {
+      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #333;
+      border-left: 4px solid #667eea;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateX(4px);
+      }
+
+      strong {
+        color: #667eea;
+      }
+    }
+
+    .form-field {
+      margin-bottom: 24px;
+      animation: fadeInUp 0.4s ease;
+
+      label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 15px;
+        color: #2d3748;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        background: #f7fafc;
+        font-weight: 500;
+
+        &:focus {
+          outline: none;
+          border-color: #667eea;
+          background: white;
+          box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1),
+                      0 4px 12px rgba(102, 126, 234, 0.15);
+          transform: translateY(-2px);
+        }
+
+        &::placeholder {
+          color: #a0aec0;
+        }
+      }
+
+      small {
+        display: block;
+        margin-top: 8px;
+        font-size: 12px;
+        color: #718096;
+        font-weight: 500;
+        padding-left: 4px;
+      }
+    }
+
+    .presets {
+      background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+      padding: 18px;
+      border-radius: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2e8f0;
+
+      span {
+        font-weight: 700;
+        font-size: 13px;
+        color: #4a5568;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      button {
+        padding: 10px 18px;
+        border: 2px solid #cbd5e0;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          transition: left 0.3s ease;
+          z-index: -1;
+        }
+
+        &:hover {
+          color: white;
+          border-color: #667eea;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+          &::before {
+            left: 0;
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+
+  .dialog-actions {
+    margin-top: 0;
+    padding: 20px 28px;
+    background: #f7fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      &:active::after {
+        width: 300px;
+        height: 300px;
+      }
+
+      &.btn-cancel {
+        background: #e2e8f0;
+        color: #4a5568;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        &:hover {
+          background: #cbd5e0;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+      }
+
+      &.btn-save {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        &:disabled {
+          background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+          cursor: not-allowed;
+          box-shadow: none;
+          transform: none;
+        }
+      }
+    }
+  }
+}
+
+// ✅ Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+// ✅ Responsive Design
+@media (max-width: 600px) {
+  .priority-dialog {
+    min-width: 100%;
+    max-width: 100%;
+
+    h2 {
+      font-size: 20px;
+      padding: 20px;
+    }
+
+    .dialog-content {
+      padding: 20px;
+
+      .form-field input {
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+
+      .presets {
+        padding: 15px;
+
+        button {
+          padding: 8px 14px;
+          font-size: 12px;
+        }
+      }
+    }
+
+    .dialog-actions {
+      padding: 16px 20px;
+
+      button {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+    }
+  }
+}

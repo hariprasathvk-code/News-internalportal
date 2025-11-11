@@ -1,0 +1,52 @@
+<div class="priority-dialog">
+  <h2>⚡ Set Priority & Lifecycle</h2>
+
+  <div class="dialog-content">
+    <div class="news-info">
+      <strong>{{ data.title }}</strong>
+    </div>
+
+    <form [formGroup]="priorityForm">
+      <div class="form-field">
+        <label>🔥 Priority (1-10)</label>
+        <input 
+          type="number" 
+          formControlName="priority"
+          min="1" 
+          max="10"
+          placeholder="Enter priority"
+        />
+        <small>Higher = More prominent on breaking news</small>
+      </div>
+
+      <div class="form-field">
+        <label>⏱️ Lifecycle (Minutes)</label>
+        <input 
+          type="number" 
+          formControlName="lifecycle"
+          min="1"
+          placeholder="Enter minutes"
+        />
+        <small>Duration on breaking news section</small>
+      </div>
+
+      <div class="presets">
+        <span>Quick:</span>
+        <button type="button" (click)="setLifecycle(30)">30m</button>
+        <button type="button" (click)="setLifecycle(60)">1h</button>
+        <button type="button" (click)="setLifecycle(120)">2h</button>
+        <button type="button" (click)="setLifecycle(360)">6h</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn-cancel" (click)="onCancel()">Cancel</button>
+    <button 
+      class="btn-save" 
+      (click)="onSave()" 
+      [disabled]="!priorityForm.valid">
+      Save
+    </button>
+  </div>
+</div>
