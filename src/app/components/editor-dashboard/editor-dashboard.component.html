@@ -42,7 +42,11 @@
  
     <!-- Ads Section -->
     <ng-container *ngIf="selectedSection === 'ads'">
-      <app-ad-submission-list [ads]="ads"></app-ad-submission-list>
+      <app-ad-submission-list
+  [ads]="ads"
+  (checkAi)="checkAiValidation($event)">
+</app-ad-submission-list>
+
     </ng-container>
  
     <!-- AI Insights Section -->

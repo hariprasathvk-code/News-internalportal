@@ -20,12 +20,37 @@ export class AdApiService {
   }
 
   approveAd(adId: string): Observable<any> {
-    const token = localStorage.getItem('accessToken');
-    const headers = {
-      'Authorization': `Bearer ${token}`
-    };
-    return this.http.put(`${this.apiUrl}/${adId}/approve`, {}, { headers });
-  }
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  return this.http.post(
+    `${this.apiUrl}/checked`,
+    { AdId: adId, Action: "Approve" }, // Capitalized keys!
+    { headers }
+  );
+}
+
+rejectAd(adId: string): Observable<any> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  return this.http.post(`${this.apiUrl}/checked`, { Action: "Reject", AdId: adId }, { headers });
+}
+
+
+
+
+  // approveAd(adId: string): Observable<any> {
+  //   const token = localStorage.getItem('accessToken');
+  //   const headers = {
+  //     'Authorization': `Bearer ${token}`
+  //   };
+  //   return this.http.post(`${this.apiUrl}/checked`, {"Action":"approve",AdId: adId}, { headers });
+  // }
 
   updateAd(adId: string, ad: AdSubmission): Observable<any> {
     const token = localStorage.getItem('accessToken');

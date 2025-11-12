@@ -209,6 +209,18 @@ onSelectCategory(category: string) {
     }
   });
 }
+checkAiValidation(ad: AdSubmission) {
+  this.aiValidation.validateSingleAd(ad.AdId).subscribe({
+    next: (response) => {
+      alert(`AI Validation Result for "${ad.Title}": ${response.message || 'No message'}`);
+      this.loadAds(); // optionally reload ads list after validation
+    },
+    error: (error) => {
+      alert(`AI Validation failed: ${error.message}`);
+    }
+  });
+}
+
   
   onValidateSingleArticle(article: ArticleDetail) {
     console.log('🤖 Validating single article:', article.NewsId);
