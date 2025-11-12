@@ -32,6 +32,16 @@ export class AdApiService {
   );
 }
 
+rejectAd(adId: string): Observable<any> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  return this.http.post(`${this.apiUrl}/checked`, { Action: "Reject", AdId: adId }, { headers });
+}
+
+
 
 
   // approveAd(adId: string): Observable<any> {

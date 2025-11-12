@@ -116,6 +116,24 @@ export class AdSubmissionListComponent {
       }
     });
   }
+rejectAd(ad: AdSubmission) {
+  this.saving = true;
+  this.adApi.rejectAd(ad.AdId).subscribe({
+    next: () => {
+      this.ads = this.ads.filter(item => item.AdId !== ad.AdId);  // Remove from UI after rejection
+      this.saving = false;
+      alert(`✗ Ad rejected: ${ad.Title}`);
+    },
+    error: (err) => {
+      this.saving = false;
+      alert(`❌ Failed to reject ad: ${ad.Title}\n${err.message || err}`);
+    }
+  });
+}
+
+
+
+
   cancelEdit() {
     this.editAd = null;
   }

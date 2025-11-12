@@ -45,6 +45,8 @@
 
         <div class="ad-actions">
           <button (click)="approveAd(ad)" class="approve-btn">✓ Approve</button>
+          <button (click)="rejectAd(ad)" [disabled]="saving" class="reject-btn">✗ Reject</button>
+
           <button class="edit-btn" (click)="startEdit(ad)">✏️ Edit</button>
           <a *ngIf="ad.TargetUrl" [href]="ad.TargetUrl" target="_blank" class="target-link">
             🔗 Visit
