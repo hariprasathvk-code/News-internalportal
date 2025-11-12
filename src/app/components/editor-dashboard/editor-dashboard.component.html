@@ -54,26 +54,45 @@
       <div class="coming-soon">🤖 AI Insights - Coming Soon</div>
     </ng-container>
 
- <div *ngIf="selectedSection === 'category'">
-  <div class="category-boxes">
+
+
+<div *ngIf="selectedSection === 'category'">
+  <div class="category-box-row">
     <button
       *ngFor="let cat of categories"
       (click)="onSelectCategory(cat.value)"
       [class.active]="selectedCategory === cat.value"
-      class="category-btn">
-      {{ cat.label }}
+      class="category-report-btn">
+      <div class="report-icon"></div>
+      <span class="report-label">{{ cat.label }}</span>
     </button>
   </div>
   <div *ngIf="selectedCategory">
-    <div *ngFor="let news of selectedCategoryNews">
-      <h4>{{ news.Title }}</h4>
-      <p>{{ news.Description }}</p>
+    <div class="news-card-row">
+      <div class="news-report-card" *ngFor="let news of selectedCategoryNews">
+        <div class="media-wrapper">
+         
+          <img *ngIf="isImage(news.MediaFolder)" [src]="news.MediaFolder" alt="News image" width="280" height="170" (error)="onImageError($event)" />
+
+          <video *ngIf="isVideo(news.MediaFolder)" [src]="news.MediaFolder" width="280" height="170" controls></video>
+        </div>
+        <div class="news-content">
+          <h3>{{ news.Title }}</h3>
+          <p class="summary">{{ news.Summary || news.Description }}</p>
+          <div class="meta">
+            <span>{{ news.Author }}</span>
+            <span>{{ news.ApprovedDate | date:'short' }}</span>
+            <span>{{ news.CategoryName }}</span>
+          </div>
+        </div>
+      </div>
     </div>
     <div *ngIf="selectedCategoryNews.length === 0">
-      No news found for selected category.
+      <p>No news found for the selected category.</p>
     </div>
   </div>
 </div>
+
 
 
 

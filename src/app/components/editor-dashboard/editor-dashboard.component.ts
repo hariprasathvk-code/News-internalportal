@@ -54,27 +54,34 @@ export class EditorDashboardComponent implements OnInit {
     { label: 'Published Today', value: 0, note: 'Live articles', change: 0 }
   ];
 
-  categories = [
-  { label: 'Defence', value: 'DefenceNewsOrg' },
-  { label: 'Politics', value: 'PoliticsNewsOrg' },
-  { label: 'Finance', value: 'FinanceNewsOrg' },
-  { label: 'Sports', value: 'SportsNewsOrg' },
-  { label: 'Region', value: 'RegionalNewsOrg' },
-  { label: 'Entertainment', value: 'EntertainmentNewsOrg' }
+categories = [
+  { label: 'Sports', value: 1 },
+  { label: 'Politics', value: 2 },
+  { label: 'Entertainment', value: 3 },
+  { label: 'Defence', value: 4 },
+  { label: 'Finance', value: 5 },
+  { label: 'Regional', value: 6 }
 ];
-selectedCategory: string | null = null;
+
+selectedCategory: number | null = null; // Must be a number now!
 selectedCategoryNews: any[] = [];
  
   ngOnInit() {
     this.loadSubmittedArticles();
   }
  
-onSelectCategory(category: string) {
-  this.selectedCategory = category;
-  this.newsApi.getNewsByCategory(category).subscribe({
-    next: (res) => this.selectedCategoryNews = res,
-    error: () => this.selectedCategoryNews = []
-  });
+onSelectCategory(categoryId: number) {
+  if (this.selectedCategory === categoryId) {
+    // Collapse news cards on re-click of same category
+    this.selectedCategory = null;
+    this.selectedCategoryNews = [];
+  } else {
+    this.selectedCategory = categoryId;
+    this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
+      next: (res) => this.selectedCategoryNews = res.news || [],
+      error: () => this.selectedCategoryNews = []
+    });
+  }
 }
 
  onSidebarSection(section: string) {
@@ -116,47 +123,13 @@ onSelectCategory(category: string) {
       }
     });
   }
+  loadCategoryNews(categoryId: number) {
+  this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
+    next: res => this.selectedCategoryNews = res.news,
+    error: () => this.selectedCategoryNews = []
+  });
+}
  
-  // ✅ Validate ALL articles
-  // checkAllWithAI() {
-  //   if (this.isValidatingAll) {
-  //     return;
-  //   }
- 
-  //   const confirmed = confirm(
-  //     '🤖 This will validate ALL submitted articles using AI.\n\n' +
-  //     'Articles will be automatically approved or rejected.\n\n' +
-  //     'Continue?'
-  //   );
- 
-  //   if (!confirmed) {
-  //     return;
-  //   }
- 
-  //   this.isValidatingAll = true;
-  //   console.log('🤖 Starting AI validation for all articles...');
- 
-  //   this.aiValidation.validateAllArticles().subscribe({
-  //     next: (response) => {
-  //       this.isValidatingAll = false;
-  //       console.log('✅ AI Validation complete:', response);
-       
-  //       alert(
-  //         `✅ Batch AI Validation Complete!\n\n` +
-  //         `Processed: ${response.processedCount} articles\n` +
-  //         `Message: ${response.message}`
-  //       );
- 
-  //       // Reload articles to see updated statuses
-  //       this.loadSubmittedArticles();
-  //     },
-  //     error: (error) => {
-  //       this.isValidatingAll = false;
-  //       console.error('❌ AI Validation error:', error);
-  //       alert(`❌ AI Validation Failed: ${error.error?.message || error.message}`);
-  //     }
-  //   });
-  // }
    checkAllWithAI() {
   if (this.isValidatingAll) {
     return;
@@ -333,5 +306,20 @@ checkAiValidation(ad: AdSubmission) {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
+  isImage(url: string): boolean {
+  if (!url) return false;
+  const parts = url.split('.');
+  const ext = parts.length > 1 ? parts.pop()?.split('?')[0].toLowerCase() : '';
+  return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '');
+}
+
+
+isVideo(url: string): boolean {
+  return url ? /\.(mp4|mov|webm|ogg)$/i.test(url.split('?')[0]) : false;
+}
+onImageError(event: any) {
+  event.target.src = 'assets/img/no-image.png'; // Provide a fallback image in your assets
+}
+
 }
  
