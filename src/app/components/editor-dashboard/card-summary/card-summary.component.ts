@@ -14,8 +14,6 @@ export class CardSummaryComponent {
   @Input() value!: number;
   @Input() note = '';
   @Input() change!: number;
-
-  // ✅ NEW: Array of cards (add this line)
   @Input() cards: any[] = [];
 }
 

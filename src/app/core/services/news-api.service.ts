@@ -19,14 +19,14 @@ export class NewsApiService {
     };
     return this.http.get<ArticleDetail[]>(this.apiUrl, { headers });
   }
- 
+
   approveArticle(newsId: string, priority: number, lifecycle: number): Observable<any> {
   const token = localStorage.getItem('accessToken');
   const headers = {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
   };
- 
+
   return this.http.post(
     `${this.apiUrl}/approve`,
     {
@@ -44,14 +44,14 @@ export class NewsApiService {
     })
   );
 }
- 
+
   rejectArticle(newsId: string, submittedDate: number): Observable<any> {
     const token = localStorage.getItem('accessToken');
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
- 
+
  
     return this.http.put(
       `${this.apiUrl}/${newsId}/reject`,  
@@ -66,7 +66,7 @@ export class NewsApiService {
       })
     );
   }
- 
+
   getNewsByCategory(category: string): Observable<any[]> {
     const token = localStorage.getItem('idToken');
     const headers = {
@@ -78,8 +78,8 @@ export class NewsApiService {
       { headers }
     );
   }
- 
- 
+
+
   updateArticle(newsId: string, article: ArticleDetail): Observable<any> {
     const token = localStorage.getItem('accessToken');
     const headers = {

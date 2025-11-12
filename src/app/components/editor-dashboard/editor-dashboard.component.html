@@ -49,30 +49,30 @@
     <ng-container *ngIf="selectedSection === 'ai'">
       <div class="coming-soon">🤖 AI Insights - Coming Soon</div>
     </ng-container>
- 
-    <!-- Category Section -->
-    <ng-container *ngIf="selectedSection === 'category'">
-      <div class="category-boxes">
-        <button
-          *ngFor="let cat of categories"
-          (click)="onSelectCategory(cat.value)"
-          [class.active]="selectedCategory === cat.value"
-          class="category-btn">
-          {{ cat.label }}
-        </button>
-      </div>
-      <div *ngIf="selectedCategory">
-        <div *ngFor="let news of selectedCategoryNews">
-          <h4>{{ news.Title }}</h4>
-          <p>{{ news.Description }}</p>
-        </div>
-        <div *ngIf="selectedCategoryNews.length === 0">
-          No news found for selected category.
-        </div>
-      </div>
-    </ng-container>
- 
-    <!-- Reports Section -->
+
+ <div *ngIf="selectedSection === 'category'">
+  <div class="category-boxes">
+    <button
+      *ngFor="let cat of categories"
+      (click)="onSelectCategory(cat.value)"
+      [class.active]="selectedCategory === cat.value"
+      class="category-btn">
+      {{ cat.label }}
+    </button>
+  </div>
+  <div *ngIf="selectedCategory">
+    <div *ngFor="let news of selectedCategoryNews">
+      <h4>{{ news.Title }}</h4>
+      <p>{{ news.Description }}</p>
+    </div>
+    <div *ngIf="selectedCategoryNews.length === 0">
+      No news found for selected category.
+    </div>
+  </div>
+</div>
+
+
+
     <ng-container *ngIf="selectedSection === 'reports'">
       <app-reports></app-reports>
     </ng-container>

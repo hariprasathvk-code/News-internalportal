@@ -193,7 +193,7 @@ category-section {
   border-radius: 28px;
   box-shadow: 0 8px 40px #b9bffe1a;
 }
- 
+
 /* Update .category-boxes to fit new spacing (inside .category-section) */
 .category-boxes {
   display: flex;
@@ -201,7 +201,7 @@ category-section {
   flex-wrap: wrap;
   gap: 38px 32px;
 }
- 
+
 .category-btn {
   min-width: 220px;
   min-height: 120px;
@@ -219,7 +219,7 @@ category-section {
   letter-spacing: 1.2px;
   text-align: center;
 }
- 
+
 .category-btn.active,
 .category-btn:focus,
 .category-btn:hover {
@@ -228,7 +228,7 @@ category-section {
   box-shadow: 0 8px 36px #5c27f7a2;
   transform: translateY(-4px) scale(1.055);
 }
- 
+
 /* Optional: additional headline */
 .category-section-title {
   font-size: 1.3rem;
