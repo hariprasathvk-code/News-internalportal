@@ -49,6 +49,8 @@
           <a *ngIf="ad.TargetUrl" [href]="ad.TargetUrl" target="_blank" class="target-link">
             🔗 Visit
           </a>
+          <button (click)="onCheckAi(ad)" class="ai-check-btn">🤖 Check with AI</button>
+
         </div>
 
         <!-- Inline Editor -->

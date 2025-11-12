@@ -43,10 +43,27 @@ export class AIValidationService {
   console.log('🤖 Calling validate-all-ads endpoint');
   return this.http.post<AIValidationResponse>(
     environment.apiUrl + '/ads/validate-all',
-    {},
+    {"action": "validate-all"},
     { headers }
   );
 }
+
+validateSingleAd(adId: string): Observable<AIValidationResponse> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+
+  console.log('🤖 Calling validate-single-ad endpoint for:', adId);
+
+  return this.http.post<AIValidationResponse>(
+    environment.apiUrl + '/ads/validate-single',
+    { AdId: adId },
+    { headers }
+  );
+}
+
   validateSingleArticle(newsId: string, submittedDate: number): Observable<AIValidationResponse> {
     const token = localStorage.getItem('accessToken');
     const headers = {

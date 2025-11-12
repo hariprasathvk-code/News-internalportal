@@ -44,7 +44,7 @@
 //     this.editAd = null;
 //   }
 // }
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdSubmission } from '../../../core/models/ad-submission.model';
@@ -59,6 +59,7 @@ import { AdApiService } from '../../../core/services/ad-api.service'; // Make su
 })
 export class AdSubmissionListComponent {
   @Input() ads: AdSubmission[] = [];
+  @Output() checkAi = new EventEmitter<AdSubmission>();
 
   editAd: AdSubmission | null = null;
   saving = false; // For optional spinner/disable
@@ -97,11 +98,24 @@ export class AdSubmissionListComponent {
     });
   }
 
-  approveAd(ad: AdSubmission) {
-    // Add approve API call here if needed (not implemented, placeholder)
-    alert(`✓ Approved ad: ${ad.Title}`);
+  onCheckAi(ad: AdSubmission) {
+    this.checkAi.emit(ad);
   }
-
+  approveAd(ad: AdSubmission) {
+    this.saving = true;
+    this.adApi.approveAd(ad.AdId).subscribe({
+      next: () => {
+        ad.Status = 'Approved';
+        this.ads = this.ads.filter(item => item.AdId !== ad.AdId);
+        this.saving = false;
+        alert(`✓ Ad approved successfully: ${ad.Title}`);
+      },
+      error: (err) => {
+        this.saving = false;
+        alert(`❌ Failed to approve ad: ${ad.Title}\n${err.message || err}`);
+      }
+    });
+  }
   cancelEdit() {
     this.editAd = null;
   }
