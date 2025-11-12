@@ -457,3 +457,37 @@
     }
   }
 }
+
+
+// ✅ ADDED: User Type Selector styling
+.user-type-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 12px;
+  background: #f0f0f0;
+  border-radius: 8px;
+
+  .type-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #5d5fef;
+      transform: translateY(-2px);
+    }
+
+    &.active {
+      background: #5d5fef;
+      color: white;
+      border-color: #5d5fef;
+    }
+  }
+}

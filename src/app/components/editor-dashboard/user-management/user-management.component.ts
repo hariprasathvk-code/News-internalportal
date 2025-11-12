@@ -1,212 +1,3 @@
-// import { Component, OnInit, inject } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { FormsModule } from '@angular/forms';
-// import { UserManagementService, Journalist, CreateJournalistRequest } from '../../../core/services/user-management.service';
-
-// @Component({
-//   selector: 'app-user-management',
-//   standalone: true,
-//   imports: [CommonModule, FormsModule],
-//   templateUrl: './user-management.component.html',
-//   styleUrls: ['./user-management.component.scss']
-// })
-// export class UserManagementComponent implements OnInit {
-//   private userManagementService = inject(UserManagementService);
-
-//   journalists: Journalist[] = []; // ✅ FIXED: Initialize as empty array
-//   isLoading = false;
-//   showAddForm = false;
-//   editingJournalist: Journalist | null = null;
-
-//   // Form data
-//   newJournalist: CreateJournalistRequest = {
-//     EditorId: '',
-//     Email: '',
-//     FullName: '',
-//     PhoneNumber: '',
-//     UserRole: 'Journalist'
-//   };
-
-//   // For displaying generated password
-//   generatedPassword = '';
-//   showPasswordModal = false;
-
-//   ngOnInit() {
-//     this.loadEditorId();
-//     this.loadJournalists();
-//   }
-
-//   private loadEditorId() {
-//     const userData = localStorage.getItem('userData');
-//     if (userData) {
-//       const user = JSON.parse(userData);
-//       this.newJournalist.EditorId = user.UserId || 'user-editor-1';
-//     }
-//   }
-
-//   loadJournalists() {
-//     this.isLoading = true;
-//     const editorId = this.newJournalist.EditorId;
-
-//     this.userManagementService.getJournalists(editorId).subscribe({
-//       next: (journalists) => {
-//         this.journalists = journalists || []; // ✅ FIXED: Fallback to empty array
-//         this.isLoading = false;
-//         console.log('✅ Loaded journalists:', journalists);
-//       },
-//       error: (error) => {
-//         console.error('❌ Error loading journalists:', error);
-//         this.journalists = []; // ✅ FIXED: Set to empty array on error
-//         this.isLoading = false;
-//         alert('Failed to load journalists: ' + error.message);
-//       }
-//     });
-//   }
-
-//   toggleAddForm() {
-//     this.showAddForm = !this.showAddForm;
-//     this.editingJournalist = null;
-//     this.resetForm();
-//   }
-
-//   createJournalist() {
-//     if (!this.validateForm()) {
-//       return;
-//     }
-
-//     this.isLoading = true;
-
-//     this.userManagementService.createJournalist(this.newJournalist).subscribe({
-//       next: (response) => {
-//         console.log('✅ Journalist created:', response);
-        
-//         this.generatedPassword = response.generatedPassword;
-//         this.showPasswordModal = true;
-
-//         this.journalists.unshift(response.journalist);
-        
-//         this.resetForm();
-//         this.showAddForm = false;
-//         this.isLoading = false;
-
-//         alert(`✅ Journalist created successfully!\n\nGenerated Password: ${response.generatedPassword}\n\nPlease save this password - it won't be shown again.`);
-//       },
-//       error: (error) => {
-//         console.error('❌ Create error:', error);
-//         this.isLoading = false;
-//         alert('Failed to create journalist: ' + error.message);
-//       }
-//     });
-//   }
-
-//   startEdit(journalist: Journalist) {
-//     this.editingJournalist = { ...journalist };
-//     this.showAddForm = false;
-//   }
-
-//   saveEdit() {
-//     if (!this.editingJournalist) return;
-
-//     this.isLoading = true;
-
-//     const updateData = {
-//       FullName: this.editingJournalist.FullName,
-//       PhoneNumber: this.editingJournalist.PhoneNumber,
-//       Email: this.editingJournalist.Email
-//     };
-
-//     this.userManagementService.updateJournalist(this.editingJournalist.UserId, updateData).subscribe({
-//       next: () => {
-//         console.log('✅ Journalist updated');
-        
-//         const index = this.journalists.findIndex(j => j.UserId === this.editingJournalist!.UserId);
-//         if (index !== -1) {
-//           this.journalists[index] = { ...this.editingJournalist! };
-//         }
-
-//         this.editingJournalist = null;
-//         this.isLoading = false;
-//         alert('✅ Journalist updated successfully!');
-//       },
-//       error: (error) => {
-//         console.error('❌ Update error:', error);
-//         this.isLoading = false;
-//         alert('Failed to update journalist: ' + error.message);
-//       }
-//     });
-//   }
-
-//   cancelEdit() {
-//     this.editingJournalist = null;
-//   }
-
-//   deleteJournalist(journalist: Journalist) {
-//     const confirmed = confirm(
-//       `🗑️ Delete Journalist?\n\n` +
-//       `Name: ${journalist.FullName}\n` +
-//       `Email: ${journalist.Email}\n\n` +
-//       `This action cannot be undone.`
-//     );
-
-//     if (!confirmed) return;
-
-//     this.isLoading = true;
-
-//     this.userManagementService.deleteJournalist(journalist.UserId).subscribe({
-//       next: () => {
-//         console.log('✅ Journalist deleted');
-        
-//         this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
-        
-//         this.isLoading = false;
-//         alert('✅ Journalist deleted successfully!');
-//       },
-//       error: (error) => {
-//         console.error('❌ Delete error:', error);
-//         this.isLoading = false;
-//         alert('Failed to delete journalist: ' + error.message);
-//       }
-//     });
-//   }
-
-//   closePasswordModal() {
-//     this.showPasswordModal = false;
-//     this.generatedPassword = '';
-//   }
-
-//   copyPassword() {
-//     navigator.clipboard.writeText(this.generatedPassword);
-//     alert('📋 Password copied to clipboard!');
-//   }
-
-//   private validateForm(): boolean {
-//     if (!this.newJournalist.Email || !this.newJournalist.Email.includes('@')) {
-//       alert('❌ Please enter a valid email address');
-//       return false;
-//     }
-
-//     if (!this.newJournalist.FullName || this.newJournalist.FullName.trim().length < 3) {
-//       alert('❌ Please enter a full name (at least 3 characters)');
-//       return false;
-//     }
-
-//     if (!this.newJournalist.PhoneNumber || this.newJournalist.PhoneNumber.length < 10) {
-//       alert('❌ Please enter a valid phone number');
-//       return false;
-//     }
-
-//     return true;
-//   }
-
-//   private resetForm() {
-//     this.newJournalist.Email = '';
-//     this.newJournalist.FullName = '';
-//     this.newJournalist.PhoneNumber = '';
-//     this.newJournalist.UserRole = 'Journalist';
-//   }
-// }
-
-
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -226,8 +17,11 @@ export class UserManagementComponent implements OnInit {
   isLoading = false;
   showAddForm = false;
   editingJournalist: Journalist | null = null;
+  selectedUserType: 'Journalist' | 'Advertiser' = 'Journalist';
 
-  // Form data
+  // ✅ Store EditorId
+  editorId: string = '';
+
   newJournalist: CreateJournalistRequest = {
     EditorId: '',
     Email: '',
@@ -236,20 +30,22 @@ export class UserManagementComponent implements OnInit {
     UserRole: 'Journalist'
   };
 
-  // For displaying generated password
   generatedPassword = '';
   showPasswordModal = false;
 
-  // ✅ ADDED: Getter methods for template (prevents errors)
   get totalJournalistCount(): number {
-    return this.journalists.length;
+    return this.journalists.filter(j => j.UserRole === 'Journalist').length;
+  }
+
+  get totalAdvertiserCount(): number {
+    return this.journalists.filter(j => j.UserRole === 'Advertiser').length;
   }
 
   get activeJournalistCount(): number {
     return this.journalists.filter(j => j.UserRole === 'Journalist').length;
   }
 
-  get hasJournalists(): boolean {
+  get hasUsers(): boolean {
     return this.journalists.length > 0;
   }
 
@@ -263,35 +59,35 @@ export class UserManagementComponent implements OnInit {
     if (userData) {
       try {
         const user = JSON.parse(userData);
-        this.newJournalist.EditorId = user.UserId || 'user-editor-1';
-        console.log('✅ Editor ID loaded:', this.newJournalist.EditorId);
+        this.editorId = user.UserId || 'user-editor-1';
+        this.newJournalist.EditorId = this.editorId;
+        console.log('✅ Editor ID loaded:', this.editorId);
       } catch (error) {
         console.error('❌ Error parsing userData:', error);
-        this.newJournalist.EditorId = 'user-editor-1';
+        this.editorId = 'user-editor-1';
+        this.newJournalist.EditorId = this.editorId;
       }
     } else {
       console.warn('⚠️ No userData in localStorage, using fallback');
-      this.newJournalist.EditorId = 'user-editor-1';
+      this.editorId = 'user-editor-1';
+      this.newJournalist.EditorId = this.editorId;
     }
   }
 
   loadJournalists() {
     this.isLoading = true;
-    const editorId = this.newJournalist.EditorId;
 
-    console.log('📡 Loading journalists for editor:', editorId);
-
-    this.userManagementService.getJournalists(editorId).subscribe({
-      next: (journalists) => {
-        this.journalists = journalists || [];
+    this.userManagementService.getJournalists().subscribe({
+      next: (users) => {
+        this.journalists = users || [];
         this.isLoading = false;
-        console.log('✅ Loaded journalists:', journalists);
+        console.log('✅ Loaded users:', users);
       },
       error: (error) => {
-        console.error('❌ Error loading journalists:', error);
+        console.error('❌ Error loading users:', error);
         this.journalists = [];
         this.isLoading = false;
-        alert('Failed to load journalists: ' + (error.message || 'Unknown error'));
+        alert('Failed to load users: ' + (error.message || 'Unknown error'));
       }
     });
   }
@@ -304,22 +100,28 @@ export class UserManagementComponent implements OnInit {
     }
   }
 
+  setUserType(type: 'Journalist' | 'Advertiser') {
+    this.selectedUserType = type;
+    this.newJournalist.UserRole = type;
+    console.log('📝 User type changed to:', type);
+  }
+
   createJournalist() {
     if (!this.validateForm()) {
       return;
     }
 
     this.isLoading = true;
-    console.log('📤 Creating journalist:', this.newJournalist);
+    this.newJournalist.UserRole = this.selectedUserType;
+    console.log('📤 Creating user:', this.newJournalist);
 
     this.userManagementService.createJournalist(this.newJournalist).subscribe({
       next: (response) => {
-        console.log('✅ Journalist created:', response);
+        console.log('✅ User created:', response);
         
         this.generatedPassword = response.generatedPassword;
         this.showPasswordModal = true;
 
-        // ✅ FIXED: Add to beginning of array safely
         if (response.journalist) {
           this.journalists = [response.journalist, ...this.journalists];
         }
@@ -329,9 +131,10 @@ export class UserManagementComponent implements OnInit {
         this.isLoading = false;
 
         alert(
-          `✅ Journalist created successfully!\n\n` +
+          `✅ ${this.selectedUserType} created successfully!\n\n` +
           `Name: ${response.journalist?.FullName}\n` +
           `Email: ${response.journalist?.Email}\n` +
+          `User ID: ${response.journalist?.UserId}\n` +
           `Generated Password: ${response.generatedPassword}\n\n` +
           `Please save this password - it won't be shown again.`
         );
@@ -339,35 +142,41 @@ export class UserManagementComponent implements OnInit {
       error: (error) => {
         console.error('❌ Create error:', error);
         this.isLoading = false;
-        alert('Failed to create journalist: ' + (error.message || 'Unknown error'));
+        alert('Failed to create user: ' + (error.error?.Message || error.message || 'Unknown error'));
       }
     });
   }
 
   startEdit(journalist: Journalist) {
-    console.log('✏️ Editing journalist:', journalist);
+    console.log('✏️ Editing user:', journalist);
     this.editingJournalist = { ...journalist };
     this.showAddForm = false;
   }
 
+  // ✅ UPDATED: Pass EditorId
   saveEdit() {
     if (!this.editingJournalist) {
-      console.warn('⚠️ No journalist being edited');
+      console.warn('⚠️ No user being edited');
       return;
     }
 
     this.isLoading = true;
-    console.log('💾 Saving journalist:', this.editingJournalist);
+    console.log('💾 Saving user:', this.editingJournalist);
 
     const updateData = {
       FullName: this.editingJournalist.FullName,
       PhoneNumber: this.editingJournalist.PhoneNumber,
-      Email: this.editingJournalist.Email
+      UserRole: this.editingJournalist.UserRole
     };
 
-    this.userManagementService.updateJournalist(this.editingJournalist.UserId, updateData).subscribe({
+    // ✅ Pass EditorId, UserId, and data
+    this.userManagementService.updateJournalist(
+      this.editingJournalist.UserId,
+      this.editorId,  // Pass EditorId
+      updateData
+    ).subscribe({
       next: (response) => {
-        console.log('✅ Journalist updated:', response);
+        console.log('✅ User updated:', response);
         
         const index = this.journalists.findIndex(j => j.UserId === this.editingJournalist!.UserId);
         if (index !== -1) {
@@ -376,12 +185,13 @@ export class UserManagementComponent implements OnInit {
 
         this.editingJournalist = null;
         this.isLoading = false;
-        alert('✅ Journalist updated successfully!');
+        alert('✅ User updated successfully!');
       },
       error: (error) => {
         console.error('❌ Update error:', error);
+        console.error('❌ Error details:', error.error);
         this.isLoading = false;
-        alert('Failed to update journalist: ' + (error.message || 'Unknown error'));
+        alert('Failed to update user: ' + (error.error?.message || error.message || 'Unknown error'));
       }
     });
   }
@@ -391,9 +201,10 @@ export class UserManagementComponent implements OnInit {
     this.editingJournalist = null;
   }
 
+  // ✅ UPDATED: Pass EditorId and UserRole
   deleteJournalist(journalist: Journalist) {
     const confirmed = confirm(
-      `🗑️ Delete Journalist?\n\n` +
+      `🗑️ Delete ${journalist.UserRole}?\n\n` +
       `Name: ${journalist.FullName}\n` +
       `Email: ${journalist.Email}\n\n` +
       `This action cannot be undone.`
@@ -405,21 +216,27 @@ export class UserManagementComponent implements OnInit {
     }
 
     this.isLoading = true;
-    console.log('🗑️ Deleting journalist:', journalist.UserId);
+    console.log('🗑️ Deleting user:', journalist.UserId);
 
-    this.userManagementService.deleteJournalist(journalist.UserId).subscribe({
+    // ✅ Pass UserId, EditorId, and UserRole
+    this.userManagementService.deleteJournalist(
+      journalist.UserId,
+      this.editorId,  // Pass EditorId
+      journalist.UserRole  // Pass UserRole
+    ).subscribe({
       next: () => {
-        console.log('✅ Journalist deleted');
+        console.log('✅ User deleted');
         
         this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
         
         this.isLoading = false;
-        alert('✅ Journalist deleted successfully!');
+        alert('✅ User deleted successfully!');
       },
       error: (error) => {
         console.error('❌ Delete error:', error);
+        console.error('❌ Error details:', error.error);
         this.isLoading = false;
-        alert('Failed to delete journalist: ' + (error.message || 'Unknown error'));
+        alert('Failed to delete user: ' + (error.error?.message || error.message || 'Unknown error'));
       }
     });
   }
@@ -473,14 +290,15 @@ export class UserManagementComponent implements OnInit {
   }
 
   private resetForm() {
-    const currentEditorId = this.newJournalist.EditorId; // ✅ FIXED: Preserve EditorId
+    const currentEditorId = this.newJournalist.EditorId;
     this.newJournalist = {
       EditorId: currentEditorId,
       Email: '',
       FullName: '',
       PhoneNumber: '',
-      UserRole: 'Journalist'
+      UserRole: this.selectedUserType
     };
     console.log('🔄 Form reset');
   }
 }
+

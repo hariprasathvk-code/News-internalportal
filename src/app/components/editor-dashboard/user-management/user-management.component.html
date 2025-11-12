@@ -2,12 +2,14 @@
   <!-- Header -->
   <div class="header">
     <div class="title-section">
-      <h2>👥 Journalist Management</h2>
-      <p class="subtitle">Manage your journalist team</p>
+      <!-- ✅ UPDATED: Changed title to "User Management" -->
+      <h2>👥 User Management</h2>
+      <p class="subtitle">Manage your journalists and advertisers</p>
     </div>
     <div class="actions">
       <button class="btn-add" (click)="toggleAddForm()" [disabled]="isLoading">
-        <span *ngIf="!showAddForm">➕ Add New Journalist</span>
+        <!-- ✅ UPDATED: Changed text to "Add New User" -->
+        <span *ngIf="!showAddForm">➕ Add New User</span>
         <span *ngIf="showAddForm">❌ Cancel</span>
       </button>
     </div>
@@ -17,11 +19,13 @@
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-value">{{ totalJournalistCount }}</div>
-      <div class="stat-label">Total Journalists</div>
+      <!-- ✅ UNCHANGED: Journalists count -->
+      <div class="stat-label">Journalists</div>
     </div>
     <div class="stat-card">
-      <div class="stat-value">{{ activeJournalistCount }}</div>
-      <div class="stat-label">Active Journalists</div>
+      <!-- ✅ ADDED: Advertisers count -->
+      <div class="stat-value">{{ totalAdvertiserCount }}</div>
+      <div class="stat-label">Advertisers</div>
     </div>
     <div class="stat-card">
       <div class="stat-value">{{ isLoading ? '⏳' : '✅' }}</div>
@@ -29,9 +33,32 @@
     </div>
   </div>
 
-  <!-- Add New Journalist Form -->
+  <!-- Add New User Form -->
   <div *ngIf="showAddForm" class="add-form">
-    <h3>➕ Create New Journalist</h3>
+    <!-- ✅ UPDATED: Changed title -->
+    <h3>➕ Create New User</h3>
+    
+    <!-- ✅ ADDED: User Type Selector (Journalist or Advertiser) -->
+    <div class="user-type-selector">
+      <button 
+        type="button"
+        class="type-btn"
+        [class.active]="selectedUserType === 'Journalist'"
+        (click)="setUserType('Journalist')"
+        [disabled]="isLoading">
+        📰 Journalist
+      </button>
+      <button 
+        type="button"
+        class="type-btn"
+        [class.active]="selectedUserType === 'Advertiser'"
+        (click)="setUserType('Advertiser')"
+        [disabled]="isLoading">
+        📢 Advertiser
+      </button>
+    </div>
+    <!-- ✅ END OF ADDED SECTION -->
+    
     <form (ngSubmit)="createJournalist()">
       <div class="form-row">
         <div class="form-group">
@@ -70,12 +97,12 @@
         </div>
 
         <div class="form-group">
+          <!-- ✅ UPDATED: Show selected user type dynamically -->
           <label>Role</label>
           <input 
             type="text" 
-            [(ngModel)]="newJournalist.UserRole" 
+            [value]="selectedUserType"
             name="role"
-            value="Journalist"
             readonly
             disabled>
         </div>
@@ -83,7 +110,8 @@
 
       <div class="form-actions">
         <button type="submit" class="btn-save" [disabled]="isLoading">
-          <span *ngIf="!isLoading">💾 Create Journalist</span>
+          <!-- ✅ UPDATED: Dynamic button text based on user type -->
+          <span *ngIf="!isLoading">💾 Create {{ selectedUserType }}</span>
           <span *ngIf="isLoading">⏳ Creating...</span>
         </button>
         <button type="button" class="btn-cancel" (click)="toggleAddForm()" [disabled]="isLoading">
@@ -97,12 +125,14 @@
   <!-- Loading State -->
   <div *ngIf="isLoading && !showAddForm && totalJournalistCount === 0" class="loading">
     <div class="spinner"></div>
-    <p>⏳ Loading journalists...</p>
+    <p>⏳ Loading users...</p>
   </div>
 
-  <!-- Journalists List -->
-  <div *ngIf="!isLoading && hasJournalists" class="journalists-list">
-    <h3>📋 Journalist List ({{ totalJournalistCount }})</h3>
+  <!-- Users List -->
+  <!-- ✅ UPDATED: Changed condition to hasUsers (covers both journalists and advertisers) -->
+  <div *ngIf="!isLoading && hasUsers" class="journalists-list">
+    <!-- ✅ UPDATED: Changed title to show total count -->
+    <h3>📋 User List ({{ journalists.length }})</h3>
     
     <div *ngFor="let journalist of journalists; let i = index" class="journalist-card">
       <!-- View Mode -->
@@ -114,6 +144,7 @@
             </div>
             <div class="journalist-title">
               <h4>{{ journalist.FullName }}</h4>
+              <!-- ✅ UNCHANGED: Shows role dynamically (Journalist or Advertiser) -->
               <span class="role-badge">{{ journalist.UserRole }}</span>
             </div>
           </div>
@@ -152,7 +183,8 @@
 
       <!-- Edit Mode -->
       <div *ngIf="editingJournalist?.UserId === journalist.UserId" class="journalist-edit">
-        <h4>✏️ Edit Journalist</h4>
+        <!-- ✅ UPDATED: Dynamic title based on role -->
+        <h4>✏️ Edit {{ editingJournalist!.UserRole }}</h4>
         <div class="form-row">
           <div class="form-group">
             <label>Full Name *</label>
@@ -203,12 +235,14 @@
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!isLoading && !hasJournalists" class="empty-state">
+  <!-- ✅ UPDATED: Changed condition to !hasUsers -->
+  <div *ngIf="!isLoading && !hasUsers" class="empty-state">
     <div class="empty-icon">📭</div>
-    <h3>No Journalists Found</h3>
-    <p class="subtitle">Click "Add New Journalist" to create your first journalist account</p>
+    <!-- ✅ UPDATED: Changed text -->
+    <h3>No Users Found</h3>
+    <p class="subtitle">Click "Add New User" to create your first journalist or advertiser account</p>
     <button class="btn-add" (click)="toggleAddForm()">
-      ➕ Add First Journalist
+      ➕ Add First User
     </button>
   </div>
 
@@ -224,7 +258,8 @@
         <div class="password-box">
           <code>{{ generatedPassword }}</code>
         </div>
-        <p class="info">Share this password securely with the journalist</p>
+        <!-- ✅ UPDATED: Generic message -->
+        <p class="info">Share this password securely with the user</p>
       </div>
       <div class="modal-actions">
         <button class="btn-copy" (click)="copyPassword()">
