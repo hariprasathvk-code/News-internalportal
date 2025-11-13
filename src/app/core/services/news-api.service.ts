@@ -11,6 +11,7 @@ import { environment } from '../../../environments/environment';
 export class NewsApiService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl + '/news';
+  //private categoryApiUrl = environment.categoryApiUrl ;
  
   getSubmittedArticles(): Observable<ArticleDetail[]> {
     const token = localStorage.getItem('accessToken');
@@ -67,17 +68,17 @@ export class NewsApiService {
     );
   }
 
-  getNewsByCategory(category: string): Observable<any[]> {
-    const token = localStorage.getItem('idToken');
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
-    return this.http.get<any[]>(
-      `${environment.apiUrl}/category?category=${category}`,
-      { headers }
-    );
-  }
+  // getNewsByCategory(category: string): Observable<any[]> {
+  //   const token = localStorage.getItem('idToken');
+  //   const headers = {
+  //     'Authorization': `Bearer ${token}`,
+  //     'Content-Type': 'application/json',
+  //   };
+  //   return this.http.get<any[]>(
+  //     `${environment.apiUrl}/category?category=${category}`,
+  //     { headers }
+  //   );
+  // }
 
 
   updateArticle(newsId: string, article: ArticleDetail): Observable<any> {
@@ -87,6 +88,23 @@ export class NewsApiService {
     };
     return this.http.put(`${this.apiUrl}/${newsId}`, article, { headers });
   }
+
+getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
+  const token = localStorage.getItem('idToken'); // or 'accessToken', depending on your auth system
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  return this.http.get(
+    `${environment.categoryApiUrl}/${categoryId}`,
+    { headers }
+  );
+}
+
+
+
+
+
 }
  
  

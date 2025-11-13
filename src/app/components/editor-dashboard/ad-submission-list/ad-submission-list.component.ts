@@ -78,6 +78,7 @@ export class AdSubmissionListComponent {
     this.editAd = { ...ad };
   }
 
+  
   saveEdit() {
     if (!this.editAd) return;
     this.saving = true;
