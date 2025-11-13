@@ -4,14 +4,14 @@
     <h2 class="logo">Ad Portal</h2>
     <nav>
       <ul>
-        <li routerLink="create-ad" routerLinkActive="active">
-          <i class="fa fa-plus"></i> Create Ads
+        <li routerLinkActive="active">
+           <a [routerLink]="['/advertiser-dashboard/create-ad']"> <i class="fa fa-plus"></i> Create Ads</a>
         </li>
-        <li routerLink="view-ads" routerLinkActive="active">
-          <i class="fa fa-bullhorn"></i> View Ads
+        <li routerLinkActive="active">
+          <a [routerLink]="['/advertiser-dashboard/view-ads']"> <i class="fa fa-bullhorn"></i> View Ads</a>
         </li>
-        <li routerLink="view-billing" routerLinkActive="active">
-          <i class="fa fa-credit-card"></i> View Billing
+        <li routerLinkActive="active">
+          <a [routerLink]="['/advertiser-dashboard/view-billing']"> <i class="fa fa-credit-card"></i> View Billing</a>
         </li>
       </ul>
     </nav>
