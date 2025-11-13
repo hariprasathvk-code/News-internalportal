@@ -27,7 +27,7 @@ export class AdApiService {
   };
   return this.http.post(
     `${this.apiUrl}/checked`,
-    { AdId: adId, Action: "Approve" }, // Capitalized keys!
+    { AdId: adId, Action: "Approve" }, 
     { headers }
   );
 }

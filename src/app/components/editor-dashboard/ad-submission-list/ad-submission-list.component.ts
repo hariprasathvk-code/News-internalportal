@@ -132,9 +132,6 @@ rejectAd(ad: AdSubmission) {
   });
 }
 
-
-
-
   cancelEdit() {
     this.editAd = null;
   }

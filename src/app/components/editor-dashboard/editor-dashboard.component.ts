@@ -318,7 +318,7 @@ isVideo(url: string): boolean {
   return url ? /\.(mp4|mov|webm|ogg)$/i.test(url.split('?')[0]) : false;
 }
 onImageError(event: any) {
-  event.target.src = 'assets/img/no-image.png'; // Provide a fallback image in your assets
+  event.target.src = 'assets/img/no-image.png'; 
 }
 
 }
