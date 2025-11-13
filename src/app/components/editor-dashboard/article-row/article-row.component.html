@@ -89,17 +89,24 @@
       </button>
     </div>
 
-    <!-- Inline Editor -->
+   <!-- Inline Editor -->
     <div *ngIf="editMode" class="edit-form">
       <h4>Edit Article</h4>
+      
       <label>Title:</label>
       <input [(ngModel)]="article.Title" />
 
       <label>Summary:</label>
-      <textarea [(ngModel)]="article.Summary"></textarea>
+      <textarea 
+        [(ngModel)]="article.Summary" 
+        rows="6"
+        class="summary-textarea"></textarea>
 
       <label>Content:</label>
-      <textarea [(ngModel)]="article.Content"></textarea>
+      <textarea 
+        [(ngModel)]="article.Content" 
+        rows="12"
+        class="content-textarea"></textarea>
 
       <label>Category:</label>
       <input [(ngModel)]="article.Category" />
