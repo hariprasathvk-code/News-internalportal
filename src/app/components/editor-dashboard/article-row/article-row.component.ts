@@ -16,6 +16,7 @@ export class ArticleRowComponent {
   @Output() reject = new EventEmitter<ArticleDetail>();
   @Output() validateWithAI = new EventEmitter<ArticleDetail>(); // ✅ NEW
   @Output() save = new EventEmitter<ArticleDetail>(); // Add this
+  @Output() rephrase = new EventEmitter<ArticleDetail>();//rephrase
 
   editMode = false;
   isValidating = false; // ✅ NEW
@@ -46,6 +47,11 @@ export class ArticleRowComponent {
   checkArticleWithAI(article: ArticleDetail) {
     this.isValidating = true;
     this.validateWithAI.emit(article);
+  }
+
+  // ✅ NEW: Emit rephrase event
+  rephraseArticle(article: ArticleDetail) {
+    this.rephrase.emit(article);
   }
 
   // ✅ Call this from parent after validation completes

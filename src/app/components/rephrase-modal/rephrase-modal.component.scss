@@ -1,0 +1,304 @@
+.rephrase-modal {
+  padding: 24px;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  .modal-header {
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 16px;
+
+    h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      color: #333;
+    }
+
+    .article-title {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  // Selection Step
+  .selection-step {
+    h3 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+
+      .checkbox-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover:not(:has(input:disabled)) {
+          border-color: #5d5fef;
+          background: #f8f9ff;
+        }
+
+        input[type="checkbox"] {
+          margin-top: 4px;
+          width: 20px;
+          height: 20px;
+          cursor: pointer;
+
+          &:disabled {
+            cursor: not-allowed;
+          }
+        }
+
+        .checkbox-content {
+          flex: 1;
+
+          .checkbox-label {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+            display: block;
+            margin-bottom: 4px;
+          }
+
+          .checkbox-description {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+          }
+        }
+      }
+    }
+
+    .loading-state {
+      text-align: center;
+      padding: 32px;
+      background: #f8f9ff;
+      border-radius: 8px;
+      margin-bottom: 24px;
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #5d5fef;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 16px;
+      }
+
+      p {
+        font-size: 16px;
+        color: #5d5fef;
+        margin-bottom: 16px;
+      }
+
+      .progress-items {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+
+        .progress-item {
+          font-size: 14px;
+          color: #666;
+        }
+      }
+    }
+  }
+
+  // Results Step
+  .results-step {
+    h3 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .comparison-section {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #e0e0e0;
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      h4 {
+        font-size: 16px;
+        margin-bottom: 12px;
+        color: #333;
+      }
+
+      .comparison-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+
+        .original, .improved {
+          padding: 16px;
+          border-radius: 8px;
+        }
+
+        .original {
+          background: #f5f5f5;
+          border: 2px solid #e0e0e0;
+        }
+
+        .improved {
+          background: #f8fff8;
+          border: 2px solid #4caf50;
+        }
+
+        .label {
+          display: block;
+          font-weight: 600;
+          font-size: 14px;
+          margin-bottom: 8px;
+          color: #666;
+        }
+
+        p {
+          margin: 0;
+          font-size: 14px;
+          line-height: 1.6;
+          color: #333;
+
+          &.scrollable {
+            max-height: 150px;
+            overflow-y: auto;
+          }
+        }
+
+        .content-area {
+          width: 100%;
+          min-height: 200px;
+          max-height: 300px;
+          padding: 12px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+          line-height: 1.6;
+          resize: vertical;
+          font-family: inherit;
+        }
+      }
+
+      .decision-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+
+        button {
+          padding: 10px 24px;
+          border: 2px solid transparent;
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 14px;
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+          }
+        }
+
+        .btn-accept {
+          background: white;
+          border-color: #4caf50;
+          color: #4caf50;
+
+          &:hover:not(:disabled) {
+            background: #4caf50;
+            color: white;
+          }
+
+          &.accepted {
+            background: #4caf50;
+            color: white;
+          }
+        }
+
+        .btn-reject {
+          background: white;
+          border-color: #f44336;
+          color: #f44336;
+
+          &:hover:not(:disabled) {
+            background: #f44336;
+            color: white;
+          }
+
+          &.rejected {
+            background: #f44336;
+            color: white;
+          }
+        }
+      }
+    }
+  }
+
+  // Modal Actions
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 2px solid #e0e0e0;
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .btn-cancel {
+      background: #f5f5f5;
+      color: #666;
+
+      &:hover:not(:disabled) {
+        background: #e0e0e0;
+      }
+    }
+
+    .btn-generate, .btn-confirm {
+      background: #5d5fef;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background: #4a4cd4;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(93, 95, 239, 0.3);
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

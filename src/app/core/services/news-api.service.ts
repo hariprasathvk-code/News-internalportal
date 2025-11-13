@@ -89,6 +89,28 @@ export class NewsApiService {
     return this.http.put(`${this.apiUrl}/${newsId}`, article, { headers });
   }
 
+  // Update article content (for AI rephrasing)
+updateArticleContent(newsId: string, submittedDate: number, data: any): Observable<any> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+
+  const payload = {
+    NewsId: newsId,
+    SubmittedDate: submittedDate,
+    ...data  // Title, Summary, Content fields
+  };
+
+  return this.http.put(
+    `${this.apiUrl}/${newsId}/update`,
+    payload,
+    { headers }
+  );
+}
+
+
 getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
   const token = localStorage.getItem('idToken'); // or 'accessToken', depending on your auth system
   const headers = {

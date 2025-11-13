@@ -1,50 +1,143 @@
+// import { Component, Input, Output, EventEmitter } from '@angular/core';
+// import { CommonModule } from '@angular/common';
+// import { ArticleRowComponent } from '../article-row/article-row.component';
+// import { ArticleDetail } from '../../../core/models/article-detail.model';
+// import { NewsApiService } from '../../../core/services/news-api.service'; 
+
+// @Component({
+//   selector: 'app-article-list',
+//   standalone: true,
+//   imports: [CommonModule, ArticleRowComponent],
+//   templateUrl: './article-list.component.html',
+//   styleUrls: ['./article-list.component.scss']
+// })
+// export class ArticleListComponent {
+//   @Input() articles: ArticleDetail[] = [];
+  
+  
+//    constructor(private newsApi: NewsApiService) {}
+
+//   onSaveArticle(article: ArticleDetail) {
+//     this.newsApi.updateArticle(article.NewsId, article).subscribe({
+//       next: () => {
+//         // Optionally show a success message/snackbar here
+//       },
+//       error: (err) => {
+//         // Optionally show error message
+//       }
+//     });
+//   }
+//   // ✅ NEW: Forward AI validation event to parent
+//    @Output() approveArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
+//   @Output() rejectArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
+//   @Output() validateArticle = new EventEmitter<ArticleDetail>();
+  
+
+//   onValidateWithAI(article: ArticleDetail) {
+//     this.validateArticle.emit(article);
+//   }
+
+//   // ✅ NEW: Forward approve event
+//   onApproveArticle(article: ArticleDetail) {
+//     this.approveArticle.emit(article);
+//   }
+
+//   // ✅ NEW: Forward reject event
+//   onRejectArticle(article: ArticleDetail) {
+//     this.rejectArticle.emit(article);
+//   }
+// }
+
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // ✅ ADDED
 import { ArticleRowComponent } from '../article-row/article-row.component';
+import { RephraseModalComponent } from '../../rephrase-modal/rephrase-modal.component'; // ✅ ADDED
 import { ArticleDetail } from '../../../core/models/article-detail.model';
-import { NewsApiService } from '../../../core/services/news-api.service'; 
+import { NewsApiService } from '../../../core/services/news-api.service';
 
 @Component({
   selector: 'app-article-list',
   standalone: true,
-  imports: [CommonModule, ArticleRowComponent],
+  imports: [CommonModule, ArticleRowComponent, MatDialogModule], // ✅ ADDED MatDialogModule
   templateUrl: './article-list.component.html',
   styleUrls: ['./article-list.component.scss']
 })
 export class ArticleListComponent {
   @Input() articles: ArticleDetail[] = [];
   
-  
-   constructor(private newsApi: NewsApiService) {}
+  @Output() approveArticle = new EventEmitter<ArticleDetail>();
+  @Output() rejectArticle = new EventEmitter<ArticleDetail>();
+  @Output() validateArticle = new EventEmitter<ArticleDetail>();
+  @Output() updateArticle = new EventEmitter<ArticleDetail>(); // ✅ ADDED
+
+  constructor(
+    private newsApi: NewsApiService,
+    private dialog: MatDialog // ✅ ADDED
+  ) {}
 
   onSaveArticle(article: ArticleDetail) {
     this.newsApi.updateArticle(article.NewsId, article).subscribe({
       next: () => {
-        // Optionally show a success message/snackbar here
+        console.log('✅ Article saved successfully');
       },
       error: (err) => {
-        // Optionally show error message
+        console.error('❌ Error saving article:', err);
       }
     });
   }
-  // ✅ NEW: Forward AI validation event to parent
-   @Output() approveArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
-  @Output() rejectArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
-  @Output() validateArticle = new EventEmitter<ArticleDetail>();
-  
 
   onValidateWithAI(article: ArticleDetail) {
     this.validateArticle.emit(article);
   }
 
-  // ✅ NEW: Forward approve event
   onApproveArticle(article: ArticleDetail) {
     this.approveArticle.emit(article);
   }
 
-  // ✅ NEW: Forward reject event
   onRejectArticle(article: ArticleDetail) {
     this.rejectArticle.emit(article);
   }
-}
 
+  // ✅ NEW: Handle rephrase - opens modal
+  onRephraseArticle(article: ArticleDetail) {
+    console.log('🤖 Opening rephrase modal for:', article.Title);
+
+    const dialogRef = this.dialog.open(RephraseModalComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      disableClose: true,
+      data: {
+        newsId: article.NewsId,
+        submittedDate: article.SubmittedDate,
+        title: article.Title
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.updated) {
+        console.log('✅ Article was updated with AI improvements');
+        console.log('📝 Changes:', result.changes);
+        
+        // Update the local article object with new content
+        if (result.changes.Title) {
+          article.Title = result.changes.Title;
+        }
+        if (result.changes.Summary) {
+          article.Summary = result.changes.Summary;
+        }
+        if (result.changes.Content) {
+          article.Content = result.changes.Content;
+        }
+
+        // Emit update event to parent (optional)
+        this.updateArticle.emit(article);
+
+        alert('✅ Article updated successfully with AI improvements!');
+      } else {
+        console.log('❌ No changes applied');
+      }
+    });
+  }
+}

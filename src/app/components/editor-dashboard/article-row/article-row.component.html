@@ -73,6 +73,14 @@
         <span *ngIf="isValidating">⏳ Checking...</span>
       </button>
       
+       <!-- ✅ NEW: Rephrase with AI button -->
+      <button 
+        (click)="rephraseArticle(article)" 
+        class="rephrase-btn"
+        [disabled]="isValidating || isRejecting || isApproving">
+        ✏️ Rephrase with AI
+      </button>
+
       <button 
         (click)="editMode = !editMode" 
         class="edit-btn"
