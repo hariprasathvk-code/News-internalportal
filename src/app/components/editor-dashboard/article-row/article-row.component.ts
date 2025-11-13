@@ -18,37 +18,39 @@ export class ArticleRowComponent {
   @Output() save = new EventEmitter<ArticleDetail>(); // Add this
 
   editMode = false;
-  isValidating = false; // ✅ NEW
+  isValidating = false; 
   isSaving = false;
-  isApproving = false; // ✅ NEW
-  isRejecting = false; // ✅ NEW
+  isApproving = false; 
+  isRejecting = false; 
+  isContentExpanded = false;
+
+  toggleContentExpand() {
+  this.isContentExpanded = !this.isContentExpanded;
+}
   
   approveArticle(article: ArticleDetail) {
     this.approve.emit(article);
   }
-// ✅ NEW: Reject article
+
   rejectArticle(article: ArticleDetail) {
     this.isRejecting = true;
     this.reject.emit(article);
   }
 
-  // ✅ Called from parent after approve/reject completes
   setActionComplete() {
     this.isApproving = false;
     this.isRejecting = false;
   }
   saveEdit() {
-    this.save.emit(this.article);   // Emit the full article to parent
+    this.save.emit(this.article);   
     this.editMode = false;
   }
   
-  // ✅ NEW: Emit event to parent for AI validation
   checkArticleWithAI(article: ArticleDetail) {
     this.isValidating = true;
     this.validateWithAI.emit(article);
   }
 
-  // ✅ Call this from parent after validation completes
   setValidationComplete() {
     this.isValidating = false;
   }

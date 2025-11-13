@@ -351,6 +351,15 @@
       color: #fff;
     }
   }
+
+  a {
+  cursor: pointer;
+  color: #1976d2;
+  margin-left: 5px;
+  text-decoration: underline;
+  font-size: 0.98em;
+}
+
 }
 
 // ... rest of existing styles ...

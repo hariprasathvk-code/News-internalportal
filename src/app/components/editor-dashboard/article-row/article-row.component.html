@@ -1,5 +1,5 @@
-<div class="article-row">
-  <!-- Media Preview Section -->
+<!-- <div class="article-row">
+  
   <div class="media-list" *ngIf="article.MediaUrls?.length; else noMedia">
     <ng-container *ngFor="let url of article.MediaUrls">
       <img *ngIf="isImage(url)" [src]="url" class="article-thumb" alt="Media" />
@@ -46,7 +46,7 @@
     <div class="content"><b>Content:</b> {{ article.Content }}</div>
 
     <div class="actions">
-      <!-- ✅ Approve Button -->
+     
       <button 
         (click)="approveArticle(article)" 
         class="approve-btn"
@@ -55,7 +55,7 @@
         <span *ngIf="isApproving">⏳ Approving...</span>
       </button>
       
-      <!-- ✅ NEW: Reject Button -->
+   
       <button 
         (click)="rejectArticle(article)" 
         class="reject-btn"
@@ -64,7 +64,7 @@
         <span *ngIf="isRejecting">⏳ Rejecting...</span>
       </button>
       
-      <!-- ✅ NEW: Check with AI button -->
+      
       <button 
         (click)="checkArticleWithAI(article)" 
         class="ai-btn"
@@ -75,6 +75,128 @@
       
       <button 
         (click)="editMode = !editMode" 
+        class="edit-btn"
+        [disabled]="isValidating">
+        ✏️ Edit
+      </button>
+    </div>
+
+   
+    <div *ngIf="editMode" class="edit-form">
+      <h4>Edit Article</h4>
+      <label>Title:</label>
+      <input [(ngModel)]="article.Title" />
+
+      <label>Summary:</label>
+      <textarea [(ngModel)]="article.Summary"></textarea>
+
+      <label>Content:</label>
+      <textarea [(ngModel)]="article.Content"></textarea>
+
+      <label>Category:</label>
+      <input [(ngModel)]="article.Category" />
+
+      <label>Status:</label>
+      <input [(ngModel)]="article.Status" />
+
+      <div class="edit-actions">
+        <button (click)="saveEdit()" class="save-btn">💾 Save</button>
+        <button (click)="editMode = false" class="cancel-btn">✕ Cancel</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="article-row">
+  <!-- Media Preview Section -->
+  <div class="media-list" *ngIf="article.MediaUrls?.length; else noMedia">
+    <ng-container *ngFor="let url of article.MediaUrls">
+      <img *ngIf="isImage(url)" [src]="url" class="article-thumb" alt="Media" />
+      <video *ngIf="isVideo(url)" [src]="url" class="article-thumb" controls></video>
+      <a *ngIf="!isImage(url) && !isVideo(url)" [href]="url" target="_blank" class="file-link">
+        📎 {{ url.split('/').pop() }}
+      </a>
+    </ng-container>
+  </div>
+  <ng-template #noMedia>
+    <span class="article-thumb noimg">No media</span>
+  </ng-template>
+
+  <div class="info">
+    <div class="main-row">
+      <span class="title"><b>{{ article.Title }}</b></span>
+      <span class="category">{{ article.Category }}</span>
+      <span class="subcategory">{{ article.SubCategory }}</span>
+      <span class="status" [ngClass]="{
+        'status-submitted': article.Status === 'Submitted',
+        'status-approved': article.Status === 'Approved by AI' || article.Status === 'Approved',
+        'status-rejected': article.Status === 'Rejected by AI' || article.Status === 'Rejected'
+      }">{{ article.Status }}</span>
+    </div>
+
+    <div class="meta">
+      <span><strong>Author:</strong> {{ article.Author }}</span>
+      <span><strong>Type:</strong> {{ article.NewsType }}</span>
+      <span><strong>NewsId:</strong> {{ article.NewsId }}</span>
+    </div>
+
+    <div class="meta">
+      <span><strong>Region:</strong> {{ article.Region }}</span>
+      <span><strong>Country:</strong> {{ article.Country }}</span>
+      <span><strong>State:</strong> {{ article.State }}</span>
+      <span><strong>City:</strong> {{ article.City }}</span>
+    </div>
+
+    <div class="meta">
+      <span><strong>Date:</strong> {{ article.SubmittedDateTime }}</span>
+    </div>
+
+    <div class="summary"><b>Summary:</b> {{ article.Summary }}</div>
+    <!-- UPDATED content with See More/See Less -->
+    <div class="content"><b>Content:</b>
+      <ng-container *ngIf="!isContentExpanded">
+        {{ article.Content | slice:0:180 }}
+        <span *ngIf="article.Content && article.Content.length > 180">...</span>
+        <a
+          *ngIf="article.Content && article.Content.length > 180"
+          href="#"
+          (click)="toggleContentExpand(); $event.preventDefault()">See more</a>
+      </ng-container>
+      <ng-container *ngIf="isContentExpanded">
+        {{ article.Content }}
+        <a href="#" (click)="toggleContentExpand(); $event.preventDefault()">See less</a>
+      </ng-container>
+    </div>
+
+    <div class="actions">
+      <!-- ✅ Approve Button -->
+      <button
+        (click)="approveArticle(article)"
+        class="approve-btn"
+        [disabled]="isValidating || isSaving || isApproving || isRejecting">
+        <span *ngIf="!isApproving">✓ Approve</span>
+        <span *ngIf="isApproving">⏳ Approving...</span>
+      </button>
+      
+      <!-- ✅ NEW: Reject Button -->
+      <button
+        (click)="rejectArticle(article)"
+        class="reject-btn"
+        [disabled]="isValidating || isSaving || isApproving || isRejecting">
+        <span *ngIf="!isRejecting">✗ Reject</span>
+        <span *ngIf="isRejecting">⏳ Rejecting...</span>
+      </button>
+      
+      <!-- ✅ NEW: Check with AI button -->
+      <button
+        (click)="checkArticleWithAI(article)"
+        class="ai-btn"
+        [disabled]="isValidating || article.Status === 'Approved by AI' || article.Status === 'Rejected by AI'">
+        <span *ngIf="!isValidating">🤖 Check with AI</span>
+        <span *ngIf="isValidating">⏳ Checking...</span>
+      </button>
+      
+      <button
+        (click)="editMode = !editMode"
         class="edit-btn"
         [disabled]="isValidating">
         ✏️ Edit
