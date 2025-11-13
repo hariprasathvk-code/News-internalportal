@@ -1,1 +1,65 @@
-<p>view-ads works!</p>
+<div class="ad-list-section">
+<div class="ad-list-header">
+<span>Active Advertisements</span>
+<button class="view-btn" (click)="fetchAds()">Refresh</button>
+</div>
+ 
+  <!-- No Ads -->
+<div *ngIf="ads.length === 0 && !loading" class="no-ads">
+<p>📭 No advertisements found.</p>
+</div>
+ 
+  <!-- Ads List -->
+<div *ngFor="let ad of ads" class="ad-card">
+<!-- Media Column -->
+<div class="ad-media">
+<ng-container *ngIf="ad.MediaUrl; else noAdMedia">
+<img *ngIf="isImage(ad.MediaUrl)" [src]="ad.MediaUrl" class="ad-thumb" alt="Ad media" />
+<video *ngIf="isVideo(ad.MediaUrl)" [src]="ad.MediaUrl" class="ad-thumb" controls></video>
+</ng-container>
+<ng-template #noAdMedia>
+<div class="ad-thumb noimg">No media</div>
+</ng-template>
+</div>
+ 
+    <!-- Info Column -->
+<div class="ad-info">
+<div class="ad-title"><b>{{ ad.Title }}</b></div>
+<div class="ad-description" *ngIf="ad.Description">{{ ad.Description }}</div>
+ 
+      <div class="ad-meta">
+<span><b>Status:</b> {{ ad.Status }}</span>
+<span><b>Type:</b> {{ ad.AdType }}</span>
+<span><b>Category:</b> {{ ad.CategoryName }}</span>
+<span><b>Cost:</b> ${{ ad.TotalCost }}</span>
+</div>
+ 
+      <div class="ad-meta">
+<span *ngIf="ad.RegionName"><b>Region:</b> {{ ad.RegionName }}</span>
+<span *ngIf="ad.CreatedAt"><b>Created:</b> {{ ad.CreatedAt }}</span>
+</div>
+ 
+      <div class="ad-meta">
+<span *ngIf="ad.StartTime"><b>Start:</b> {{ ad.StartTime }}</span>
+<span *ngIf="ad.EndTime"><b>End:</b> {{ ad.EndTime }}</span>
+</div>
+ 
+      <!-- Visit Button Only -->
+<div class="ad-actions">
+<a *ngIf="ad.TargetUrl" [href]="ad.TargetUrl" target="_blank" class="target-link">
+          🔗 Visit
+</a>
+</div>
+</div>
+</div>
+ 
+  <!-- Loading Indicator -->
+<div *ngIf="loading" class="loading">
+<p>Loading ads...</p>
+</div>
+ 
+  <!-- Pagination -->
+<div class="pagination" *ngIf="lastKey && !loading">
+<button (click)="fetchNextPage()">Load More</button>
+</div>
+</div>

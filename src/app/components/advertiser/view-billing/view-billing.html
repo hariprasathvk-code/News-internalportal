@@ -1,1 +1,49 @@
-<p>view-billing works!</p>
+<div class="billing-list-section">
+<div class="billing-list-header">
+<span>Ad Billing Records</span>
+<button class="view-btn" (click)="fetchBilling()">Refresh</button>
+</div>
+ 
+  <div *ngIf="bills.length === 0 && !loading" class="no-bills">
+<p>📭 No billing records found.</p>
+</div>
+ 
+  <div *ngFor="let bill of bills" class="billing-card">
+<div class="billing-row">
+<span><b>BillingId:</b> {{ bill.BillingId }}</span>
+<span><b>AdId:</b> {{ bill.AdId }}</span>
+</div>
+<div class="billing-row">
+<span><b>Category:</b> {{ bill.CategoryName }}</span>
+<span><b>Region:</b> {{ bill.RegionType || bill.StateName || bill.CountryName }}</span>
+</div>
+<div class="billing-row">
+<span><b>Clicks:</b> {{ bill.Clicks }}</span>
+<span><b>Impressions:</b> {{ bill.Impressions }}</span>
+</div>
+<div class="billing-row">
+<span><b>LastClicks:</b> {{ bill.LastClicks }}</span>
+<span><b>LastImpressions:</b> {{ bill.LastImpressions }}</span>
+</div>
+<div class="billing-row">
+<span><b>CPC:</b> ${{ bill.CPC }}</span>
+<span><b>CPM:</b> ${{ bill.CPM }}</span>
+<span><b>Cost:</b> ${{ bill.Cost }}</span>
+</div>
+<div class="billing-row">
+<span><b>Payment Status:</b> {{ bill.PaymentStatus }}</span>
+<span><b>RecordedAt:</b> {{ bill.RecordedAt }}</span>
+</div>
+</div>
+ 
+  <!-- Loading -->
+<div *ngIf="loading" class="loading">
+<p>Loading billing records...</p>
+</div>
+ 
+  <!-- Pagination -->
+<div class="pagination" *ngIf="lastKey && !loading">
+<button (click)="fetchNextPage()">Load More</button>
+</div>
+</div>
+ 

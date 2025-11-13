@@ -118,13 +118,13 @@ export const routes: Routes = [
       path: 'view-ads',
       loadComponent: () =>
         import('./components/advertiser/view-ads/view-ads')
-          .then(m => m.ViewAdsComponent)
+          .then(m => m.AdSubmissionListComponent)
     },
     {
       path: 'view-billing',
       loadComponent: () =>
         import('./components/advertiser/view-billing/view-billing')
-          .then(m => m.ViewBillingComponent)
+          .then(m => m.AdBillingListComponent)
     },
     {
       path: '', // default route inside dashboard
