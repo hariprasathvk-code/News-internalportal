@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'; 
- 
+import { AIInsightsComponent } from './ai-insights/ai-insights.component';
 import { EditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { CardSummaryComponent } from './card-summary/card-summary.component';
 import { ArticleListComponent } from './article-list/article-list.component';
@@ -30,7 +30,8 @@ import { UserManagementComponent } from './user-management/user-management.compo
     ArticleListComponent,
     AdSubmissionListComponent,
     UserManagementComponent,
-    ReportsComponent
+    ReportsComponent,
+    AIInsightsComponent
   ],
   templateUrl: './editor-dashboard.component.html',
   styleUrls: ['./editor-dashboard.component.scss']
