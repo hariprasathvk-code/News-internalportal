@@ -1,0 +1,187 @@
+<div class="ai-insights-container">
+  <!-- Header -->
+  <div class="insights-header">
+    <div class="title-section">
+      <h2>🤖 AI Analysis Dashboard</h2>
+      
+    </div>
+    <button class="btn-refresh" (click)="loadAllAnalytics()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔄 Refresh</span>
+      <span *ngIf="isLoading">⏳ Loading...</span>
+    </button>
+  </div>
+
+  <!-- Toggle Switch -->
+  <div class="toggle-container">
+    <div class="toggle-switch">
+      <button 
+        class="toggle-button" 
+        [class.active]="currentView === 'articles'"
+        (click)="switchView('articles')">
+        <span class="toggle-icon">📰</span>
+        <span class="toggle-text">News Articles</span>
+      </button>
+      <button 
+        class="toggle-button" 
+        [class.active]="currentView === 'ads'"
+        (click)="switchView('ads')">
+        <span class="toggle-icon">📢</span>
+        <span class="toggle-text">Ad Content</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading && !currentAnalytics" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading AI insights...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !currentAnalytics" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <h3>Unable to Load Analytics</h3>
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="loadAllAnalytics()">Try Again</button>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="currentAnalytics && !isLoading" class="insights-content">
+    
+    <!-- Today's AI Analytics Box -->
+    <div class="analytics-summary">
+      <h3>{{ contentTypeEmoji }} Today's AI Analytics - {{ contentTypeLabel }}</h3>
+      <div class="summary-tree">
+        <div class="tree-line">
+          <span class="tree-icon">├──</span>
+          <span class="tree-label">{{ contentTypeLabel }} Validated:</span>
+          <span class="tree-value">{{ itemsValidated }}</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-icon">├──</span>
+          <span class="tree-label">Approved:</span>
+          <span class="tree-value approved">{{ approved }}</span>
+        </div>
+        <div class="tree-line last">
+          <span class="tree-icon">└──</span>
+          <span class="tree-label">Rejected:</span>
+          <span class="tree-value rejected">{{ rejected }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+      <div class="stat-card validated">
+        <div class="stat-icon">{{ contentTypeEmoji }}</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ itemsValidated }}</div>
+          <div class="stat-label">{{ contentTypeLabel }} Validated</div>
+        </div>
+      </div>
+
+      <div class="stat-card approved">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ approved }}</div>
+          <div class="stat-label">Approved by AI</div>
+          <div class="stat-percentage">{{ approvalRate }}% approval rate</div>
+        </div>
+      </div>
+
+      <div 
+        class="stat-card rejected" 
+        [class.clickable]="rejected > 0"
+        (click)="openRejectionPopup()">
+        <div class="stat-icon">❌</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ rejected }}</div>
+          <div class="stat-label">Rejected by AI</div>
+          <div class="stat-percentage">{{ rejectionRate }}% rejection rate</div>
+          <div class="view-reasons" *ngIf="rejected > 0">
+             Click to view rejection reasons
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card time-saved">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-content">
+          <div class="stat-value">{{ timeSavedFormatted }}</div>
+          <div class="stat-label">Time Saved Today</div>
+          <div class="stat-percentage">{{ timeSavedMinutes }} minutes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="metrics-section">
+      <h3>📈 Performance Metrics</h3>
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-bar">
+            <div class="metric-fill approved" [style.width.%]="approvalRate"></div>
+          </div>
+          <div class="metric-info">
+            <span class="metric-label">Approval Rate</span>
+            <span class="metric-value">{{ approvalRate }}%</span>
+          </div>
+        </div>
+
+        <div class="metric-item">
+          <div class="metric-bar">
+            <div class="metric-fill rejected" [style.width.%]="rejectionRate"></div>
+          </div>
+          <div class="metric-info">
+            <span class="metric-label">Rejection Rate</span>
+            <span class="metric-value">{{ rejectionRate }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last Updated -->
+    <div class="footer-info">
+      <small>📅 Last updated: {{ currentAnalytics.timestamp | date:'medium' }}</small>
+    </div>
+  </div>
+
+  <!-- Rejection Reasons Popup -->
+  <div class="rejection-popup-overlay" *ngIf="showRejectionPopup" (click)="closeRejectionPopup()">
+    <div class="rejection-popup" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h3>⚠️ Rejection Reasons - {{ contentTypeLabel }}</h3>
+        <button class="close-btn" (click)="closeRejectionPopup()">✕</button>
+      </div>
+      
+      <div class="popup-content">
+        <p class="rejection-intro">
+          The reason behind the rejection of <strong>{{ contentTypeLabel }}</strong> is that 
+          it violates any of the following policies:
+        </p>
+        
+        <div class="rules-section">
+          <h4>📋 AI Validation Rules:</h4>
+          <ol class="rules-list">
+            <li *ngFor="let rule of rejectionRules">{{ rule }}</li>
+          </ol>
+        </div>
+        
+        <div class="rejection-stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ rejected }}</span>
+            <span class="stat-text">{{ contentTypeLabel }} Rejected</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">{{ rejectionRate }}%</span>
+            <span class="stat-text">Rejection Rate</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="popup-footer">
+        <button class="btn-close" (click)="closeRejectionPopup()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
