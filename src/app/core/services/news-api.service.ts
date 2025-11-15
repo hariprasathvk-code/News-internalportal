@@ -90,7 +90,7 @@ export class NewsApiService {
   }
 
 getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
-  const token = localStorage.getItem('idToken'); // or 'accessToken', depending on your auth system
+  const token = localStorage.getItem('idToken'); 
   const headers = {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
@@ -100,10 +100,6 @@ getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
     { headers }
   );
 }
-
-
-
-
 
 }
  

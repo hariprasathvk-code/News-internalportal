@@ -325,6 +325,18 @@ textarea.form-control {
     background: darken($secondary-color, 10%);
   }
 }
+.btn-light {
+  background: #df1a1a;
+  color: #222;
+  border: 1px solid #c9c9c9;
+  font-weight: 600;
+
+  &:hover:not(:disabled) {
+    background: #df1a1a;
+    color: $primary-color;
+    border-color: $primary-color;
+  }
+}
 
 .form-text {
   &.text-muted {
@@ -334,3 +346,4 @@ textarea.form-control {
     margin-top: 5px;
   }
 }
+

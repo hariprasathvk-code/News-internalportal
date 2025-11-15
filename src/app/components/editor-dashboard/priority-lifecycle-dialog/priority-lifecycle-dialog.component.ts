@@ -23,7 +23,9 @@ export class PriorityLifecycleDialogComponent {
     private fb: FormBuilder
   ) {
     this.priorityForm = this.fb.group({
-      priority: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
+      // priority: [-1, [Validators.required, Validators.min(-1), Validators.max(10)]],
+      priority: [-1, [Validators.required]],
+
       lifecycle: [60, [Validators.required, Validators.min(1)]]
     });
   }

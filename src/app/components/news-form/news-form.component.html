@@ -1,5 +1,5 @@
 <div class="news-form-container">
-  <div class="form-header">
+  <div class="form-header">    
     <h2>📝 Submit News Article</h2>
     <p class="user-info">Logged in as: <strong>{{ currentUser?.FullName }}</strong></p>
   </div>
@@ -319,6 +319,17 @@
       >
         🔄 Reset
       </button>
+     
+      <button 
+        type="button"
+        class="btn btn-light"
+        (click)="onBack()"
+        style="margin-left:16px;"
+      >
+        ← Back
+      </button>
+
+
     </div>
   </form>
 </div>

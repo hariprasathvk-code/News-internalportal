@@ -307,6 +307,14 @@ export class NewsFormComponent implements OnInit {
       this.errorMessage = '';
     }
   }
+  
+  onBack() {
+  // Option 1: Navigate with Angular Router
+  this.router.navigate(['/editor-dashboard']); // or whatever your back route is
+
+  // Option 2: Emit event if used in parent component
+  // this.back.emit();
+}
 
   removeFile(index: number): void {
     this.selectedFiles.splice(index, 1);
