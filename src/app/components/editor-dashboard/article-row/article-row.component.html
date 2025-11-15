@@ -73,6 +73,14 @@
         <span *ngIf="isValidating">⏳ Checking...</span>
       </button>
       
+       <!-- ✅ NEW: Rephrase with AI button -->
+      <button 
+        (click)="rephraseArticle(article)" 
+        class="rephrase-btn"
+        [disabled]="isValidating || isRejecting || isApproving">
+        ✏️ Rephrase with AI
+      </button>
+
       <button 
         (click)="editMode = !editMode" 
         class="edit-btn"
@@ -105,7 +113,7 @@
       </div>
     </div>
   </div>
-</div> -->
+</div> 
 <div class="article-row">
   <!-- Media Preview Section -->
   <div class="media-list" *ngIf="article.MediaUrls?.length; else noMedia">
@@ -206,14 +214,21 @@
     <!-- Inline Editor -->
     <div *ngIf="editMode" class="edit-form">
       <h4>Edit Article</h4>
+      
       <label>Title:</label>
       <input [(ngModel)]="article.Title" />
 
       <label>Summary:</label>
-      <textarea [(ngModel)]="article.Summary"></textarea>
+      <textarea 
+        [(ngModel)]="article.Summary" 
+        rows="6"
+        class="summary-textarea"></textarea>
 
       <label>Content:</label>
-      <textarea [(ngModel)]="article.Content"></textarea>
+      <textarea 
+        [(ngModel)]="article.Content" 
+        rows="12"
+        class="content-textarea"></textarea>
 
       <label>Category:</label>
       <input [(ngModel)]="article.Category" />

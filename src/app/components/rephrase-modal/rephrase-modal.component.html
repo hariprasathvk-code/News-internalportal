@@ -1,0 +1,190 @@
+<div class="rephrase-modal">
+  <!-- Header -->
+  <div class="modal-header">
+    <h2>✏️ Rephrase with AI</h2>
+    <p class="article-title">{{ data.title }}</p>
+  </div>
+
+  <!-- Step 1: Selection -->
+  <div *ngIf="!hasResults" class="selection-step">
+    <h3>Select what to rephrase:</h3>
+    
+    <div class="checkbox-group">
+      <label class="checkbox-item">
+        <input type="checkbox" [(ngModel)]="rephraseTitle" [disabled]="isGenerating">
+        <div class="checkbox-content">
+          <span class="checkbox-label">📰 Title</span>
+          <p class="checkbox-description">Generate improved title based on content</p>
+        </div>
+      </label>
+
+      <label class="checkbox-item">
+        <input type="checkbox" [(ngModel)]="rephraseSummary" [disabled]="isGenerating">
+        <div class="checkbox-content">
+          <span class="checkbox-label">📄 Summary</span>
+          <p class="checkbox-description">Create better summary from content</p>
+        </div>
+      </label>
+
+      <label class="checkbox-item">
+        <input type="checkbox" [(ngModel)]="rephraseContent" [disabled]="isGenerating">
+        <div class="checkbox-content">
+          <span class="checkbox-label">📝 Content</span>
+          <p class="checkbox-description">Improve and develop full content</p>
+        </div>
+      </label>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isGenerating" class="loading-state">
+      <div class="spinner"></div>
+      <p>🤖 AI is analyzing your content...</p>
+      <div class="progress-items">
+        <div class="progress-item" *ngIf="rephraseTitle">
+          <span class="icon">⏳</span> Generating Title...
+        </div>
+        <div class="progress-item" *ngIf="rephraseSummary">
+          <span class="icon">⏳</span> Generating Summary...
+        </div>
+        <div class="progress-item" *ngIf="rephraseContent">
+          <span class="icon">⏳</span> Improving Content...
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancel()" [disabled]="isGenerating">
+        Cancel
+      </button>
+      <button 
+        class="btn-generate" 
+        (click)="generateImprovements()" 
+        [disabled]="!canGenerate || isGenerating">
+        <span *ngIf="!isGenerating">🤖 Generate Improvements</span>
+        <span *ngIf="isGenerating">⏳ Generating...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 2: Results & Comparison -->
+  <div *ngIf="hasResults" class="results-step">
+    <h3>Review AI Improvements</h3>
+
+    <!-- Title Comparison -->
+    <div *ngIf="rephraseTitle" class="comparison-section">
+      <h4>📰 Title Comparison</h4>
+      
+      <div class="comparison-box">
+        <div class="original">
+          <span class="label">Original:</span>
+          <p>{{ originalTitle }}</p>
+        </div>
+        
+        <div class="improved">
+          <span class="label">AI Improved: ✨</span>
+          <p>{{ improvedTitle }}</p>
+        </div>
+      </div>
+
+      <div class="decision-buttons">
+        <button 
+          class="btn-accept" 
+          [class.accepted]="titleAccepted === true"
+          (click)="acceptTitle()"
+          [disabled]="isProcessing">
+          ✅ Accept
+        </button>
+        <button 
+          class="btn-reject" 
+          [class.rejected]="titleAccepted === false"
+          (click)="rejectTitle()"
+          [disabled]="isProcessing">
+          ❌ Reject
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary Comparison -->
+    <div *ngIf="rephraseSummary" class="comparison-section">
+      <h4>📄 Summary Comparison</h4>
+      
+      <div class="comparison-box">
+        <div class="original">
+          <span class="label">Original: ({{ originalSummary.length }} chars)</span>
+          <p class="scrollable">{{ originalSummary }}</p>
+        </div>
+        
+        <div class="improved">
+          <span class="label">AI Improved: ✨ ({{ improvedSummary.length }} chars)</span>
+          <p class="scrollable">{{ improvedSummary }}</p>
+        </div>
+      </div>
+
+      <div class="decision-buttons">
+        <button 
+          class="btn-accept" 
+          [class.accepted]="summaryAccepted === true"
+          (click)="acceptSummary()"
+          [disabled]="isProcessing">
+          ✅ Accept
+        </button>
+        <button 
+          class="btn-reject" 
+          [class.rejected]="summaryAccepted === false"
+          (click)="rejectSummary()"
+          [disabled]="isProcessing">
+          ❌ Reject
+        </button>
+      </div>
+    </div>
+
+    <!-- Content Comparison -->
+    <div *ngIf="rephraseContent" class="comparison-section">
+      <h4>📝 Content Comparison</h4>
+      
+      <div class="comparison-box">
+        <div class="original">
+          <span class="label">Original: ({{ originalContent.length }} chars)</span>
+          <textarea readonly class="content-area">{{ originalContent }}</textarea>
+        </div>
+        
+        <div class="improved">
+          <span class="label">AI Improved: ✨ ({{ improvedContent.length }} chars)</span>
+          <textarea readonly class="content-area">{{ improvedContent }}</textarea>
+        </div>
+      </div>
+
+      <div class="decision-buttons">
+        <button 
+          class="btn-accept" 
+          [class.accepted]="contentAccepted === true"
+          (click)="acceptContent()"
+          [disabled]="isProcessing">
+          ✅ Accept
+        </button>
+        <button 
+          class="btn-reject" 
+          [class.rejected]="contentAccepted === false"
+          (click)="rejectContent()"
+          [disabled]="isProcessing">
+          ❌ Reject
+        </button>
+      </div>
+    </div>
+
+    <!-- Final Actions -->
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancel()" [disabled]="isProcessing">
+        Cancel
+      </button>
+      <button 
+        class="btn-confirm" 
+        (click)="confirmChanges()" 
+        [disabled]="!hasAcceptedChanges || isProcessing">
+        <span *ngIf="!isProcessing">💾 Confirm & Update</span>
+        <span *ngIf="isProcessing">⏳ Updating...</span>
+      </button>
+    </div>
+  </div>
+</div>
