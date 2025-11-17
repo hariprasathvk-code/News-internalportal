@@ -162,7 +162,7 @@ export class AdSubmissionListComponent {
       },
       error: (err) => {
         this.saving = false;
-        this.snackBar.open(`❌ Failed to approve ad: ${ad.Title}\n${err.message || err}`, 'Close', { duration: 6000 });
+        this.snackBar.open(`❌ Failed to approve ad`, 'Close', { duration: 6000 });
       }
     });
   }

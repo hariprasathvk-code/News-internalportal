@@ -1,3 +1,314 @@
+// .reports-section {
+//   padding: 20px;
+//   background: #f8f9fc;
+//   border-radius: 12px;
+//   margin-top: 20px;
+// }
+
+// .reports-header {
+//   margin-bottom: 30px;
+
+//   h2 {
+//     font-size: 2rem;
+//     font-weight: 700;
+//     color: #333;
+//     margin-bottom: 8px;
+//   }
+
+//   .subtitle {
+//     font-size: 1rem;
+//     color: #666;
+//     line-height: 1.5;
+//   }
+// }
+
+// .reports-grid {
+//   display: grid;
+//   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+//   gap: 24px;
+//   margin-bottom: 30px;
+// }
+
+// .report-card {
+//   background: #fff;
+//   border-radius: 12px;
+//   padding: 28px;
+//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+//   transition: transform 0.2s, box-shadow 0.2s;
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   text-align: center;
+
+//   &:hover {
+//     transform: translateY(-4px);
+//     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+//   }
+
+//   .report-icon {
+//     width: 80px;
+//     height: 80px;
+//     border-radius: 50%;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-size: 2.5rem;
+//     margin-bottom: 20px;
+//     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+//     &.subscription {
+//       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+//     }
+
+//     &.news {
+//       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+//     }
+
+//     &.ad {
+//       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+//     }
+//   }
+
+//   h3 {
+//     font-size: 1.4rem;
+//     font-weight: 600;
+//     color: #333;
+//     margin-bottom: 12px;
+//   }
+
+//   p {
+//     font-size: 0.95rem;
+//     color: #666;
+//     line-height: 1.6;
+//     margin-bottom: 24px;
+//     min-height: 60px;
+//   }
+
+//   .report-btn {
+//     width: 100%;
+//     padding: 14px 24px;
+//     border: none;
+//     border-radius: 8px;
+//     font-size: 1rem;
+//     font-weight: 600;
+//     cursor: pointer;
+//     transition: all 0.2s;
+//     color: #fff;
+//     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+//     &:hover:not(:disabled) {
+//       transform: translateY(-2px);
+//       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+//     }
+
+//     &:disabled {
+//       opacity: 0.6;
+//       cursor: not-allowed;
+//       transform: none;
+//     }
+
+//     &.subscription-btn {
+//       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+//     }
+
+//     &.news-btn {
+//       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+//     }
+
+//     &.ad-btn {
+//       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+//     }
+//   }
+
+//   .report-result {
+//     margin-top: 20px;
+//     width: 100%;
+//     padding: 16px;
+//     background: #e8f5e9;
+//     border-radius: 8px;
+//     border-left: 4px solid #4caf50;
+
+//     .result-badge {
+//       display: inline-block;
+//       padding: 4px 12px;
+//       border-radius: 12px;
+//       font-size: 0.85rem;
+//       font-weight: 600;
+//       margin-bottom: 8px;
+
+//       &.success {
+//         background: #4caf50;
+//         color: #fff;
+//       }
+//     }
+
+//     .result-message {
+//       margin: 8px 0;
+//       font-size: 0.9rem;
+//       color: #2e7d32;
+//       font-weight: 500;
+//     }
+
+//     .result-stats {
+//       display: flex;
+//       justify-content: space-between;
+//       align-items: center;
+//       padding: 8px 0;
+//       margin: 8px 0;
+//       border-top: 1px solid #c8e6c9;
+
+//       .stat-label {
+//         font-size: 0.85rem;
+//         color: #555;
+//         font-weight: 500;
+//       }
+
+//       .stat-value {
+//         font-size: 1.1rem;
+//         color: #2e7d32;
+//         font-weight: 700;
+//       }
+//     }
+
+//     .download-btn {
+//       width: 100%;
+//       margin-top: 12px;
+//       padding: 8px 16px;
+//       background: #2e7d32;
+//       color: #fff;
+//       border: none;
+//       border-radius: 6px;
+//       font-size: 0.9rem;
+//       font-weight: 600;
+//       cursor: pointer;
+//       transition: all 0.2s;
+
+//       &:hover {
+//         background: #1b5e20;
+//         transform: translateY(-1px);
+//       }
+//     }
+//   }
+// }
+
+// .reports-data {
+//   background: #fff;
+//   border-radius: 12px;
+//   padding: 24px;
+//   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+//   h3 {
+//     font-size: 1.5rem;
+//     font-weight: 600;
+//     color: #333;
+//     margin-bottom: 24px;
+//   }
+
+//   .data-section {
+//     margin-bottom: 24px;
+//     padding: 20px;
+//     background: #f8f9fc;
+//     border-radius: 8px;
+
+//     .section-header {
+//       display: flex;
+//       justify-content: space-between;
+//       align-items: center;
+//       margin-bottom: 16px;
+//       flex-wrap: wrap;
+//       gap: 12px;
+
+//       h4 {
+//         font-size: 1.2rem;
+//         font-weight: 600;
+//         color: #564bfa;
+//         margin: 0;
+//       }
+
+//       .generated-time {
+//         font-size: 0.85rem;
+//         color: #666;
+//         font-style: italic;
+//       }
+//     }
+
+//     pre {
+//       background: #2d3748;
+//       color: #68d391;
+//       padding: 20px;
+//       border-radius: 8px;
+//       overflow-x: auto;
+//       font-size: 0.9rem;
+//       line-height: 1.6;
+//       margin: 0;
+//       max-height: 400px;
+//       overflow-y: auto;
+
+//       &::-webkit-scrollbar {
+//         width: 8px;
+//         height: 8px;
+//       }
+
+//       &::-webkit-scrollbar-track {
+//         background: #1a202c;
+//         border-radius: 4px;
+//       }
+
+//       &::-webkit-scrollbar-thumb {
+//         background: #4a5568;
+//         border-radius: 4px;
+
+//         &:hover {
+//           background: #718096;
+//         }
+//       }
+//     }
+//   }
+// }
+
+// @media (max-width: 1024px) {
+//   .reports-grid {
+//     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+//     gap: 20px;
+//   }
+// }
+
+// @media (max-width: 768px) {
+//   .reports-section {
+//     padding: 16px;
+//   }
+
+//   .reports-grid {
+//     grid-template-columns: 1fr;
+//     gap: 16px;
+//   }
+
+//   .report-card {
+//     padding: 20px;
+
+//     .report-icon {
+//       width: 60px;
+//       height: 60px;
+//       font-size: 2rem;
+//     }
+
+//     h3 {
+//       font-size: 1.2rem;
+//     }
+
+//     p {
+//       font-size: 0.9rem;
+//       min-height: auto;
+//     }
+//   }
+
+//   .data-section {
+//     .section-header {
+//       flex-direction: column;
+//       align-items: flex-start;
+//     }
+//   }
+// }
 .reports-section {
   padding: 20px;
   background: #f8f9fc;
@@ -7,14 +318,12 @@
 
 .reports-header {
   margin-bottom: 30px;
-
   h2 {
     font-size: 2rem;
     font-weight: 700;
     color: #333;
     margin-bottom: 8px;
   }
-
   .subtitle {
     font-size: 1rem;
     color: #666;
@@ -59,11 +368,9 @@
     &.subscription {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-
     &.news {
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     }
-
     &.ad {
       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     }
@@ -95,6 +402,7 @@
     transition: all 0.2s;
     color: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-bottom: 4px; // Minimal gap to download button
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
@@ -110,86 +418,36 @@
     &.subscription-btn {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-
     &.news-btn {
       background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     }
-
     &.ad-btn {
       background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
     }
   }
 
-  .report-result {
-    margin-top: 20px;
+  .download-btn {
     width: 100%;
-    padding: 16px;
-    background: #e8f5e9;
+    margin-top: 0;      // No gap above this button
+    padding: 10px 18px;
+    background: #2e7d32;
+    color: #fff;
+    border: none;
     border-radius: 8px;
-    border-left: 4px solid #4caf50;
+    font-size: 0.98rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s, transform 0.2s;
 
-    .result-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-
-      &.success {
-        background: #4caf50;
-        color: #fff;
-      }
-    }
-
-    .result-message {
-      margin: 8px 0;
-      font-size: 0.9rem;
-      color: #2e7d32;
-      font-weight: 500;
-    }
-
-    .result-stats {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      margin: 8px 0;
-      border-top: 1px solid #c8e6c9;
-
-      .stat-label {
-        font-size: 0.85rem;
-        color: #555;
-        font-weight: 500;
-      }
-
-      .stat-value {
-        font-size: 1.1rem;
-        color: #2e7d32;
-        font-weight: 700;
-      }
-    }
-
-    .download-btn {
-      width: 100%;
-      margin-top: 12px;
-      padding: 8px 16px;
-      background: #2e7d32;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        background: #1b5e20;
-        transform: translateY(-1px);
-      }
+    &:hover {
+      background: #1b5e20;
+      transform: translateY(-1px);
     }
   }
 }
+
+/* Remove old .report-result styles completely from your SCSS. */
 
 .reports-data {
   background: #fff;
