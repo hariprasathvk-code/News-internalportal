@@ -18,10 +18,10 @@
         <mat-icon>badge</mat-icon>
         <span>{{ currentUser?.UserRole }}</span>
       </button>
-      <button mat-menu-item disabled>
+      <!-- <button mat-menu-item disabled>
         <mat-icon>article</mat-icon>
         <span>Articles: {{ currentUser?.NewsCount }}</span>
-      </button>
+      </button> -->
       <!-- <mat-divider></mat-divider> -->
       <button mat-menu-item (click)="logout()">
         <mat-icon>logout</mat-icon>
@@ -34,7 +34,7 @@
     <div class="welcome-section">
       <h1>Welcome, {{ currentUser?.FullName }}!</h1>
       <p>You are logged in as a <strong>{{ currentUser?.UserRole }}</strong></p>
-      <p class="stats">You have written <strong>{{ currentUser?.NewsCount }}</strong> articles</p>
+      <!-- <p class="stats">You have written <strong>{{ currentUser?.NewsCount }}</strong> articles</p> -->
     </div>
 
     <div class="cards-grid">
@@ -60,7 +60,7 @@
         </mat-card-actions>
       </mat-card>
 
-      <mat-card class="dashboard-card">
+      <!-- <mat-card class="dashboard-card">
         <mat-card-header>
           <mat-icon mat-card-avatar class="card-icon">drafts</mat-icon>
           <mat-card-title>My Drafts</mat-card-title>
@@ -92,7 +92,7 @@
             View Submissions
           </button>
         </mat-card-actions>
-      </mat-card>
+      </mat-card> -->
     </div>
   </div>
 </div>
