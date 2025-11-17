@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'; 
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AIInsightsComponent } from './ai-insights/ai-insights.component';
 import { EditorSidebarComponent } from './editor-sidebar/editor-sidebar.component';
 import { CardSummaryComponent } from './card-summary/card-summary.component';
@@ -25,6 +26,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
     CommonModule,
     HttpClientModule,
     MatDialogModule, 
+    MatSnackBarModule,
     EditorSidebarComponent,
     CardSummaryComponent,
     ArticleListComponent,
@@ -42,6 +44,7 @@ export class EditorDashboardComponent implements OnInit {
   private aiValidation = inject(AIValidationService);
   private router = inject(Router);
   private dialog = inject(MatDialog); 
+  private snackBar=inject(MatSnackBar);
  
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
@@ -131,112 +134,100 @@ onSelectCategory(categoryId: number) {
   });
 }
  
-   checkAllWithAI() {
-  if (this.isValidatingAll) {
-    return;
-  }
-
-  let context = '';
-  let count = 0;
-  if (this.selectedSection === 'ads') {
-    context = 'ads';
-    count = this.ads.length;
-  } else {
-    context = 'news articles';
-    count = this.articles.length;
-  }
-
-  const confirmed = confirm(
-    `🤖 This will validate ALL ${context} using AI.\n\n` +
-    `This will automatically process ${count} item(s).\n\nContinue?`
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  this.isValidatingAll = true;
-  console.log('🤖 Starting AI validation for:', context);
-
-  const serviceCall = 
-    this.selectedSection === 'ads'
-      ? this.aiValidation.validateAllAds()
-      : this.aiValidation.validateAllArticles();
-
-  serviceCall.subscribe({
-    next: (response) => {
-      this.isValidatingAll = false;
-      alert(
-        `✅ Batch AI Validation Complete!\n\n` +
-        `Processed: ${response.processedCount} ${context}` +
-        (response.message ? `\nMessage: ${response.message}` : '')
-      );
-      if (this.selectedSection === 'ads') {
-        this.loadAds();
-      } else {
-        this.loadSubmittedArticles();
-      }
-    },
-    error: (error) => {
-      this.isValidatingAll = false;
-      alert(`❌ AI Validation Failed: ${error.error?.message || error.message}`);
-    }
-  });
-}
-checkAiValidation(ad: AdSubmission) {
-  this.aiValidation.validateSingleAd(ad.AdId).subscribe({
-    next: (response) => {
-      alert(`AI Validation Result for "${ad.Title}": ${response.message || 'No message'}`);
-      this.loadAds(); // optionally reload ads list after validation
-    },
-    error: (error) => {
-      alert(`AI Validation failed: ${error.message}`);
-    }
-  });
-}
-
-  
-  onValidateSingleArticle(article: ArticleDetail) {
-    console.log('🤖 Validating single article:', article.NewsId);
+  checkAllWithAI() {
+    if (this.isValidatingAll) { return; }
  
-    const confirmed = confirm(
-      `🤖 Validate this article with AI?\n\n` +
-      `Title: ${article.Title}\n\n` +
-      `This will check the content quality and update its status.`
+    let context = '';
+    let count = 0;
+    if (this.selectedSection === 'ads') {
+      context = 'ads';
+      count = this.ads.length;
+    } else {
+      context = 'news articles';
+      count = this.articles.length;
+    }
+ 
+    const snackRef = this.snackBar.open(
+      `🤖 Validate ALL ${context}? Processing ${count} items.`, 'Confirm', { duration: 10000 }
     );
  
-    if (!confirmed) {
-      return;
-    }
+    snackRef.onAction().subscribe(() => {
+      this.isValidatingAll = true;
+      console.log('🤖 Starting AI validation for:', context);
  
-    this.aiValidation.validateSingleArticle(article.NewsId, article.SubmittedDate).subscribe({
+      const serviceCall =
+        this.selectedSection === 'ads'
+          ? this.aiValidation.validateAllAds()
+          : this.aiValidation.validateAllArticles();
+ 
+      serviceCall.subscribe({
+        next: (response) => {
+          this.isValidatingAll = false;
+          this.snackBar.open(`
+            ✅ Batch AI Validation Complete! Processed: ${response.processedCount} ${context}
+            ${response.message ? '\nMessage: ' + response.message : ''}
+          `, 'Close', { duration: 6000 });
+ 
+          if (this.selectedSection === 'ads') {
+            this.loadAds();
+          } else {
+            this.loadSubmittedArticles();
+          }
+        },
+        error: (error) => {
+          this.isValidatingAll = false;
+          this.snackBar.open(`❌ AI Validation Failed: ${error.error?.message || error.message}`, 'Close', { duration: 6000 });
+        }
+      });
+    });
+  }
+ 
+  checkAiValidation(ad: AdSubmission) {
+    this.aiValidation.validateSingleAd(ad.AdId).subscribe({
       next: (response) => {
-        console.log('✅ Single article validation complete:', response);
-       
-        alert(
-          `✅ AI Validation Complete!\n\n` +
-          `Status: ${response.status}\n` +
-          `NewsID: ${response.newsId}`
-        );
- 
-        // Reload articles to see updated status
-        this.loadSubmittedArticles();
+        this.snackBar.open(`AI Validation Result for "${ad.Title}": ${response.message || 'No message'}`, 'Close', { duration: 5000 });
+        this.loadAds();
       },
       error: (error) => {
-        console.error('❌ Single article validation error:', error);
-        alert(`❌ Validation Failed: ${error.error?.message || error.message}`);
+        this.snackBar.open(`AI Validation failed: ${error.message}`, 'Close', { duration: 5000 });
       }
     });
   }
  
-
+  onValidateSingleArticle(article: ArticleDetail) {
+    console.log('🤖 Validating single article:', article.NewsId);
+ 
+    const snackRef = this.snackBar.open(
+      `🤖 Validate this article with AI?\nTitle: ${article.Title}\nCheck content quality and update status.`,
+      'Confirm',
+      { duration: 10000 }
+    );
+ 
+    snackRef.onAction().subscribe(() => {
+      this.aiValidation.validateSingleArticle(article.NewsId, article.SubmittedDate).subscribe({
+        next: (response) => {
+          console.log('✅ Single article validation complete:', response);
+          this.snackBar.open(`
+            ✅ AI Validation Complete!
+            Status: ${response.status}
+            NewsID: ${response.newsId}
+          `, 'Close', { duration: 6000 });
+          this.loadSubmittedArticles();
+        },
+        error: (error) => {
+          console.error('❌ Single article validation error:', error);
+          this.snackBar.open(`❌ Validation Failed: ${error.error?.message || error.message}`, 'Close', { duration: 6000 });
+        }
+      });
+    });
+  }
+ 
   onApproveArticle(article: ArticleDetail) {
     console.log('✅ Approve button clicked for:', article.Title);
  
- 
     const dialogRef = this.dialog.open(PriorityLifecycleDialogComponent, {
       width: '500px',
-      disableClose: true, 
+      disableClose: true,
       data: {
         newsId: article.NewsId,
         title: article.Title
@@ -255,50 +246,49 @@ checkAiValidation(ad: AdSubmission) {
     });
   }
  
-
   private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-  console.log('📤 Calling approve API with priority & lifecycle...');
-  this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-    next: (response) => {
-      console.log('✅ Article approved successfully:', response);
-
-      alert(
-        `✅ Article Approved Successfully!\n\n` +
-        `Title: ${article.Title}\n` +
-        `Priority: ${priority}\n` +
-        `Lifecycle: ${lifecycle} minutes\n\n`
-      );
-      this.loadSubmittedArticles();
-    },
-    error: (error) => {
-      console.error('❌ Approve error:', error);
-      alert(`❌ Approval Failed: ${error.message}`);
-    }
-  });
-}
-
-  onRejectArticle(article: ArticleDetail) {
-    console.log('❌ Rejecting article:', article.NewsId);
- 
-    const confirmed = confirm(
-      `✗ Reject this article?\n\n` +
-      `Title: ${article.Title}\n\n` +
-      `This will change the status to "Rejected".`
-    );
- 
-    if (!confirmed) return;
- 
-    this.newsApi.rejectArticle(article.NewsId, article.SubmittedDate).subscribe({
+    console.log('📤 Calling approve API with priority & lifecycle...');
+    this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
       next: (response) => {
-        console.log('✅ Article rejected successfully:', response);
-       
-        alert(`✓ Article Rejected\n\nTitle: ${article.Title}`);
+        console.log('✅ Article approved successfully:', response);
+ 
+        this.snackBar.open(`
+          ✅ Article Approved Successfully!
+          Title: ${article.Title}
+          Priority: ${priority}
+          Lifecycle: ${lifecycle} minutes
+        `, 'Close', { duration: 6000 });
+ 
         this.loadSubmittedArticles();
       },
       error: (error) => {
-        console.error('❌ Reject error:', error);
-        alert(`❌ Rejection Failed: ${error.message}`);
+        console.error('❌ Approve error:', error);
+        this.snackBar.open(`❌ Approval Failed: ${error.message}`, 'Close', { duration: 6000 });
       }
+    });
+  }
+ 
+  onRejectArticle(article: ArticleDetail) {
+    console.log('❌ Rejecting article:', article.NewsId);
+ 
+    const snackRef = this.snackBar.open(
+      `✗ Reject this article?\nTitle: ${article.Title}`,
+      'Confirm',
+      { duration: 10000 }
+    );
+ 
+    snackRef.onAction().subscribe(() => {
+      this.newsApi.rejectArticle(article.NewsId, article.SubmittedDate).subscribe({
+        next: (response) => {
+          console.log('✅ Article rejected successfully:', response);
+          this.snackBar.open(`✓ Article Rejected\nTitle: ${article.Title}`, 'Close', { duration: 5000 });
+          this.loadSubmittedArticles();
+        },
+        error: (error) => {
+          console.error('❌ Reject error:', error);
+          this.snackBar.open(`❌ Rejection Failed: ${error.message}`, 'Close', { duration: 5000 });
+        }
+      });
     });
   }
  
@@ -307,20 +297,20 @@ checkAiValidation(ad: AdSubmission) {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
+ 
   isImage(url: string): boolean {
-  if (!url) return false;
-  const parts = url.split('.');
-  const ext = parts.length > 1 ? parts.pop()?.split('?')[0].toLowerCase() : '';
-  return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '');
-}
-
-
-isVideo(url: string): boolean {
-  return url ? /\.(mp4|mov|webm|ogg)$/i.test(url.split('?')[0]) : false;
-}
-onImageError(event: any) {
-  event.target.src = 'assets/img/no-image.png'; 
-}
-
+    if (!url) return false;
+    const parts = url.split('.');
+    const ext = parts.length > 1 ? parts.pop()?.split('?')[0].toLowerCase() : '';
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext || '');
+  }
+ 
+  isVideo(url: string): boolean {
+    return url ? /\.(mp4|mov|webm|ogg)$/i.test(url.split('?')[0]) : false;
+  }
+ 
+  onImageError(event: any) {
+    event.target.src = 'assets/img/no-image.png'; // Provide a fallback image in your assets
+  }
 }
  

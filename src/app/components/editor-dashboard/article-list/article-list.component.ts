@@ -1,56 +1,7 @@
-// import { Component, Input, Output, EventEmitter } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { ArticleRowComponent } from '../article-row/article-row.component';
-// import { ArticleDetail } from '../../../core/models/article-detail.model';
-// import { NewsApiService } from '../../../core/services/news-api.service'; 
-
-// @Component({
-//   selector: 'app-article-list',
-//   standalone: true,
-//   imports: [CommonModule, ArticleRowComponent],
-//   templateUrl: './article-list.component.html',
-//   styleUrls: ['./article-list.component.scss']
-// })
-// export class ArticleListComponent {
-//   @Input() articles: ArticleDetail[] = [];
-  
-  
-//    constructor(private newsApi: NewsApiService) {}
-
-//   onSaveArticle(article: ArticleDetail) {
-//     this.newsApi.updateArticle(article.NewsId, article).subscribe({
-//       next: () => {
-//         // Optionally show a success message/snackbar here
-//       },
-//       error: (err) => {
-//         // Optionally show error message
-//       }
-//     });
-//   }
-//   // ✅ NEW: Forward AI validation event to parent
-//    @Output() approveArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
-//   @Output() rejectArticle = new EventEmitter<ArticleDetail>(); // ✅ NEW
-//   @Output() validateArticle = new EventEmitter<ArticleDetail>();
-  
-
-//   onValidateWithAI(article: ArticleDetail) {
-//     this.validateArticle.emit(article);
-//   }
-
-//   // ✅ NEW: Forward approve event
-//   onApproveArticle(article: ArticleDetail) {
-//     this.approveArticle.emit(article);
-//   }
-
-//   // ✅ NEW: Forward reject event
-//   onRejectArticle(article: ArticleDetail) {
-//     this.rejectArticle.emit(article);
-//   }
-// }
-
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // ✅ ADDED
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ArticleRowComponent } from '../article-row/article-row.component';
 import { RephraseModalComponent } from '../../rephrase-modal/rephrase-modal.component'; // ✅ ADDED
 import { ArticleDetail } from '../../../core/models/article-detail.model';
@@ -59,7 +10,7 @@ import { NewsApiService } from '../../../core/services/news-api.service';
 @Component({
   selector: 'app-article-list',
   standalone: true,
-  imports: [CommonModule, ArticleRowComponent, MatDialogModule], // ✅ ADDED MatDialogModule
+  imports: [CommonModule, ArticleRowComponent, MatDialogModule, MatSnackBarModule], // ✅ ADDED MatDialogModule
   templateUrl: './article-list.component.html',
   styleUrls: ['./article-list.component.scss']
 })
@@ -70,6 +21,8 @@ export class ArticleListComponent {
   @Output() rejectArticle = new EventEmitter<ArticleDetail>();
   @Output() validateArticle = new EventEmitter<ArticleDetail>();
   @Output() updateArticle = new EventEmitter<ArticleDetail>(); // ✅ ADDED
+
+  private snackBar =inject(MatSnackBar);
 
   constructor(
     private newsApi: NewsApiService,
@@ -134,7 +87,9 @@ export class ArticleListComponent {
         // Emit update event to parent (optional)
         this.updateArticle.emit(article);
 
-        alert('✅ Article updated successfully with AI improvements!');
+        this.snackBar.open('✅ Article updated successfully with AI improvements!', 'Close', {
+          duration: 4000,
+        });
       } else {
         console.log('❌ No changes applied');
       }

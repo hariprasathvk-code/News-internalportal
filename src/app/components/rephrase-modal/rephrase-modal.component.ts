@@ -2,19 +2,21 @@ import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AiRephraseService, RephraseRequest } from '../../core/services/ai-rephrase.service';
 import { NewsApiService } from '../../core/services/news-api.service';
 
 @Component({
   selector: 'app-rephrase-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './rephrase-modal.component.html',
   styleUrls: ['./rephrase-modal.component.scss']
 })
 export class RephraseModalComponent {
   private aiRephraseService = inject(AiRephraseService);
   private newsApiService = inject(NewsApiService);
+  private snackBar=inject(MatSnackBar);
 
   // Selection state
   rephraseTitle = false;
@@ -99,7 +101,7 @@ export class RephraseModalComponent {
       },
       error: (error) => {
         console.error('❌ Rephrasing error:', error);
-        alert('Failed to generate improvements: ' + (error.error?.message || error.message));
+        this.snackBar.open('Failed to generate improvements: ' + (error.error?.message || error.message), 'Close', { duration: 6000 });
         this.isGenerating = false;
         this.isProcessing = false;
       }
@@ -138,17 +140,17 @@ export class RephraseModalComponent {
 
   confirmChanges() {
     if (!this.hasAcceptedChanges) {
-      alert('⚠️ Please accept at least one improvement before confirming.');
+      this.snackBar.open('⚠️ Please accept at least one improvement before confirming.', 'Close', { duration: 5000 });
       return;
     }
 
-    const confirmed = confirm(
-      'Are you sure you want to apply the accepted changes?\n\n' +
-      'This will update the article in the database.'
+    const snackRef = this.snackBar.open(
+      'Are you sure you want to apply the accepted changes? This will update the article in the database.',
+      'Confirm',
+      { duration: 10000 }
     );
-
-    if (!confirmed) return;
-
+ 
+    snackRef.onAction().subscribe(() => {
     this.isProcessing = true;
 
     // ✅ FIXED: Prepare update payload with accepted changes
@@ -176,14 +178,15 @@ export class RephraseModalComponent {
     ).subscribe({
       next: (response) => {
         console.log('✅ Article updated successfully:', response);
-        alert('✅ Article updated successfully with AI improvements!');
+        this.snackBar.open('✅ Article updated successfully with AI improvements!', 'Close', { duration: 6000 });
         this.dialogRef.close({ updated: true, changes: updateData });
       },
       error: (error) => {
         console.error('❌ Update error:', error);
-        alert('Failed to update article: ' + (error.error?.message || error.message));
+        this.snackBar.open('Failed to update article: ' + (error.error?.message || error.message), 'Close', { duration: 6000 });
         this.isProcessing = false;
       }
+    });
     });
   }
 
