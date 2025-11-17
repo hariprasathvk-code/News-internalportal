@@ -1,10 +1,10 @@
-<div class="article-list-section">
+<!-- <div class="article-list-section">
   <div class="article-list-header">
     <span>Today's Articles</span>
     <button class="view-btn">View All Articles</button>
   </div>
   <div *ngIf="articles.length === 0" class="no-articles">
-    <p>📭 No articles available.</p>
+    <p>Loading......</p>
   </div>
   <div *ngIf="articles.length > 0">
 
@@ -16,6 +16,28 @@
       (approve)="onApproveArticle($event)"
       (reject)="onRejectArticle($event)"
       (rephrase)="onRephraseArticle($event)"> 
+    </app-article-row>
+  </div>
+</div> -->
+<div class="article-list-section">
+  <div class="article-list-header">
+    <span>Today's Articles</span>
+    <button class="view-btn">View All Articles</button>
+  </div>
+  <div *ngIf="articles.length === 0" class="no-articles">
+    <div class="loading-spinner"></div>
+    <span class="news-emoji">📰</span>
+    <p>Fetching today’s headlines, just a moment...</p>
+  </div>
+  <div *ngIf="articles.length > 0">
+    <app-article-row
+      *ngFor="let article of articles"
+      [article]="article"
+      (save)="onSaveArticle($event)"
+      (validateWithAI)="onValidateWithAI($event)"
+      (approve)="onApproveArticle($event)"
+      (reject)="onRejectArticle($event)"
+      (rephrase)="onRephraseArticle($event)">
     </app-article-row>
   </div>
 </div>

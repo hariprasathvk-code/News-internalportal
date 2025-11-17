@@ -34,10 +34,47 @@
     }
   }
 
+  // .no-articles {
+  //   text-align: center;
+  //   padding: 20px;
+  //   color: #888;
+  //   font-size: 1rem;
+  // }
+
+
   .no-articles {
-    text-align: center;
-    padding: 20px;
-    color: #888;
-    font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 0 8px 0;
+  color: #888;
+  font-size: 1rem;
+
+  .loading-spinner {
+    margin-bottom: 13px;
+    width: 36px;
+    height: 36px;
+    border: 3px solid #eceeff;
+    border-top: 3px solid #4b51fa;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
   }
+
+  .news-emoji {
+    font-size: 2.1rem;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
 }

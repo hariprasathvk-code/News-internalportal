@@ -68,6 +68,10 @@
     </button>
   </div>
   <div *ngIf="selectedCategory">
+    <div *ngIf="selectedCategoryNews.length === 0" class="category-news-loading">
+      <div class="loading-spinner"></div>
+      <p>Loading {{ getCategoryLabel(selectedCategory) }} news.....</p>
+    </div>
     <div class="news-card-row">
       <div class="news-report-card" *ngFor="let news of selectedCategoryNews">
         <div class="media-wrapper">

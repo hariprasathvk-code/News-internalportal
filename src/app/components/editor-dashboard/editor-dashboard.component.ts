@@ -133,6 +133,13 @@ onSelectCategory(categoryId: number) {
     error: () => this.selectedCategoryNews = []
   });
 }
+
+getCategoryLabel(id: number): string {
+  const cat = this.categories.find(c => c.value === id);
+  return cat ? cat.label : '';
+}
+
+
  
   checkAllWithAI() {
     if (this.isValidatingAll) { return; }
