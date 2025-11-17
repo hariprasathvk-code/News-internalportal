@@ -32,3 +32,39 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+// Success Snackbar
+.success-snackbar {
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: #4caf50;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+}
+
+// Error Snackbar
+.error-snackbar {
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: #f44336;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+}
+
+// Warning Snackbar
+.warning-snackbar {
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: #ff9800;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+}
+
+// Info Snackbar
+.info-snackbar {
+  .mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: #2196f3;
+    --mat-mdc-snack-bar-button-color: #fff;
+    --mdc-snackbar-supporting-text-color: #fff;
+  }
+}

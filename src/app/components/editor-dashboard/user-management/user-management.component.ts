@@ -1,17 +1,19 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserManagementService, Journalist, CreateJournalistRequest } from '../../../core/services/user-management.service';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatSnackBarModule],
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
   private userManagementService = inject(UserManagementService);
+  private snackBar = inject(MatSnackBar);
 
   journalists: Journalist[] = [];
   isLoading = false;
@@ -19,7 +21,6 @@ export class UserManagementComponent implements OnInit {
   editingJournalist: Journalist | null = null;
   selectedUserType: 'Journalist' | 'Advertiser' = 'Journalist';
 
-  // ✅ Store EditorId
   editorId: string = '';
 
   newJournalist: CreateJournalistRequest = {
@@ -82,12 +83,16 @@ export class UserManagementComponent implements OnInit {
         this.journalists = users || [];
         this.isLoading = false;
         console.log('✅ Loaded users:', users);
+        
+        if (users && users.length > 0) {
+          this.showSuccessSnackbar(`Loaded ${users.length} user(s)`);
+        }
       },
       error: (error) => {
         console.error('❌ Error loading users:', error);
         this.journalists = [];
         this.isLoading = false;
-        alert('Failed to load users: ' + (error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to load users: ' + (error.message || 'Unknown error'));
       }
     });
   }
@@ -130,19 +135,13 @@ export class UserManagementComponent implements OnInit {
         this.showAddForm = false;
         this.isLoading = false;
 
-        alert(
-          `✅ ${this.selectedUserType} created successfully!\n\n` +
-          `Name: ${response.journalist?.FullName}\n` +
-          `Email: ${response.journalist?.Email}\n` +
-          `User ID: ${response.journalist?.UserId}\n` +
-          `Generated Password: ${response.generatedPassword}\n\n` +
-          `Please save this password - it won't be shown again.`
-        );
+        // Show success snackbar
+        this.showSuccessSnackbar(`${this.selectedUserType} "${response.journalist?.FullName}" created successfully!`);
       },
       error: (error) => {
         console.error('❌ Create error:', error);
         this.isLoading = false;
-        alert('Failed to create user: ' + (error.error?.Message || error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to create user: ' + (error.error?.Message || error.message || 'Unknown error'));
       }
     });
   }
@@ -153,7 +152,6 @@ export class UserManagementComponent implements OnInit {
     this.showAddForm = false;
   }
 
-  // ✅ UPDATED: Pass EditorId
   saveEdit() {
     if (!this.editingJournalist) {
       console.warn('⚠️ No user being edited');
@@ -169,10 +167,9 @@ export class UserManagementComponent implements OnInit {
       UserRole: this.editingJournalist.UserRole
     };
 
-    // ✅ Pass EditorId, UserId, and data
     this.userManagementService.updateJournalist(
       this.editingJournalist.UserId,
-      this.editorId,  // Pass EditorId
+      this.editorId,
       updateData
     ).subscribe({
       next: (response) => {
@@ -185,13 +182,15 @@ export class UserManagementComponent implements OnInit {
 
         this.editingJournalist = null;
         this.isLoading = false;
-        alert('✅ User updated successfully!');
+        
+        // Show success snackbar
+        this.showSuccessSnackbar('User updated successfully!');
       },
       error: (error) => {
         console.error('❌ Update error:', error);
         console.error('❌ Error details:', error.error);
         this.isLoading = false;
-        alert('Failed to update user: ' + (error.error?.message || error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to update user: ' + (error.error?.message || error.message || 'Unknown error'));
       }
     });
   }
@@ -201,45 +200,62 @@ export class UserManagementComponent implements OnInit {
     this.editingJournalist = null;
   }
 
-  // ✅ UPDATED: Pass EditorId and UserRole
   deleteJournalist(journalist: Journalist) {
-    const confirmed = confirm(
-      `🗑️ Delete ${journalist.UserRole}?\n\n` +
-      `Name: ${journalist.FullName}\n` +
-      `Email: ${journalist.Email}\n\n` +
-      `This action cannot be undone.`
-    );
-
-    if (!confirmed) {
-      console.log('❌ Delete cancelled');
-      return;
+  // Show snackbar with Undo option
+  const snackBarRef = this.snackBar.open(
+    `🗑️ Delete ${journalist.UserRole} "${journalist.FullName}"?`,
+    'Confirm Delete',
+    {
+      duration: 10000, // 10 seconds to confirm
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['delete-confirm-snackbar']
     }
+  );
 
-    this.isLoading = true;
-    console.log('🗑️ Deleting user:', journalist.UserId);
+  // Wait for user action
+  snackBarRef.onAction().subscribe(() => {
+    // User clicked "Confirm Delete"
+    this.performDelete(journalist);
+  });
 
-    // ✅ Pass UserId, EditorId, and UserRole
-    this.userManagementService.deleteJournalist(
-      journalist.UserId,
-      this.editorId,  // Pass EditorId
-      journalist.UserRole  // Pass UserRole
-    ).subscribe({
-      next: () => {
-        console.log('✅ User deleted');
-        
-        this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
-        
-        this.isLoading = false;
-        alert('✅ User deleted successfully!');
-      },
-      error: (error) => {
-        console.error('❌ Delete error:', error);
-        console.error('❌ Error details:', error.error);
-        this.isLoading = false;
-        alert('Failed to delete user: ' + (error.error?.message || error.message || 'Unknown error'));
-      }
-    });
-  }
+  // Auto-cancel if dismissed without action
+  snackBarRef.afterDismissed().subscribe(info => {
+    if (!info.dismissedByAction) {
+      console.log('❌ Delete cancelled');
+      this.showInfoSnackbar('Delete cancelled');
+    }
+  });
+}
+
+private performDelete(journalist: Journalist) {
+  this.isLoading = true;
+  console.log('🗑️ Deleting user:', journalist.UserId);
+
+  this.userManagementService.deleteJournalist(
+    journalist.UserId,
+    this.editorId,
+    journalist.UserRole
+  ).subscribe({
+    next: () => {
+      console.log('✅ User deleted');
+      
+      this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
+      
+      this.isLoading = false;
+      
+      // Show success snackbar
+      this.showSuccessSnackbar(`User "${journalist.FullName}" deleted successfully`);
+    },
+    error: (error) => {
+      console.error('❌ Delete error:', error);
+      console.error('❌ Error details:', error.error);
+      this.isLoading = false;
+      this.showErrorSnackbar('Failed to delete user: ' + (error.error?.message || error.message || 'Unknown error'));
+    }
+  });
+}
+
 
   closePasswordModal() {
     console.log('🔒 Closing password modal');
@@ -256,33 +272,33 @@ export class UserManagementComponent implements OnInit {
     navigator.clipboard.writeText(this.generatedPassword).then(
       () => {
         console.log('✅ Password copied to clipboard');
-        alert('📋 Password copied to clipboard!');
+        this.showSuccessSnackbar('📋 Password copied to clipboard!');
       },
       (error) => {
         console.error('❌ Failed to copy password:', error);
-        alert('❌ Failed to copy password. Please copy manually.');
+        this.showErrorSnackbar('Failed to copy password. Please copy manually.');
       }
     );
   }
 
   private validateForm(): boolean {
     if (!this.newJournalist.Email || !this.newJournalist.Email.includes('@')) {
-      alert('❌ Please enter a valid email address');
+      this.showWarningSnackbar('Please enter a valid email address');
       return false;
     }
 
     if (!this.newJournalist.FullName || this.newJournalist.FullName.trim().length < 3) {
-      alert('❌ Please enter a full name (at least 3 characters)');
+      this.showWarningSnackbar('Please enter a full name (at least 3 characters)');
       return false;
     }
 
     if (!this.newJournalist.PhoneNumber || this.newJournalist.PhoneNumber.length < 10) {
-      alert('❌ Please enter a valid phone number (at least 10 digits)');
+      this.showWarningSnackbar('Please enter a valid phone number (at least 10 digits)');
       return false;
     }
 
     if (!this.newJournalist.EditorId) {
-      alert('❌ Editor ID is missing. Please reload the page.');
+      this.showErrorSnackbar('Editor ID is missing. Please reload the page.');
       return false;
     }
 
@@ -300,5 +316,41 @@ export class UserManagementComponent implements OnInit {
     };
     console.log('🔄 Form reset');
   }
-}
 
+  // ✅ Snackbar helper methods
+  private showSuccessSnackbar(message: string) {
+    this.snackBar.open('✅ ' + message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar']
+    });
+  }
+
+  private showErrorSnackbar(message: string) {
+    this.snackBar.open('❌ ' + message, 'Close', {
+      duration: 7000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['error-snackbar']
+    });
+  }
+
+  private showWarningSnackbar(message: string) {
+    this.snackBar.open('⚠️ ' + message, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['warning-snackbar']
+    });
+  }
+
+  private showInfoSnackbar(message: string) {
+    this.snackBar.open('ℹ️ ' + message, 'Close', {
+      duration: 4000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: ['info-snackbar']
+    });
+  }
+}
