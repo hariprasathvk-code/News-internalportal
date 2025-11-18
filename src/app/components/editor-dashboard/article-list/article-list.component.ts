@@ -16,7 +16,7 @@ import { NewsApiService } from '../../../core/services/news-api.service';
 })
 export class ArticleListComponent {
   @Input() articles: ArticleDetail[] = [];
-  
+ 
   @Output() approveArticle = new EventEmitter<ArticleDetail>();
   @Output() rejectArticle = new EventEmitter<ArticleDetail>();
   @Output() validateArticle = new EventEmitter<ArticleDetail>();

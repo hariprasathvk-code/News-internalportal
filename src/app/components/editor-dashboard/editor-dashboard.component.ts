@@ -270,7 +270,7 @@ getCategoryLabel(id: number): string {
       },
       error: (error) => {
         console.error('❌ Approve error:', error);
-        this.snackBar.open(`❌ Approval Failed: ${error.message}`, 'Close', { duration: 6000 });
+        this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
       }
     });
   }
@@ -293,7 +293,7 @@ getCategoryLabel(id: number): string {
         },
         error: (error) => {
           console.error('❌ Reject error:', error);
-          this.snackBar.open(`❌ Rejection Failed: ${error.message}`, 'Close', { duration: 5000 });
+          this.snackBar.open(`❌ Rejection Failed`, 'Close', { duration: 5000 });
         }
       });
     });

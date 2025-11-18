@@ -325,64 +325,135 @@ export class NewsFormComponent implements OnInit {
     return this.newsForm.controls;
   }
 
-  async onSubmit(): Promise<void> {
-    this.submitted = true;
-    this.errorMessage = '';
-    this.successMessage = '';
+  // async onSubmit(): Promise<void> {
+  //   this.submitted = true;
+  //   this.errorMessage = '';
+  //   this.successMessage = '';
 
-    if (this.newsForm.invalid) {
-      this.errorMessage = 'Please fill all required fields correctly';
-      return;
-    }
+  //   if (this.newsForm.invalid) {
+  //     this.errorMessage = 'Please fill all required fields correctly';
+  //     return;
+  //   }
 
-    this.loading = true;
+  //   this.loading = true;
 
-    try {
-      const mediaFiles = await this.fileUploadService.convertFilesToMediaFiles(
-        this.selectedFilesAsFileList()
-      );
+  //   try {
+  //     const mediaFiles = await this.fileUploadService.convertFilesToMediaFiles(
+  //       this.selectedFilesAsFileList()
+  //     );
 
-      const newsSubmission: NewsSubmission = {
-        title: this.f['title'].value,
-        summary: this.f['summary'].value,
-        content: this.f['content'].value,
-        category: this.f['category'].value,
-        subCategory: this.f['subCategory'].value,
-        region: this.f['region'].value,
-        country: this.f['country'].value,
-        state: this.f['state'].value,
-        city: this.f['city'].value,
-        newsType: this.f['newsType'].value,
-        authorFullName: this.currentUser.FullName,
-        mediaFiles: mediaFiles
-      };
+  //     const newsSubmission: NewsSubmission = {
+  //       title: this.f['title'].value,
+  //       summary: this.f['summary'].value,
+  //       content: this.f['content'].value,
+  //       category: this.f['category'].value,
+  //       subCategory: this.f['subCategory'].value,
+  //       region: this.f['region'].value,
+  //       country: this.f['country'].value,
+  //       state: this.f['state'].value,
+  //       city: this.f['city'].value,
+  //       newsType: this.f['newsType'].value,
+  //       authorFullName: this.currentUser.FullName,
+  //       mediaFiles: mediaFiles
+  //     };
 
-      this.newsService.submitNews(newsSubmission, this.accessToken).subscribe({
-        next: (response) => {
-          this.loading = false;
-          this.successMessage = `News submitted successfully! NewsID: ${response.newsId}`;
+  //     this.newsService.submitNews(newsSubmission, this.accessToken).subscribe({
+  //       next: (response) => {
+  //         this.loading = false;
+  //         this.successMessage = `News submitted successfully! NewsID: ${response.newsId}`;
           
-          this.newsForm.reset();
-          this.selectedFiles = [];
-          this.selectedFilesPreview = [];
-          this.submitted = false;
+  //         this.newsForm.reset();
+  //         this.selectedFiles = [];
+  //         this.selectedFilesPreview = [];
+  //         this.submitted = false;
 
-          setTimeout(() => {
-            this.successMessage = '';
-          }, 5000);
-        },
-        error: (error) => {
-          this.loading = false;
-          this.errorMessage = error.error?.Message || 'Failed to submit news';
-          console.error('Error:', error);
-        }
-      });
-    } catch (error) {
-      this.loading = false;
-      this.errorMessage = 'Error processing files';
-      console.error('Error:', error);
-    }
+  //         setTimeout(() => {
+  //           this.successMessage = '';
+  //         }, 5000);
+  //       },
+  //       error: (error) => {
+  //         this.loading = false;
+  //         this.errorMessage = error.error?.Message || 'Failed to submit news';
+  //         console.error('Error:', error);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     this.loading = false;
+  //     this.errorMessage = 'Error processing files';
+  //     console.error('Error:', error);
+  //   }
+  // }
+
+
+  async onSubmit(): Promise<void> {
+  this.submitted = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+
+  if (this.newsForm.invalid) {
+    this.errorMessage = 'Please fill all required fields correctly';
+    return;
   }
+
+  this.loading = true;
+
+  try {
+    const mediaFiles = await this.fileUploadService.convertFilesToMediaFiles(
+      this.selectedFilesAsFileList()
+    );
+
+    const newsSubmission: NewsSubmission = {
+      title: this.f['title'].value,
+      summary: this.f['summary'].value,
+      content: this.f['content'].value,
+      category: this.f['category'].value,
+      subCategory: this.f['subCategory'].value,
+      region: this.f['region'].value,
+      country: this.f['country'].value,
+      state: this.f['state'].value,
+      city: this.f['city'].value,
+      newsType: this.f['newsType'].value,
+      authorFullName: this.currentUser.FullName,
+      mediaFiles: mediaFiles
+    };
+
+    // Submit to main API
+    this.newsService.submitNews(newsSubmission, this.accessToken).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.successMessage = `News submitted successfully! NewsID: ${response.newsId}`;
+        this.newsForm.reset();
+        this.selectedFiles = [];
+        this.selectedFilesPreview = [];
+        this.submitted = false;
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 5000);
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error.error?.Message || 'Failed to submit news';
+        console.error('Error:', error);
+      }
+    });
+
+    // Submit to audit API (no accessToken needed)
+    this.newsService.submitAuditNews(newsSubmission).subscribe({
+      next: (response) => {
+        // Optional: log or handle success, but don't block main form
+      },
+      error: (error) => {
+        // Optional: log or handle audit error, but don't block main form
+        console.error('Audit API Error:', error);
+      }
+    });
+  } catch (error) {
+    this.loading = false;
+    this.errorMessage = 'Error processing files';
+    console.error('Error:', error);
+  }
+}
+
 
   selectedFilesAsFileList(): FileList {
     const dataTransfer = new DataTransfer();
