@@ -4,19 +4,17 @@
     <p class="user-info">Logged in as: <strong>{{ currentUser?.FullName }}</strong></p>
   </div>
 
-  <!-- Success Message -->
   <div *ngIf="successMessage" class="alert alert-success">
     ✓ {{ successMessage }}
   </div>
 
-  <!-- Error Message -->
+
   <div *ngIf="errorMessage" class="alert alert-danger">
     ✗ {{ errorMessage }}
   </div>
 
   <form [formGroup]="newsForm" (ngSubmit)="onSubmit()" (click)="closeAllDropdowns()" class="news-form">
-    
-    <!-- News Type Selection with Autocomplete -->
+
     <div class="form-group">
       <label for="newsType">News Type *</label>
       <div class="autocomplete-container">
@@ -44,7 +42,6 @@
       </div>
     </div>
 
-    <!-- Title -->
     <div class="form-group">
       <label for="title">Title *</label>
       <input 
@@ -60,7 +57,6 @@
       </div>
     </div>
 
-    <!-- Summary -->
     <div class="form-group">
       <label for="summary">Summary *</label>
       <textarea 
@@ -76,7 +72,6 @@
       </div>
     </div>
 
-    <!-- Content -->
     <div class="form-group">
       <label for="content">Full Content *</label>
       <textarea 
@@ -92,7 +87,6 @@
       </div>
     </div>
 
-    <!-- Category with Autocomplete -->
     <div class="form-group">
       <label for="category">Category *</label>
       <div class="autocomplete-container">
@@ -120,7 +114,6 @@
       </div>
     </div>
 
-    <!-- Sub Category with Autocomplete -->
     <div class="form-group" *ngIf="f['category'].value">
       <label for="subCategory">Sub Category *</label>
       <div class="autocomplete-container">
@@ -148,11 +141,9 @@
       </div>
     </div>
 
-    <!-- Location Section -->
     <fieldset class="location-fieldset">
       <legend>📍 Location Details *</legend>
 
-      <!-- Region with Autocomplete -->
       <div class="form-group">
         <label for="region">Region *</label>
         <div class="autocomplete-container">
@@ -180,7 +171,7 @@
         </div>
       </div>
 
-      <!-- Country with Autocomplete -->
+
       <div class="form-group" *ngIf="f['region'].value">
         <label for="country">Country *</label>
         <div class="autocomplete-container">
@@ -265,7 +256,6 @@
       </div>
     </fieldset>
 
-    <!-- File Upload -->
     <div class="form-group">
       <label for="mediaFiles">📎 Upload Media Files (Max 5 files, 10MB each)</label>
       <input 

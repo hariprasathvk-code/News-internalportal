@@ -374,7 +374,7 @@ getCategoryLabel(id: number): string {
       },
       error: (error) => {
         console.error('❌ Approve error:', error);
-        this.snackBar.open(`❌ Approval Failed: ${error.message}`, 'Close', { duration: 6000 });
+        this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
       }
     });
   }

@@ -35,40 +35,45 @@ export const routes: Routes = [
         .then(m => m.EditorDashboardComponent),
     canActivate: [authGuard]
   },
-
   {
-  path: 'advertiser-dashboard',
-  loadComponent: () =>
-    import('./components/advertiser/advertiser-dashboard/advertiser-dashboard')
-      .then(m => m.AdvertiserDashboardComponent),
-  canActivate: [authGuard],
-  children: [
-    {
-      path: 'create-ad',
-      loadComponent: () =>
-        import('./components/advertiser/create-ad/create-ad')
-          .then(m => m.CreateAdComponent)
-    },
-    {
-      path: 'view-ads',
-      loadComponent: () =>
-        import('./components/advertiser/view-ads/view-ads')
-          .then(m => m.AdSubmissionListComponent)
-    },
-    {
-      path: 'view-billing',
-      loadComponent: () =>
-        import('./components/advertiser/view-billing/view-billing')
-          .then(m => m.AdBillingListComponent)
-    },
-    {
-      path: '', // default route inside dashboard
-      redirectTo: 'create-ad', // optional: can leave blank if you want an empty page first
-      pathMatch: 'full'
-    }
-  ]
-},
-
+    path: 'advertiser-dashboard',
+    loadComponent: () =>
+      import('./components/advertiser/advertiser-dashboard/advertiser-dashboard')
+        .then(m => m.AdvertiserDashboardComponent),
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'create-ad',
+        loadComponent: () =>
+          import('./components/advertiser/create-ad/create-ad')
+            .then(m => m.CreateAdComponent)
+      },
+      {
+        path: 'view-ads',
+        loadComponent: () =>
+          import('./components/advertiser/view-ads/view-ads')
+            .then(m => m.AdSubmissionListComponent)
+      },
+      {
+        path: 'view-billing',
+        loadComponent: () =>
+          import('./components/advertiser/view-billing/view-billing')
+            .then(m => m.AdBillingListComponent)
+      },
+      {
+        path: '', // default route inside dashboard
+        redirectTo: 'create-ad', // optional
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: 'journalist-submissions',  // <-- Add submissions view route here
+    loadComponent: () =>
+      import('./components/journalist-submissions/journalist-submissions.component')
+        .then(m => m.JournalistSubmissionsComponent),
+    canActivate: [authGuard]
+  },
   {
     path: '',
     redirectTo: 'login',
@@ -79,4 +84,3 @@ export const routes: Routes = [
     redirectTo: 'login'
   }
 ];
-
