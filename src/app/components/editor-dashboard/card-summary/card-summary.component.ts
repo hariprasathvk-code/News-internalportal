@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./card-summary.component.scss']
 })
 export class CardSummaryComponent {
-  // ✅ OLD: Individual properties (keep these for backward compatibility)
+
   @Input() label!: string;
   @Input() value!: number;
   @Input() note = '';
