@@ -252,7 +252,7 @@ getCategoryLabel(id: number): string {
         },
         error: (error) => {
           this.isValidatingAll = false;
-          this.snackBar.open(`❌ AI Validation Failed: ${error.error?.message || error.message}`, 'Close', { duration: 6000 });
+          this.snackBar.open(`❌ AI Validation Failed`, 'Close', { duration: 6000 });
         }
       });
     });
@@ -292,7 +292,7 @@ getCategoryLabel(id: number): string {
         },
         error: (error) => {
           console.error('❌ Single article validation error:', error);
-          this.snackBar.open(`❌ Validation Failed: ${error.error?.message || error.message}`, 'Close', { duration: 6000 });
+          this.snackBar.open(`❌ Validation Failed:`, 'Close', { duration: 6000 });
         }
       });
     });
@@ -455,7 +455,7 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
       error: (error) => {
         console.error('❌ Reject error:', error);
         this.snackBar.open(
-          `❌ Rejection Failed: ${error.error?.message || error.message}`, 
+          `❌ Rejection Failed: `, 
           'Close', 
           {
             duration: 7000,

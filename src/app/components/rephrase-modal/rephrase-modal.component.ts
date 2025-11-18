@@ -101,7 +101,7 @@ export class RephraseModalComponent {
       },
       error: (error) => {
         console.error('❌ Rephrasing error:', error);
-        this.snackBar.open('Failed to generate improvements: ' + (error.error?.message || error.message), 'Close', { duration: 6000 });
+        this.snackBar.open('Failed to generate improvements ', 'Close', { duration: 6000 });
         this.isGenerating = false;
         this.isProcessing = false;
       }
@@ -183,7 +183,7 @@ export class RephraseModalComponent {
       },
       error: (error) => {
         console.error('❌ Update error:', error);
-        this.snackBar.open('Failed to update article: ' + (error.error?.message || error.message), 'Close', { duration: 6000 });
+        this.snackBar.open('Failed to update article: ' , 'Close', { duration: 6000 });
         this.isProcessing = false;
       }
     });

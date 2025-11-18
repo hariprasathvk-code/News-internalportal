@@ -57,7 +57,7 @@ export class LoginComponent {
         this.isLoading = false;
         
         if (!response.Success) {
-          this.errorMessage = response.Message || 'Login failed';
+          this.errorMessage = 'Login failed';
           return;
         }
         
@@ -91,7 +91,7 @@ export class LoginComponent {
         } else if (error.status === 403) {
           this.errorMessage = 'Access forbidden. Please check your credentials.';
         } else {
-          this.errorMessage = error.error?.Message || error.message || 'Login failed. Please try again.';
+          this.errorMessage = 'Login failed. Please try again.';
         }
       }
     });
