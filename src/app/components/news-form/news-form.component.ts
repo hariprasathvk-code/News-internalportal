@@ -23,6 +23,7 @@ export class NewsFormComponent implements OnInit {
   loading = false;
   successMessage: string = '';
   errorMessage: string = '';
+  confirmSubmission: boolean = false;
 
   // All data
   allRegions: Region[] = [];
@@ -320,6 +321,9 @@ export class NewsFormComponent implements OnInit {
     this.selectedFiles.splice(index, 1);
     this.selectedFilesPreview.splice(index, 1);
   }
+  get isSubmitDisabled(): boolean {
+    return !this.confirmSubmission || this.newsForm.invalid || this.loading;
+  }
 
   get f() {
     return this.newsForm.controls;
@@ -385,7 +389,13 @@ export class NewsFormComponent implements OnInit {
   // }
 
 
-  async onSubmit(): Promise<void> {
+async onSubmit(): Promise<void> {
+  // ✅ ADD THIS CHECK AT THE VERY BEGINNING
+  if (!this.confirmSubmission) {
+    this.errorMessage = 'Please confirm that you have reviewed all the information before submitting.';
+    return;
+  }
+
   this.submitted = true;
   this.errorMessage = '';
   this.successMessage = '';
@@ -426,6 +436,10 @@ export class NewsFormComponent implements OnInit {
         this.selectedFiles = [];
         this.selectedFilesPreview = [];
         this.submitted = false;
+        
+        // ✅ ADD THIS LINE TO RESET CHECKBOX AFTER SUCCESS
+        this.confirmSubmission = false;
+        
         setTimeout(() => {
           this.successMessage = '';
         }, 5000);
@@ -440,10 +454,9 @@ export class NewsFormComponent implements OnInit {
     // Submit to audit API (no accessToken needed)
     this.newsService.submitAuditNews(newsSubmission).subscribe({
       next: (response) => {
-        // Optional: log or handle success, but don't block main form
+        // Optional: log or handle success
       },
       error: (error) => {
-        // Optional: log or handle audit error, but don't block main form
         console.error('Audit API Error:', error);
       }
     });

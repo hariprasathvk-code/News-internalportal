@@ -346,4 +346,55 @@ textarea.form-control {
     margin-top: 5px;
   }
 }
+// Confirmation Section
+.confirmation-section {
+  margin: 24px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.confirmation-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  input[type="checkbox"] {
+    margin-top: 4px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #007bff;
+    
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  label {
+    cursor: pointer;
+    flex: 1;
+    user-select: none;
+
+    .checkbox-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #495057;
+      font-weight: 500;
+
+      &:hover {
+        color: #007bff;
+      }
+    }
+  }
+}
+
+// Update disabled button style
+.btn-primary:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
 
