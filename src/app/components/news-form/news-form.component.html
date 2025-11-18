@@ -15,7 +15,7 @@
 
   <form [formGroup]="newsForm" (ngSubmit)="onSubmit()" (click)="closeAllDropdowns()" class="news-form">
 
-    <div class="form-group">
+    <!-- <div class="form-group">
       <label for="newsType">News Type *</label>
       <div class="autocomplete-container">
         <input 
@@ -40,7 +40,22 @@
       <div *ngIf="submitted && f['newsType'].errors" class="text-danger">
         News Type is required
       </div>
-    </div>
+    </div> -->
+    <div class="form-group">
+  <label for="newsType">News Type *</label>
+  <select
+    id="newsType"
+    formControlName="newsType"
+    class="form-control"
+  >
+    <option value="" disabled selected>Select News Type</option>
+    <option *ngFor="let type of filteredNewsTypes" [value]="type.name">{{ type.name }}</option>
+  </select>
+  <div *ngIf="submitted && f['newsType'].errors" class="text-danger">
+    News Type is required
+  </div>
+</div>
+
 
     <div class="form-group">
       <label for="title">Title *</label>
@@ -87,32 +102,24 @@
       </div>
     </div>
 
+
     <div class="form-group">
       <label for="category">Category *</label>
-      <div class="autocomplete-container">
-        <input 
-          type="text" 
-          id="category"
-          placeholder="Search or type category..."
-          [(ngModel)]="categorySearch"
-          (ngModelChange)="onCategorySearch($event)"
-          (focus)="showCategoryDropdown = true"
-          (click)="$event.stopPropagation()"
-          formControlName="category"
-          class="form-control"
-        >
-        <div *ngIf="showCategoryDropdown && filteredCategories.length > 0" class="dropdown-menu">
-          <div *ngFor="let cat of filteredCategories" 
-               (click)="selectCategory(cat)"
-               class="dropdown-item">
-            {{ cat.name }}
-          </div>
-        </div>
-      </div>
+      <select 
+        id="category" 
+        formControlName="category" 
+        class="form-control"
+        (change)="onCategorySelected()"
+      >
+        <option value="" disabled selected>Select Category</option>
+        <option *ngFor="let cat of filteredCategories" [value]="cat.name">{{ cat.name }}</option>
+      </select>
       <div *ngIf="submitted && f['category'].errors" class="text-danger">
         Category is required
       </div>
     </div>
+
+
 
     <div class="form-group" *ngIf="f['category'].value">
       <label for="subCategory">Sub Category *</label>
@@ -290,7 +297,8 @@
         </div>
       </div>
     </div>
-<!-- ✅ ADD THIS NEW CONFIRMATION SECTION HERE -->
+
+    <!-- ✅ ADD THIS NEW CONFIRMATION SECTION HERE -->
     <div class="confirmation-section">
       <div class="confirmation-checkbox">
         <input 
@@ -305,9 +313,10 @@
         </label>
       </div>
     </div>
+
     <!-- Action Buttons -->
     <div class="form-actions">
-           <button 
+      <button 
         type="submit" 
         class="btn btn-primary"
         [disabled]="isSubmitDisabled"
@@ -315,7 +324,6 @@
         <span *ngIf="!loading">📤 Submit News</span>
         <span *ngIf="loading">⏳ Submitting...</span>
       </button>
-
       <button 
         type="button" 
         (click)="resetForm()"

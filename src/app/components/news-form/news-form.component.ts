@@ -223,24 +223,25 @@ export class NewsFormComponent implements OnInit {
   }
 
   // ============ CATEGORY HANDLERS ============
-  onCategorySearch(term: string): void {
-    this.categorySearch = term;
-    this.filteredCategories = this.locationService.filterItems(this.allCategories, term, 'name');
-    this.showCategoryDropdown = true;
-  }
+  onCategorySelected() {
+  const categoryName = this.newsForm.get('category')?.value;
+  
+  if (!categoryName) return;
+  
+  this.newsForm.patchValue({ subCategory: '' });
+  this.subCategorySearch = '';
 
-  selectCategory(category: Category): void {
-    this.newsForm.patchValue({ category: category.name, subCategory: '' });
-    this.categorySearch = category.name;
-    this.showCategoryDropdown = false;
-    this.subCategorySearch = '';
-
-    // Load subcategories for this category
-    this.locationService.getSubCategories(category.id).subscribe(data => {
+  const selectedCat = this.allCategories.find(cat => cat.name === categoryName);
+  if (selectedCat) {
+    this.locationService.getSubCategories(selectedCat.id).subscribe(data => {
       this.allSubCategories = data;
       this.filteredSubCategories = data;
     });
+  } else {
+    this.allSubCategories = [];
+    this.filteredSubCategories = [];
   }
+}
 
   // ============ SUBCATEGORY HANDLERS ============
   onSubCategorySearch(term: string): void {
