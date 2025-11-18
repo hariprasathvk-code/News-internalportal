@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
-
 import { AdBilling } from '../../../core/models/ad-billing.model';
-
 import { AdBillingService } from '../../../core/services/adbilling-api.service';
  
 @Component({
