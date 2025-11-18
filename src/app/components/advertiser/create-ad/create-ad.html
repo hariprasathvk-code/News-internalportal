@@ -40,11 +40,22 @@
     <label>Media Upload *</label>
     <input type="file" accept="image/*" (change)="onFileSelected($event)" required />
 
-    <label>Start Time *</label>
+    <!-- <label>Start Time *</label>
     <input type="datetime-local" name="StartTime" [(ngModel)]="ad.StartTime" required />
 
     <label>End Time *</label>
-    <input type="datetime-local" name="EndTime" [(ngModel)]="ad.EndTime" required />
+    <input type="datetime-local" name="EndTime" [(ngModel)]="ad.EndTime" required /> -->
+<input type="datetime-local"
+       name="StartTime"
+       [(ngModel)]="ad.StartTime"
+       [min]="minDateTime"
+       required />
+
+<input type="datetime-local"
+       name="EndTime"
+       [(ngModel)]="ad.EndTime"
+       [min]="ad.StartTime || minDateTime"
+       required />
 
     <label>
       <input type="checkbox" name="Activated" [(ngModel)]="ad.Activated" />
