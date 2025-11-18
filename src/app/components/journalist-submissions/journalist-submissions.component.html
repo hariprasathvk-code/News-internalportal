@@ -230,7 +230,7 @@
 </div> -->
 <div class="article-feed-bg">
   <button class="article-back-btn" (click)="goBack()">
-    <mat-icon inline>arrow_back</mat-icon> Back to Dashboard
+    <mat-icon inline>arrow_back</mat-icon> Back 
   </button>
 
   <h1 class="article-feed-title">Your Submitted Articles</h1>
@@ -248,7 +248,18 @@
 
     <div class="article-main-col">
       <div class="article-title-row">
-        <div class="article-title">{{ article.Title }}</div>
+        <ng-container *ngIf="!isEditingArticle(article)">
+          <div class="article-title">{{ article.Title }}</div>
+        </ng-container>
+        <ng-container *ngIf="isEditingArticle(article)">
+          <input 
+            class="edit-title-input" 
+            [(ngModel)]="article.Title" 
+            [disabled]="savingArticleId === article.NewsId"
+            maxlength="120"
+            placeholder="Title"
+          />
+        </ng-container>
         <div class="article-badges">
           <span *ngIf="article.Category" class="article-badge cat">{{ article.Category }}</span>
           <span *ngIf="article.SubCategory" class="article-badge subcat">{{ article.SubCategory }}</span>
@@ -258,29 +269,27 @@
           class="edit-btn"
           [disabled]="article.Status !== 'Submitted'"
           (click)="onEditClick(article)">
-          ✏️ Edit
+          <mat-icon inline>edit</mat-icon> Edit
         </button>
       </div>
 
-      <div class="article-meta-row">
+      <div class="article-meta-strip">
         <span><b>By:</b> {{ article.Author }}</span>
         <span><b>Type:</b> {{ article.NewsType }}</span>
         <span><b>ID:</b> <span class="article-id">{{ article.NewsId }}</span></span>
       </div>
-
-      <div class="article-meta-row">
+      <div class="article-meta-strip">
         <span><b>Region:</b> {{ article.Region }}</span>
         <span><b>Country:</b> {{ article.Country }}</span>
         <span><b>State:</b> {{ article.State }}</span>
         <span *ngIf="article.City"><b>City:</b> {{ article.City }}</span>
       </div>
-
-      <div class="article-date-row">
+      <div class="article-meta-strip date">
         <mat-icon inline>calendar_month</mat-icon>
-        {{ article.SubmittedDateTime | date:'mediumDate' }} {{ article.SubmittedDateTime | date:'shortTime' }}
+        <span>{{ article.SubmittedDateTime | date:'mediumDate' }} {{ article.SubmittedDateTime | date:'shortTime' }}</span>
       </div>
 
-      <!-- Summary field display -->
+      <!-- Summary -->
       <div class="article-field article-summary" *ngIf="!isEditingArticle(article)">
         <div class="label">Summary:</div>
         <div class="truncate">
@@ -295,13 +304,12 @@
           <ng-container *ngIf="article.Summary?.length <= 80">{{ article.Summary }}</ng-container>
         </div>
       </div>
-      <!-- Summary field edit mode -->
       <div class="article-field article-summary" *ngIf="isEditingArticle(article)">
         <label>Summary:</label>
         <textarea [(ngModel)]="article.Summary" rows="4" [disabled]="savingArticleId === article.NewsId"></textarea>
       </div>
 
-      <!-- Content field display -->
+      <!-- Content -->
       <div class="article-field article-content" *ngIf="!isEditingArticle(article)">
         <div class="label">Content:</div>
         <div class="truncate">
@@ -316,28 +324,27 @@
           <ng-container *ngIf="article.Content?.length <= 80">{{ article.Content }}</ng-container>
         </div>
       </div>
-      <!-- Content field edit mode -->
       <div class="article-field article-content" *ngIf="isEditingArticle(article)">
         <label>Content:</label>
         <textarea [(ngModel)]="article.Content" rows="6" [disabled]="savingArticleId === article.NewsId"></textarea>
       </div>
 
       <div *ngIf="isEditingArticle(article)" class="edit-actions">
-  <button 
-    class="pretty-btn save-btn"
-    (click)="saveArticle(article)"
-    [disabled]="savingArticleId === article.NewsId">
-    <mat-icon inline>save</mat-icon>
-    Save
-  </button>
-  <button 
-    class="pretty-btn cancel-btn"
-    (click)="cancelEdit()"
-    [disabled]="savingArticleId === article.NewsId">
-    <mat-icon inline>close</mat-icon>
-    Cancel
-  </button>
-</div>
+        <button 
+          class="pretty-btn save-btn"
+          (click)="saveArticle(article)"
+          [disabled]="savingArticleId === article.NewsId">
+          <mat-icon inline>save</mat-icon> Save
+        </button>
+        <button 
+          class="pretty-btn cancel-btn"
+          (click)="cancelEdit()"
+          [disabled]="savingArticleId === article.NewsId">
+          <mat-icon inline>close</mat-icon> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
 
   <div class="article-pagination" *ngIf="totalPages > 1">
     <button (click)="prevPage()" [disabled]="page === 1">&laquo; Prev</button>
