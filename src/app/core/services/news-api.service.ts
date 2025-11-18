@@ -111,6 +111,30 @@ updateArticleContent(newsId: string, submittedDate: number, data: any): Observab
 }
 
 
+// In NewsApiService
+
+updateAuditStatus(newsId: string, status: string): Observable<any> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  return this.http.put(
+    `${environment.auditNewsApiUrl}/${newsId}/status`, // path per your API Gateway setup
+    { NewsId: newsId, Status: status},
+    { headers }
+  ).pipe(
+    catchError((error) => {
+      if (error.status === 200 || error.status === 204) {
+        return of({ success: true });
+      }
+      throw error;
+    })
+  );
+}
+
+
+
 getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
   const token = localStorage.getItem('idToken'); 
   const headers = {

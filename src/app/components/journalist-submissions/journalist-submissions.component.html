@@ -228,47 +228,49 @@
     <button (click)="nextPage()" [disabled]="page === totalPages">Next &raquo;</button>
   </div>
 </div> -->
+
 <div class="article-feed-bg">
   <button class="article-back-btn" (click)="goBack()">
-    <mat-icon inline>arrow_back</mat-icon> Back 
+    <mat-icon inline>arrow_back</mat-icon> Back
   </button>
 
   <h1 class="article-feed-title">Your Submitted Articles</h1>
+
   <mat-spinner *ngIf="loading"></mat-spinner>
+
   <div *ngIf="errorMessage" class="article-error">{{ errorMessage }}</div>
+
   <div *ngIf="!loading && !pagedArticles.length" class="article-none">
     No submitted articles yet.
   </div>
 
+  <!-- ARTICLE LIST -->
   <div *ngFor="let article of pagedArticles" class="article-card">
+
     <div class="article-image-col">
-      <img *ngIf="article.MediaUrls?.length" [src]="article.MediaUrls[0]" class="article-img" alt="media" />
+      <img *ngIf="article.MediaUrls?.length"
+           [src]="article.MediaUrls[0]"
+           class="article-img"
+           alt="media" />
+
       <span *ngIf="!article.MediaUrls?.length" class="article-nomedia">No media</span>
     </div>
 
     <div class="article-main-col">
+
       <div class="article-title-row">
-        <ng-container *ngIf="!isEditingArticle(article)">
-          <div class="article-title">{{ article.Title }}</div>
-        </ng-container>
-        <ng-container *ngIf="isEditingArticle(article)">
-          <input 
-            class="edit-title-input" 
-            [(ngModel)]="article.Title" 
-            [disabled]="savingArticleId === article.NewsId"
-            maxlength="120"
-            placeholder="Title"
-          />
-        </ng-container>
+        <div class="article-title">{{ article.Title }}</div>
+
         <div class="article-badges">
           <span *ngIf="article.Category" class="article-badge cat">{{ article.Category }}</span>
           <span *ngIf="article.SubCategory" class="article-badge subcat">{{ article.SubCategory }}</span>
           <span class="article-badge status">{{ article.Status }}</span>
         </div>
+
         <button
           class="edit-btn"
           [disabled]="article.Status !== 'Submitted'"
-          (click)="onEditClick(article)">
+          (click)="openEditModal(article)">
           <mat-icon inline>edit</mat-icon> Edit
         </button>
       </div>
@@ -278,77 +280,94 @@
         <span><b>Type:</b> {{ article.NewsType }}</span>
         <span><b>ID:</b> <span class="article-id">{{ article.NewsId }}</span></span>
       </div>
+
       <div class="article-meta-strip">
         <span><b>Region:</b> {{ article.Region }}</span>
         <span><b>Country:</b> {{ article.Country }}</span>
         <span><b>State:</b> {{ article.State }}</span>
         <span *ngIf="article.City"><b>City:</b> {{ article.City }}</span>
       </div>
+
       <div class="article-meta-strip date">
         <mat-icon inline>calendar_month</mat-icon>
-        <span>{{ article.SubmittedDateTime | date:'mediumDate' }} {{ article.SubmittedDateTime | date:'shortTime' }}</span>
+        <span>
+          {{ article.SubmittedDateTime | date:'mediumDate' }}
+          {{ article.SubmittedDateTime | date:'shortTime' }}
+        </span>
       </div>
 
-      <!-- Summary -->
-      <div class="article-field article-summary" *ngIf="!isEditingArticle(article)">
+      <!-- SUMMARY -->
+      <div class="article-field article-summary">
         <div class="label">Summary:</div>
         <div class="truncate">
           <ng-container *ngIf="article.Summary?.length > 80 && !expandedSummary[article.NewsId]">
             {{ article.Summary | slice:0:80 }}...
             <a class="see-link" (click)="toggleSummary(article)">See more</a>
           </ng-container>
+
           <ng-container *ngIf="expandedSummary[article.NewsId]">
             {{ article.Summary }}
             <a class="see-link" (click)="toggleSummary(article)">See less</a>
           </ng-container>
-          <ng-container *ngIf="article.Summary?.length <= 80">{{ article.Summary }}</ng-container>
+
+          <ng-container *ngIf="article.Summary?.length <= 80">
+            {{ article.Summary }}
+          </ng-container>
         </div>
       </div>
-      <div class="article-field article-summary" *ngIf="isEditingArticle(article)">
-        <label>Summary:</label>
-        <textarea [(ngModel)]="article.Summary" rows="4" [disabled]="savingArticleId === article.NewsId"></textarea>
-      </div>
 
-      <!-- Content -->
-      <div class="article-field article-content" *ngIf="!isEditingArticle(article)">
+      <!-- CONTENT -->
+      <div class="article-field article-content">
         <div class="label">Content:</div>
         <div class="truncate">
           <ng-container *ngIf="article.Content?.length > 80 && !expandedContent[article.NewsId]">
             {{ article.Content | slice:0:80 }}...
             <a class="see-link" (click)="toggleContent(article)">See more</a>
           </ng-container>
+
           <ng-container *ngIf="expandedContent[article.NewsId]">
             {{ article.Content }}
             <a class="see-link" (click)="toggleContent(article)">See less</a>
           </ng-container>
-          <ng-container *ngIf="article.Content?.length <= 80">{{ article.Content }}</ng-container>
+
+          <ng-container *ngIf="article.Content?.length <= 80">
+            {{ article.Content }}
+          </ng-container>
         </div>
       </div>
-      <div class="article-field article-content" *ngIf="isEditingArticle(article)">
-        <label>Content:</label>
-        <textarea [(ngModel)]="article.Content" rows="6" [disabled]="savingArticleId === article.NewsId"></textarea>
-      </div>
 
-      <div *ngIf="isEditingArticle(article)" class="edit-actions">
-        <button 
-          class="pretty-btn save-btn"
-          (click)="saveArticle(article)"
-          [disabled]="savingArticleId === article.NewsId">
-          <mat-icon inline>save</mat-icon> Save
-        </button>
-        <button 
-          class="pretty-btn cancel-btn"
-          (click)="cancelEdit()"
-          [disabled]="savingArticleId === article.NewsId">
-          <mat-icon inline>close</mat-icon> Cancel
-        </button>
-      </div>
     </div>
   </div>
 
+  <!-- PAGINATION -->
   <div class="article-pagination" *ngIf="totalPages > 1">
     <button (click)="prevPage()" [disabled]="page === 1">&laquo; Prev</button>
     <span>Page {{ page }} / {{ totalPages }}</span>
     <button (click)="nextPage()" [disabled]="page === totalPages">Next &raquo;</button>
+  </div>
+</div>
+
+<!-- =======================
+     EDIT MODAL
+======================= -->
+<div class="modal-bg" *ngIf="isEditModalOpen">
+  <div class="modal-box">
+
+    <h2>Edit Article</h2>
+
+    <label>Title:</label>
+    <input type="text" [(ngModel)]="editingArticleData.Title" />
+
+    <label>Summary:</label>
+    <textarea rows="4" [(ngModel)]="editingArticleData.Summary"></textarea>
+
+    <label>Content:</label>
+    <textarea rows="8" [(ngModel)]="editingArticleData.Content"></textarea>
+
+    <div class="modal-actions">
+      <button class="save-btn" (click)="saveArticle()">Save</button>
+      <button class="cancel-btn" (click)="closeEditModal()">Cancel</button>
+    </div>
+
   </div>
 </div>

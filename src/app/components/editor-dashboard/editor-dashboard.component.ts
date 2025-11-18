@@ -253,28 +253,48 @@ getCategoryLabel(id: number): string {
     });
   }
  
-  private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-    console.log('📤 Calling approve API with priority & lifecycle...');
-    this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-      next: (response) => {
-        console.log('✅ Article approved successfully:', response);
+  // private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+  //   console.log('📤 Calling approve API with priority & lifecycle...');
+  //   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
+  //     next: (response) => {
+  //       console.log('✅ Article approved successfully:', response);
  
-        this.snackBar.open(`
-          ✅ Article Approved Successfully!
-          Title: ${article.Title}
-          Priority: ${priority}
-          Lifecycle: ${lifecycle} minutes
-        `, 'Close', { duration: 6000 });
+  //       this.snackBar.open(`
+  //         ✅ Article Approved Successfully!
+  //         Title: ${article.Title}
+  //         Priority: ${priority}
+  //         Lifecycle: ${lifecycle} minutes
+  //       `, 'Close', { duration: 6000 });
  
-        this.loadSubmittedArticles();
-      },
-      error: (error) => {
-        console.error('❌ Approve error:', error);
-        this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
-      }
-    });
-  }
- 
+  //       this.loadSubmittedArticles();
+  //     },
+  //     error: (error) => {
+  //       console.error('❌ Approve error:', error);
+  //       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
+  //     }
+  //   });
+  // }
+ private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+  console.log('📤 Calling approve API with priority & lifecycle...');
+  this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
+    next: (response) => {
+      this.newsApi.updateAuditStatus(article.NewsId, 'Approved').subscribe({
+        next: () => {
+          this.snackBar.open(`✅ Article Approved & Synced with Audit Table!`, 'Close', { duration: 6000 });
+          this.loadSubmittedArticles();
+        },
+        error: () => {
+          this.snackBar.open(`✅ Article Approved, ❌ Audit Table NOT updated!`, 'Close', { duration: 6000 });
+        }
+      });
+    },
+    error: (error) => {
+      console.error('❌ Approve error:', error);
+      this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
+    }
+  });
+}
+
   onRejectArticle(article: ArticleDetail) {
     console.log('❌ Rejecting article:', article.NewsId);
  
