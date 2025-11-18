@@ -57,7 +57,7 @@ export class EditorDashboardComponent implements OnInit {
     { label: 'Total News', value: 0, note: 'All articles', change: 0 },
     { label: 'Active Ads', value: 0, note: 'Running campaigns', change: 0 },
     { label: 'Pending Reviews', value: 0, note: 'Awaiting approval', change: 0 },
-    { label: 'Published Today', value: 0, note: 'Live articles', change: 0 }
+    //{ label: 'Published Today', value: 0, note: 'Live articles', change: 0 }
   ];
 
   categories = [
@@ -109,41 +109,6 @@ export class EditorDashboardComponent implements OnInit {
     }
   }
 
-//   loadSubmittedArticles() {
-//     this.newsApi.getSubmittedArticles().subscribe({
-//       next: (data) => {
-//         console.log('📰 Articles loaded:', data);
-//         this.articles = data;
-//         this.summaryCards[0].value = data.length || 0;
-//       },
-//       error: (error) => {
-//         console.error('❌ Error loading articles:', error);
-//       }
-//     });
-//   }
-
-// loadRejectedArticles() {
-//     this.isLoadingRejected = true; // ✅ Start loading
-    
-//     this.newsApi.getRejectedArticles().subscribe({
-//       next: (data) => {
-//         console.log('🗑️ Rejected articles loaded:', data);
-//         this.rejectedArticles = data;
-//         this.summaryCards[2].value = data.length || 0;
-//         this.isLoadingRejected = false; // ✅ Stop loading
-//       },
-//       error: (error) => {
-//         console.error('❌ Error loading rejected articles:', error);
-//         this.isLoadingRejected = false; // ✅ Stop loading on error
-//         this.snackBar.open('❌ Failed to load rejected articles', 'Close', {
-//           duration: 5000,
-//           horizontalPosition: 'center',
-//           verticalPosition: 'bottom',
-//           panelClass: ['error-snackbar']
-//         });
-//       }
-//     });
-//   }
  
   loadAds() {
     this.adApi.getAds().subscribe({
@@ -357,73 +322,61 @@ getCategoryLabel(id: number): string {
     });
   }
  
-  private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-    console.log('📤 Calling approve API with priority & lifecycle...');
-    this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-      next: (response) => {
-        console.log('✅ Article approved successfully:', response);
- 
-        this.snackBar.open(`
-          ✅ Article Approved Successfully!
-          Title: ${article.Title}
-          Priority: ${priority}
-          Lifecycle: ${lifecycle} minutes
-        `, 'Close', { duration: 6000 });
- 
-        this.loadSubmittedArticles();
-      },
-      error: (error) => {
-        console.error('❌ Approve error:', error);
-        this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
-      }
-    });
-  }
- 
-  // // ✅ UPDATED: Handle rejection with remark
-  // onRejectArticle(data: { article: ArticleDetail; remark: string }) {
-  //   console.log('🗑️ Rejecting article:', data.article.NewsId);
-  //   console.log('📝 Rejection remark:', data.remark);
-
-  //   this.newsApi.rejectArticle(
-  //     data.article.NewsId, 
-  //     data.article.SubmittedDate, 
-  //     data.remark
-  //   ).subscribe({
+  // private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+  //   console.log('📤 Calling approve API with priority & lifecycle...');
+  //   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
   //     next: (response) => {
-  //       console.log('✅ Article rejected successfully:', response);
-        
-  //       // Remove from list
-  //       this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
-        
-  //       this.snackBar.open(
-  //         `✅ Article "${data.article.Title}" rejected successfully`, 
-  //         'Close', 
-  //         {
-  //           duration: 5000,
-  //           horizontalPosition: 'end',
-  //           verticalPosition: 'top',
-  //           panelClass: ['success-snackbar']
-  //         }
-  //       );
-        
+  //       console.log('✅ Article approved successfully:', response);
+ 
+  //       this.snackBar.open(`
+  //         ✅ Article Approved Successfully!
+  //         Title: ${article.Title}
+  //         Priority: ${priority}
+  //         Lifecycle: ${lifecycle} minutes
+  //       `, 'Close', { duration: 6000 });
+ 
   //       this.loadSubmittedArticles();
+        
   //     },
   //     error: (error) => {
-  //       console.error('❌ Reject error:', error);
-  //       this.snackBar.open(
-  //         `❌ Rejection Failed: ${error.error?.message || error.message}`, 
-  //         'Close', 
-  //         {
-  //           duration: 7000,
-  //           horizontalPosition: 'end',
-  //           verticalPosition: 'top',
-  //           panelClass: ['error-snackbar']
-  //         }
-  //       );
+  //       console.error('❌ Approve error:', error);
+  //       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
   //     }
   //   });
   // }
 
+  private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+  console.log('📤 Calling approve API with priority & lifecycle...');
+  this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
+    next: (response) => {
+      console.log('✅ Article approved successfully:', response);
+
+      // ✅ Remove approved article from list immediately (optimistic update)
+      this.articles = this.articles.filter(a => a.NewsId !== article.NewsId);
+      
+      // ✅ Update summary cards with new counts
+      this.updateSummaryCards(this.articles);
+
+      // Show success snackbar
+      this.snackBar.open(`
+        ✅ Article Approved Successfully!
+        Title: ${article.Title}
+        Priority: ${priority}
+        Lifecycle: ${lifecycle} minutes
+      `, 'Close', { duration: 6000 });
+
+      // Optional: Reload full list in background to sync
+      this.loadSubmittedArticles();
+    },
+    error: (error) => {
+      console.error('❌ Approve error:', error);
+      this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
+    }
+  });
+}
+
+ 
+  
   // ✅ ADD THIS METHOD HERE
   onRejectArticle(data: { article: ArticleDetail; remark: string }) {
     console.log('🗑️ Rejecting article:', data.article.NewsId);
