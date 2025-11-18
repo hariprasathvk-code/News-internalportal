@@ -135,7 +135,6 @@ export class UserManagementComponent implements OnInit {
         this.showAddForm = false;
         this.isLoading = false;
 
-        // Show success snackbar
         this.showSuccessSnackbar(`${this.selectedUserType} "${response.journalist?.FullName}" created successfully!`);
       },
       error: (error) => {
@@ -183,7 +182,6 @@ export class UserManagementComponent implements OnInit {
         this.editingJournalist = null;
         this.isLoading = false;
         
-        // Show success snackbar
         this.showSuccessSnackbar('User updated successfully!');
       },
       error: (error) => {
@@ -201,61 +199,55 @@ export class UserManagementComponent implements OnInit {
   }
 
   deleteJournalist(journalist: Journalist) {
-  // Show snackbar with Undo option
-  const snackBarRef = this.snackBar.open(
-    `🗑️ Delete ${journalist.UserRole} "${journalist.FullName}"?`,
-    'Confirm Delete',
-    {
-      duration: 10000, // 10 seconds to confirm
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
-      panelClass: ['delete-confirm-snackbar']
-    }
-  );
+    const snackBarRef = this.snackBar.open(
+      `🗑️ Delete ${journalist.UserRole} "${journalist.FullName}"?`,
+      'Confirm Delete',
+      {
+        duration: 10000,
+        horizontalPosition: 'center', // ✅ CHANGED
+        verticalPosition: 'bottom',   // ✅ CHANGED
+        panelClass: ['delete-confirm-snackbar']
+      }
+    );
 
-  // Wait for user action
-  snackBarRef.onAction().subscribe(() => {
-    // User clicked "Confirm Delete"
-    this.performDelete(journalist);
-  });
+    snackBarRef.onAction().subscribe(() => {
+      this.performDelete(journalist);
+    });
 
-  // Auto-cancel if dismissed without action
-  snackBarRef.afterDismissed().subscribe(info => {
-    if (!info.dismissedByAction) {
-      console.log('❌ Delete cancelled');
-      this.showInfoSnackbar('Delete cancelled');
-    }
-  });
-}
+    snackBarRef.afterDismissed().subscribe(info => {
+      if (!info.dismissedByAction) {
+        console.log('❌ Delete cancelled');
+        this.showInfoSnackbar('Delete cancelled');
+      }
+    });
+  }
 
-private performDelete(journalist: Journalist) {
-  this.isLoading = true;
-  console.log('🗑️ Deleting user:', journalist.UserId);
+  private performDelete(journalist: Journalist) {
+    this.isLoading = true;
+    console.log('🗑️ Deleting user:', journalist.UserId);
 
-  this.userManagementService.deleteJournalist(
-    journalist.UserId,
-    this.editorId,
-    journalist.UserRole
-  ).subscribe({
-    next: () => {
-      console.log('✅ User deleted');
-      
-      this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
-      
-      this.isLoading = false;
-      
-      // Show success snackbar
-      this.showSuccessSnackbar(`User "${journalist.FullName}" deleted successfully`);
-    },
-    error: (error) => {
-      console.error('❌ Delete error:', error);
-      console.error('❌ Error details:', error.error);
-      this.isLoading = false;
-      this.showErrorSnackbar('Failed to delete user: ' + (error.error?.message || error.message || 'Unknown error'));
-    }
-  });
-}
-
+    this.userManagementService.deleteJournalist(
+      journalist.UserId,
+      this.editorId,
+      journalist.UserRole
+    ).subscribe({
+      next: () => {
+        console.log('✅ User deleted');
+        
+        this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
+        
+        this.isLoading = false;
+        
+        this.showSuccessSnackbar(`User "${journalist.FullName}" deleted successfully`);
+      },
+      error: (error) => {
+        console.error('❌ Delete error:', error);
+        console.error('❌ Error details:', error.error);
+        this.isLoading = false;
+        this.showErrorSnackbar('Failed to delete user: ' + (error.error?.message || error.message || 'Unknown error'));
+      }
+    });
+  }
 
   closePasswordModal() {
     console.log('🔒 Closing password modal');
@@ -317,12 +309,12 @@ private performDelete(journalist: Journalist) {
     console.log('🔄 Form reset');
   }
 
-  // ✅ Snackbar helper methods
+  // ✅ Updated Snackbar helper methods - ALL BOTTOM CENTER
   private showSuccessSnackbar(message: string) {
     this.snackBar.open('✅ ' + message, 'Close', {
       duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      horizontalPosition: 'center', // ✅ CHANGED
+      verticalPosition: 'bottom',   // ✅ CHANGED
       panelClass: ['success-snackbar']
     });
   }
@@ -330,8 +322,8 @@ private performDelete(journalist: Journalist) {
   private showErrorSnackbar(message: string) {
     this.snackBar.open('❌ ' + message, 'Close', {
       duration: 7000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      horizontalPosition: 'center', // ✅ CHANGED
+      verticalPosition: 'bottom',   // ✅ CHANGED
       panelClass: ['error-snackbar']
     });
   }
@@ -339,8 +331,8 @@ private performDelete(journalist: Journalist) {
   private showWarningSnackbar(message: string) {
     this.snackBar.open('⚠️ ' + message, 'Close', {
       duration: 5000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      horizontalPosition: 'center', // ✅ CHANGED
+      verticalPosition: 'bottom',   // ✅ CHANGED
       panelClass: ['warning-snackbar']
     });
   }
@@ -348,8 +340,8 @@ private performDelete(journalist: Journalist) {
   private showInfoSnackbar(message: string) {
     this.snackBar.open('ℹ️ ' + message, 'Close', {
       duration: 4000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      horizontalPosition: 'center', // ✅ CHANGED
+      verticalPosition: 'bottom',   // ✅ CHANGED
       panelClass: ['info-snackbar']
     });
   }

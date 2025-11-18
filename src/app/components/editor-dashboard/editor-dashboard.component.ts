@@ -9,7 +9,7 @@ import { EditorSidebarComponent } from './editor-sidebar/editor-sidebar.componen
 import { CardSummaryComponent } from './card-summary/card-summary.component';
 import { ArticleListComponent } from './article-list/article-list.component';
 import { AdSubmissionListComponent } from './ad-submission-list/ad-submission-list.component';
-import { PriorityLifecycleDialogComponent } from './priority-lifecycle-dialog/priority-lifecycle-dialog.component'; // ✅ NEW
+import { PriorityLifecycleDialogComponent } from './priority-lifecycle-dialog/priority-lifecycle-dialog.component';
  
 import { NewsApiService } from '../../core/services/news-api.service';
 import { AdApiService } from '../../core/services/ad-api.service';
@@ -18,6 +18,7 @@ import { ArticleDetail } from '../../core/models/article-detail.model';
 import { AdSubmission } from '../../core/models/ad-submission.model';
 import { ReportsComponent } from '../reports/reports.component';
 import { UserManagementComponent } from './user-management/user-management.component';
+
  
 @Component({
   selector: 'app-editor-dashboard',
@@ -33,7 +34,8 @@ import { UserManagementComponent } from './user-management/user-management.compo
     AdSubmissionListComponent,
     UserManagementComponent,
     ReportsComponent,
-    AIInsightsComponent
+    AIInsightsComponent,
+    
   ],
   templateUrl: './editor-dashboard.component.html',
   styleUrls: ['./editor-dashboard.component.scss']
@@ -44,7 +46,7 @@ export class EditorDashboardComponent implements OnInit {
   private aiValidation = inject(AIValidationService);
   private router = inject(Router);
   private dialog = inject(MatDialog); 
-  private snackBar=inject(MatSnackBar);
+  private snackBar = inject(MatSnackBar);
  
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
@@ -58,37 +60,38 @@ export class EditorDashboardComponent implements OnInit {
     { label: 'Published Today', value: 0, note: 'Live articles', change: 0 }
   ];
 
-categories = [
-  { label: 'Sports', value: 1 },
-  { label: 'Politics', value: 2 },
-  { label: 'Entertainment', value: 3 },
-  { label: 'Defence', value: 4 },
-  { label: 'Finance', value: 5 },
-  { label: 'Regional', value: 6 }
-];
+  categories = [
+    { label: 'Sports', value: 1 },
+    { label: 'Politics', value: 2 },
+    { label: 'Entertainment', value: 3 },
+    { label: 'Defence', value: 4 },
+    { label: 'Finance', value: 5 },
+    { label: 'Regional', value: 6 }
+  ];
 
-selectedCategory: number | null = null; // Must be a number now!
-selectedCategoryNews: any[] = [];
+  selectedCategory: number | null = null;
+  selectedCategoryNews: any[] = [];
+  rejectedArticles: ArticleDetail[] = [];
+   isLoadingRejected = false; // ✅ ADD THIS
  
   ngOnInit() {
     this.loadSubmittedArticles();
   }
  
-onSelectCategory(categoryId: number) {
-  if (this.selectedCategory === categoryId) {
-    // Collapse news cards on re-click of same category
-    this.selectedCategory = null;
-    this.selectedCategoryNews = [];
-  } else {
-    this.selectedCategory = categoryId;
-    this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
-      next: (res) => this.selectedCategoryNews = res.news || [],
-      error: () => this.selectedCategoryNews = []
-    });
+  onSelectCategory(categoryId: number) {
+    if (this.selectedCategory === categoryId) {
+      this.selectedCategory = null;
+      this.selectedCategoryNews = [];
+    } else {
+      this.selectedCategory = categoryId;
+      this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
+        next: (res) => this.selectedCategoryNews = res.news || [],
+        error: () => this.selectedCategoryNews = []
+      });
+    }
   }
-}
 
- onSidebarSection(section: string) {
+  onSidebarSection(section: string) {
     this.selectedSection = section;
     console.log('📍 Section changed to:', section);
 
@@ -96,24 +99,51 @@ onSelectCategory(categoryId: number) {
       this.loadSubmittedArticles();
     } else if (section === 'ads') {
       this.loadAds();
-    }
+    } else if (section === 'rejected') {  // ✅ NEW
+    this.loadRejectedArticles();
+  }
+    
     else if (section === 'category') {
-    this.selectedCategory = null;
-    this.selectedCategoryNews = [];
+      this.selectedCategory = null;
+      this.selectedCategoryNews = [];
+    }
   }
-  }
-  loadSubmittedArticles() {
-    this.newsApi.getSubmittedArticles().subscribe({
-      next: (data) => {
-        console.log('📰 Articles loaded:', data);
-        this.articles = data;
-        this.summaryCards[0].value = data.length || 0;
-      },
-      error: (error) => {
-        console.error('❌ Error loading articles:', error);
-      }
-    });
-  }
+
+//   loadSubmittedArticles() {
+//     this.newsApi.getSubmittedArticles().subscribe({
+//       next: (data) => {
+//         console.log('📰 Articles loaded:', data);
+//         this.articles = data;
+//         this.summaryCards[0].value = data.length || 0;
+//       },
+//       error: (error) => {
+//         console.error('❌ Error loading articles:', error);
+//       }
+//     });
+//   }
+
+// loadRejectedArticles() {
+//     this.isLoadingRejected = true; // ✅ Start loading
+    
+//     this.newsApi.getRejectedArticles().subscribe({
+//       next: (data) => {
+//         console.log('🗑️ Rejected articles loaded:', data);
+//         this.rejectedArticles = data;
+//         this.summaryCards[2].value = data.length || 0;
+//         this.isLoadingRejected = false; // ✅ Stop loading
+//       },
+//       error: (error) => {
+//         console.error('❌ Error loading rejected articles:', error);
+//         this.isLoadingRejected = false; // ✅ Stop loading on error
+//         this.snackBar.open('❌ Failed to load rejected articles', 'Close', {
+//           duration: 5000,
+//           horizontalPosition: 'center',
+//           verticalPosition: 'bottom',
+//           panelClass: ['error-snackbar']
+//         });
+//       }
+//     });
+//   }
  
   loadAds() {
     this.adApi.getAds().subscribe({
@@ -127,12 +157,86 @@ onSelectCategory(categoryId: number) {
       }
     });
   }
+ // ✅ UPDATED: Load submitted articles with proper counts
+  loadSubmittedArticles() {
+    this.newsApi.getSubmittedArticles().subscribe({
+      next: (data) => {
+        console.log('📰 Articles loaded:', data);
+        this.articles = data;
+        
+        // ✅ Update summary cards with correct counts
+        this.updateSummaryCards(data);
+      },
+      error: (error) => {
+        console.error('❌ Error loading articles:', error);
+      }
+    });
+  }
+
+  // ✅ NEW: Update summary cards based on article data
+  updateSummaryCards(articles: ArticleDetail[]) {
+    // Total News (all articles in NewsArticles table)
+    this.summaryCards[0].value = articles.length || 0;
+
+    // Pending Reviews (articles with status 'Submitted')
+    const pendingCount = articles.filter(a => 
+      a.Status === 'Submitted' || 
+      a.Status === 'submitted' || 
+      !a.Status
+    ).length;
+    this.summaryCards[2].value = pendingCount;
+
+    // Published Today (articles approved today)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const publishedTodayCount = articles.filter(a => {
+      if (!a.ApprovedDate) return false;
+      const approvedDate = new Date(a.ApprovedDate);
+      approvedDate.setHours(0, 0, 0, 0);
+      return approvedDate.getTime() === today.getTime() && 
+             (a.Status === 'Approved' || a.Status === 'approved');
+    }).length;
+    this.summaryCards[3].value = publishedTodayCount;
+
+    console.log('📊 Summary updated:', {
+      total: this.summaryCards[0].value,
+      pending: this.summaryCards[2].value,
+      publishedToday: this.summaryCards[3].value
+    });
+  }
+
+  // ✅ UPDATED: Load rejected articles and update count
+  loadRejectedArticles() {
+    this.isLoadingRejected = true;
+    
+    this.newsApi.getRejectedArticles().subscribe({
+      next: (data) => {
+        console.log('🗑️ Rejected articles loaded:', data);
+        this.rejectedArticles = data;
+        // Don't update pending reviews card with rejected count
+        this.isLoadingRejected = false;
+      },
+      error: (error) => {
+        console.error('❌ Error loading rejected articles:', error);
+        this.isLoadingRejected = false;
+        this.snackBar.open('❌ Failed to load rejected articles', 'Close', {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
+  }
+
+  
+  
   loadCategoryNews(categoryId: number) {
-  this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
-    next: res => this.selectedCategoryNews = res.news,
-    error: () => this.selectedCategoryNews = []
-  });
-}
+    this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
+      next: res => this.selectedCategoryNews = res.news,
+      error: () => this.selectedCategoryNews = []
+    });
+  }
  
   checkAllWithAI() {
     if (this.isValidatingAll) { return; }
@@ -268,27 +372,92 @@ onSelectCategory(categoryId: number) {
     });
   }
  
-  onRejectArticle(article: ArticleDetail) {
-    console.log('❌ Rejecting article:', article.NewsId);
- 
-    const snackRef = this.snackBar.open(
-      `✗ Reject this article?\nTitle: ${article.Title}`,
-      'Confirm',
-      { duration: 10000 }
-    );
- 
-    snackRef.onAction().subscribe(() => {
-      this.newsApi.rejectArticle(article.NewsId, article.SubmittedDate).subscribe({
-        next: (response) => {
-          console.log('✅ Article rejected successfully:', response);
-          this.snackBar.open(`✓ Article Rejected\nTitle: ${article.Title}`, 'Close', { duration: 5000 });
-          this.loadSubmittedArticles();
-        },
-        error: (error) => {
-          console.error('❌ Reject error:', error);
-          this.snackBar.open(`❌ Rejection Failed: ${error.message}`, 'Close', { duration: 5000 });
-        }
-      });
+  // // ✅ UPDATED: Handle rejection with remark
+  // onRejectArticle(data: { article: ArticleDetail; remark: string }) {
+  //   console.log('🗑️ Rejecting article:', data.article.NewsId);
+  //   console.log('📝 Rejection remark:', data.remark);
+
+  //   this.newsApi.rejectArticle(
+  //     data.article.NewsId, 
+  //     data.article.SubmittedDate, 
+  //     data.remark
+  //   ).subscribe({
+  //     next: (response) => {
+  //       console.log('✅ Article rejected successfully:', response);
+        
+  //       // Remove from list
+  //       this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
+        
+  //       this.snackBar.open(
+  //         `✅ Article "${data.article.Title}" rejected successfully`, 
+  //         'Close', 
+  //         {
+  //           duration: 5000,
+  //           horizontalPosition: 'end',
+  //           verticalPosition: 'top',
+  //           panelClass: ['success-snackbar']
+  //         }
+  //       );
+        
+  //       this.loadSubmittedArticles();
+  //     },
+  //     error: (error) => {
+  //       console.error('❌ Reject error:', error);
+  //       this.snackBar.open(
+  //         `❌ Rejection Failed: ${error.error?.message || error.message}`, 
+  //         'Close', 
+  //         {
+  //           duration: 7000,
+  //           horizontalPosition: 'end',
+  //           verticalPosition: 'top',
+  //           panelClass: ['error-snackbar']
+  //         }
+  //       );
+  //     }
+  //   });
+  // }
+
+  // ✅ ADD THIS METHOD HERE
+  onRejectArticle(data: { article: ArticleDetail; remark: string }) {
+    console.log('🗑️ Rejecting article:', data.article.NewsId);
+    console.log('📝 Rejection remark:', data.remark);
+
+    this.newsApi.rejectArticle(
+      data.article.NewsId, 
+      data.article.SubmittedDate, 
+      data.remark
+    ).subscribe({
+      next: (response) => {
+        console.log('✅ Article rejected:', response);
+        
+        this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
+        
+        this.snackBar.open(
+          `✅ Article "${data.article.Title}" rejected successfully`, 
+          'Close', 
+          {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: ['success-snackbar']
+          }
+        );
+        
+        this.loadSubmittedArticles();
+      },
+      error: (error) => {
+        console.error('❌ Reject error:', error);
+        this.snackBar.open(
+          `❌ Rejection Failed: ${error.error?.message || error.message}`, 
+          'Close', 
+          {
+            duration: 7000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+            panelClass: ['error-snackbar']
+          }
+        );
+      }
     });
   }
  
@@ -310,7 +479,6 @@ onSelectCategory(categoryId: number) {
   }
  
   onImageError(event: any) {
-    event.target.src = 'assets/img/no-image.png'; // Provide a fallback image in your assets
+    event.target.src = 'assets/img/no-image.png';
   }
 }
- 

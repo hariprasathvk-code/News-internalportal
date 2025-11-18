@@ -78,6 +78,46 @@
         <span *ngIf="isRejecting">⏳ Rejecting...</span>
       </button>
       
+       <!-- ✅ Reject Overlay -->
+      <div *ngIf="showRejectOverlay" class="reject-overlay" (click)="closeRejectOverlay()">
+        <div class="reject-modal" (click)="$event.stopPropagation()">
+          <h3>🗑️ Reject Article</h3>
+          
+          <div class="article-info">
+            <p><strong>Title:</strong> {{ article.Title }}</p>
+            <p><strong>News ID:</strong> {{ article.NewsId }}</p>
+          </div>
+
+          <div class="remark-section">
+            <label for="rejectRemark">Rejection Reason <span class="required">*</span></label>
+            <textarea
+              id="rejectRemark"
+              [(ngModel)]="rejectRemark"
+              placeholder="Enter reason for rejection (minimum 10 characters)..."
+              rows="6"
+              class="remark-textarea"
+              [class.error]="showRemarkError"
+            ></textarea>
+            <div class="char-count">{{ rejectRemark.length }} / 500</div>
+            <p *ngIf="showRemarkError" class="error-msg">
+              ⚠️ Please enter at least 10 characters
+            </p>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-cancel" (click)="closeRejectOverlay()">
+              Cancel
+            </button>
+            <button 
+              class="btn-confirm-reject" 
+              (click)="confirmReject()"
+              [disabled]="rejectRemark.length < 10">
+              Reject Article
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- ✅ NEW: Check with AI button -->
       <button
         (click)="checkArticleWithAI(article)"

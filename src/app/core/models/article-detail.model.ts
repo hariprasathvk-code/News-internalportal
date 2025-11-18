@@ -15,7 +15,11 @@ export interface ArticleDetail {
   Status: string;
   SubCategory: string;
   SubmittedDateTime: string;
+  ApprovedDate?: string; 
   Summary: string;
   Title: string;
   MediaUrls: string[];
+
+   RejectionRemark?: string;
+  RejectedAt?: string;
 }

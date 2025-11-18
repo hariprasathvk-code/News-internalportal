@@ -48,6 +48,79 @@
 </app-ad-submission-list>
 
     </ng-container>
+
+    <!-- ✅ Rejected Articles Section with Loading State -->
+<ng-container *ngIf="selectedSection === 'rejected'">
+  <div class="rejected-articles-section">
+    <h2>🗑️ Rejected Articles</h2>
+    <p class="section-desc">View all rejected articles with rejection reasons</p>
+    
+    <!-- ✅ Loading State -->
+    <div *ngIf="isLoadingRejected" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading rejected articles...</p>
+    </div>
+    
+    <!-- ✅ No Articles State -->
+    <div *ngIf="!isLoadingRejected && rejectedArticles.length === 0" class="no-articles">
+      <p>📭 No rejected articles found</p>
+    </div>
+
+    <!-- ✅ Articles List -->
+    <div *ngIf="!isLoadingRejected && rejectedArticles.length > 0" class="rejected-articles-list">
+      <div *ngFor="let article of rejectedArticles" class="rejected-article-card">
+        <!-- Media Preview -->
+        <div class="media-section">
+          <div *ngIf="article.MediaUrls && article.MediaUrls.length > 0" class="media-list">
+            <ng-container *ngFor="let url of article.MediaUrls">
+              <img *ngIf="isImage(url)" [src]="url" class="article-thumb" alt="Media" />
+              <video *ngIf="isVideo(url)" [src]="url" class="article-thumb" controls></video>
+            </ng-container>
+          </div>
+          <div *ngIf="!article.MediaUrls || article.MediaUrls.length === 0" class="no-media">
+            📷 No media
+          </div>
+        </div>
+
+        <!-- Article Info -->
+        <div class="article-info">
+          <h3 class="article-title">{{ article.Title }}</h3>
+          
+          <div class="meta-row">
+            <span class="badge category">{{ article.Category }}</span>
+            <span class="badge subcategory">{{ article.SubCategory }}</span>
+            <span class="badge status-rejected">Rejected</span>
+          </div>
+
+          <div class="meta-details">
+            <p><strong>Author:</strong> {{ article.Author }}</p>
+            <p><strong>News ID:</strong> {{ article.NewsId }}</p>
+            <p><strong>Type:</strong> {{ article.NewsType }}</p>
+            <p><strong>Submitted:</strong> {{ article.SubmittedDateTime }}</p>
+            <p><strong>Rejected:</strong> {{ article.RejectedAt ? (article.RejectedAt | date:'medium') : 'N/A' }}</p>
+          </div>
+
+          <div class="summary-section">
+            <strong>Summary:</strong>
+            <p>{{ article.Summary }}</p>
+          </div>
+
+          <div class="content-section">
+            <strong>Content:</strong>
+            <p>{{ article.Content | slice:0:200 }}{{ (article.Content && article.Content.length > 200) ? '...' : '' }}</p>
+          </div>
+
+          <!-- Rejection Remark -->
+          <div class="rejection-remark">
+            <strong>❌ Rejection Reason:</strong>
+            <p class="remark-text">{{ article.RejectionRemark || 'No remark provided' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
  
     <!-- AI Insights Section -->
     <ng-container *ngIf="selectedSection === 'ai'">

@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
 export class NewsApiService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl + '/news';
-  //private categoryApiUrl = environment.categoryApiUrl ;
  
   getSubmittedArticles(): Observable<ArticleDetail[]> {
     const token = localStorage.getItem('accessToken');
@@ -21,42 +20,28 @@ export class NewsApiService {
     return this.http.get<ArticleDetail[]>(this.apiUrl, { headers });
   }
 
+  getRejectedArticles(): Observable<ArticleDetail[]> {
+    const token = localStorage.getItem('accessToken');
+    const headers = {
+      'Authorization': `Bearer ${token}`
+    };
+    return this.http.get<ArticleDetail[]>(`${this.apiUrl}/rejected`, { headers });
+  }
+
   approveArticle(newsId: string, priority: number, lifecycle: number): Observable<any> {
-  const token = localStorage.getItem('accessToken');
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  };
-
-  return this.http.post(
-    `${this.apiUrl}/approve`,
-    {
-      newsId: newsId,
-      priority: priority,
-      lifecycle: lifecycle
-    },
-    { headers }
-  ).pipe(
-    catchError((error) => {
-      if (error.status === 200 || error.status === 204) {
-        return of({ success: true });
-      }
-      throw error;
-    })
-  );
-}
-
-  rejectArticle(newsId: string, submittedDate: number): Observable<any> {
     const token = localStorage.getItem('accessToken');
     const headers = {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     };
 
- 
-    return this.http.put(
-      `${this.apiUrl}/${newsId}/reject`,  
-      { submittedDate: submittedDate.toString() },
+    return this.http.post(
+      `${this.apiUrl}/approve`,
+      {
+        newsId: newsId,
+        priority: priority,
+        lifecycle: lifecycle
+      },
       { headers }
     ).pipe(
       catchError((error) => {
@@ -68,18 +53,30 @@ export class NewsApiService {
     );
   }
 
-  // getNewsByCategory(category: string): Observable<any[]> {
-  //   const token = localStorage.getItem('idToken');
-  //   const headers = {
-  //     'Authorization': `Bearer ${token}`,
-  //     'Content-Type': 'application/json',
-  //   };
-  //   return this.http.get<any[]>(
-  //     `${environment.apiUrl}/category?category=${category}`,
-  //     { headers }
-  //   );
-  // }
+  // ✅ Updated reject method with remark
+  rejectArticle(newsId: string, submittedDate: number, remark: string): Observable<any> {
+    const token = localStorage.getItem('accessToken');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
 
+    return this.http.put(
+      `${this.apiUrl}/${newsId}/reject`,  
+      { 
+        submittedDate: submittedDate.toString(),
+        remark: remark
+      },
+      { headers }
+    ).pipe(
+      catchError((error) => {
+        if (error.status === 200 || error.status === 204) {
+          return of({ success: true });
+        }
+        throw error;
+      })
+    );
+  }
 
   updateArticle(newsId: string, article: ArticleDetail): Observable<any> {
     const token = localStorage.getItem('accessToken');
@@ -89,40 +86,35 @@ export class NewsApiService {
     return this.http.put(`${this.apiUrl}/${newsId}`, article, { headers });
   }
 
-  // Update article content (for AI rephrasing)
-updateArticleContent(newsId: string, submittedDate: number, data: any): Observable<any> {
-  const token = localStorage.getItem('accessToken');
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  };
+  updateArticleContent(newsId: string, submittedDate: number, data: any): Observable<any> {
+    const token = localStorage.getItem('accessToken');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
 
-  const payload = {
-    NewsId: newsId,
-    SubmittedDate: submittedDate,
-    ...data  // Title, Summary, Content fields
-  };
+    const payload = {
+      NewsId: newsId,
+      SubmittedDate: submittedDate,
+      ...data
+    };
 
-  return this.http.put(
-    `${this.apiUrl}/${newsId}/update`,
-    payload,
-    { headers }
-  );
+    return this.http.put(
+      `${this.apiUrl}/${newsId}/update`,
+      payload,
+      { headers }
+    );
+  }
+
+  getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
+    const token = localStorage.getItem('idToken'); 
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.get(
+      `${environment.categoryApiUrl}/${categoryId}`,
+      { headers }
+    );
+  }
 }
-
-
-getApprovedNewsByCategoryId(categoryId: number): Observable<any> {
-  const token = localStorage.getItem('idToken'); 
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json'
-  };
-  return this.http.get(
-    `${environment.categoryApiUrl}/${categoryId}`,
-    { headers }
-  );
-}
-
-}
- 
- 

@@ -13,37 +13,66 @@ import { ArticleDetail } from '../../../core/models/article-detail.model';
 export class ArticleRowComponent {
   @Input() article!: ArticleDetail;
   @Output() approve = new EventEmitter<ArticleDetail>();
-  @Output() reject = new EventEmitter<ArticleDetail>();
-  @Output() validateWithAI = new EventEmitter<ArticleDetail>(); // ✅ NEW
-  @Output() save = new EventEmitter<ArticleDetail>(); // Add this
-  @Output() rephrase = new EventEmitter<ArticleDetail>();//rephrase
+  @Output() reject = new EventEmitter<{ article: ArticleDetail; remark: string }>();
+  @Output() validateWithAI = new EventEmitter<ArticleDetail>();
+  @Output() save = new EventEmitter<ArticleDetail>();
+  @Output() rephrase = new EventEmitter<ArticleDetail>();
 
   editMode = false;
-  isValidating = false; 
+  isValidating = false;
   isSaving = false;
-  isApproving = false; 
-  isRejecting = false; 
+  isApproving = false;
+  isRejecting = false;
+  
+  isSummaryExpanded = false;
   isContentExpanded = false;
 
-  toggleContentExpand() {
-  this.isContentExpanded = !this.isContentExpanded;
-}
-  
+  // ✅ Reject overlay state
+  showRejectOverlay = false;
+  rejectRemark = '';
+  showRemarkError = false;
+
   approveArticle(article: ArticleDetail) {
+    this.isApproving = true;
     this.approve.emit(article);
   }
 
+  // ✅ Show reject overlay
   rejectArticle(article: ArticleDetail) {
+    this.showRejectOverlay = true;
+  }
+
+  // ✅ Confirm rejection with remark
+  confirmReject() {
+    if (this.rejectRemark.trim().length < 10) {
+      this.showRemarkError = true;
+      return;
+    }
+
+    this.showRemarkError = false;
     this.isRejecting = true;
-    this.reject.emit(article);
+    this.showRejectOverlay = false;
+    
+    this.reject.emit({ 
+      article: this.article, 
+      remark: this.rejectRemark.trim() 
+    });
+  }
+
+  // ✅ Close overlay
+  closeRejectOverlay() {
+    this.showRejectOverlay = false;
+    this.rejectRemark = '';
+    this.showRemarkError = false;
   }
 
   setActionComplete() {
     this.isApproving = false;
     this.isRejecting = false;
   }
+
   saveEdit() {
-    this.save.emit(this.article);   
+    this.save.emit(this.article);
     this.editMode = false;
   }
   
@@ -52,14 +81,20 @@ export class ArticleRowComponent {
     this.validateWithAI.emit(article);
   }
 
-  // ✅ NEW: Emit rephrase event
   rephraseArticle(article: ArticleDetail) {
     this.rephrase.emit(article);
   }
 
-  // ✅ Call this from parent after validation completes
   setValidationComplete() {
     this.isValidating = false;
+  }
+
+  toggleSummaryExpand() {
+    this.isSummaryExpanded = !this.isSummaryExpanded;
+  }
+
+  toggleContentExpand() {
+    this.isContentExpanded = !this.isContentExpanded;
   }
 
   isImage(url: string): boolean {
@@ -70,3 +105,4 @@ export class ArticleRowComponent {
     return /\.(mp4|mov|webm|ogg)$/i.test(url.split('?')[0]);
   }
 }
+
