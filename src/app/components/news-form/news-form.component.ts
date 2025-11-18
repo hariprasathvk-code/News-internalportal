@@ -385,23 +385,120 @@ export class NewsFormComponent implements OnInit {
   // }
 
 
-  async onSubmit(): Promise<void> {
+//   async onSubmit(): Promise<void> {
+//   this.submitted = true;
+//   this.errorMessage = '';
+//   this.successMessage = '';
+
+//   if (this.newsForm.invalid) {
+//     this.errorMessage = 'Please fill all required fields correctly';
+//     return;
+//   }
+
+//   this.loading = true;
+
+//   try {
+//     const mediaFiles = await this.fileUploadService.convertFilesToMediaFiles(
+//       this.selectedFilesAsFileList()
+//     );
+
+//     const newsSubmission: NewsSubmission = {
+//       title: this.f['title'].value,
+//       summary: this.f['summary'].value,
+//       content: this.f['content'].value,
+//       category: this.f['category'].value,
+//       subCategory: this.f['subCategory'].value,
+//       region: this.f['region'].value,
+//       country: this.f['country'].value,
+//       state: this.f['state'].value,
+//       city: this.f['city'].value,
+//       newsType: this.f['newsType'].value,
+//       authorFullName: this.currentUser.FullName,
+//       mediaFiles: mediaFiles
+//     };
+
+//     // Submit to main API
+//     this.newsService.submitNews(newsSubmission, this.accessToken).subscribe({
+//       next: (response) => {
+//         this.loading = false;
+//         this.successMessage = `News submitted successfully! NewsID: ${response.newsId}`;
+//         this.newsForm.reset();
+//         this.selectedFiles = [];
+//         this.selectedFilesPreview = [];
+//         this.submitted = false;
+//         setTimeout(() => {
+//           this.successMessage = '';
+//         }, 5000);
+//       },
+//       error: (error) => {
+//         this.loading = false;
+//         this.errorMessage = error.error?.Message || 'Failed to submit news';
+//         console.error('Error:', error);
+//       }
+//     });
+
+//     // Submit to audit API (no accessToken needed)
+//     this.newsService.submitAuditNews(newsSubmission).subscribe({
+//       next: (response) => {
+//         // Optional: log or handle success, but don't block main form
+//       },
+//       error: (error) => {
+//         // Optional: log or handle audit error, but don't block main form
+//         console.error('Audit API Error:', error);
+//       }
+//     });
+//   } catch (error) {
+//     this.loading = false;
+//     this.errorMessage = 'Error processing files';
+//     console.error('Error:', error);
+//   }
+// }
+
+
+//   selectedFilesAsFileList(): FileList {
+//     const dataTransfer = new DataTransfer();
+//     this.selectedFiles.forEach(file => {
+//       dataTransfer.items.add(file);
+//     });
+//     return dataTransfer.files;
+//   }
+
+//   resetForm(): void {
+//     this.newsForm.reset();
+//     this.selectedFiles = [];
+//     this.selectedFilesPreview = [];
+//     this.submitted = false;
+//     this.errorMessage = '';
+//     this.successMessage = '';
+//   }
+
+//   closeAllDropdowns(): void {
+//     this.showRegionDropdown = false;
+//     this.showCountryDropdown = false;
+//     this.showStateDropdown = false;
+//     this.showCityDropdown = false;
+//     this.showCategoryDropdown = false;
+//     this.showSubCategoryDropdown = false;
+//     this.showNewsTypeDropdown = false;
+//   }
+// }
+async onSubmit(): Promise<void> {
   this.submitted = true;
   this.errorMessage = '';
   this.successMessage = '';
-
+ 
   if (this.newsForm.invalid) {
     this.errorMessage = 'Please fill all required fields correctly';
     return;
   }
-
+ 
   this.loading = true;
-
+ 
   try {
     const mediaFiles = await this.fileUploadService.convertFilesToMediaFiles(
       this.selectedFilesAsFileList()
     );
-
+ 
     const newsSubmission: NewsSubmission = {
       title: this.f['title'].value,
       summary: this.f['summary'].value,
@@ -416,16 +513,35 @@ export class NewsFormComponent implements OnInit {
       authorFullName: this.currentUser.FullName,
       mediaFiles: mediaFiles
     };
-
-    // Submit to main API
+ 
+    // Submit to main API first
     this.newsService.submitNews(newsSubmission, this.accessToken).subscribe({
       next: (response) => {
         this.loading = false;
-        this.successMessage = `News submitted successfully! NewsID: ${response.newsId}`;
+        this.successMessage = `News submitted successfully! NewsID: ${response.NewsId}`;
         this.newsForm.reset();
         this.selectedFiles = [];
         this.selectedFilesPreview = [];
         this.submitted = false;
+       
+        // Prepare audit submission with the returned NewsId
+        const auditSubmission = {
+          ...newsSubmission,
+          NewsId: response.NewsId
+        };
+ 
+        // Submit to audit API with the NewsId from main API
+        this.newsService.submitAuditNews(auditSubmission).subscribe({
+          next: (auditResponse) => {
+            // optional success log or UI feedback
+            console.log("Audit submission successful", auditResponse);
+          },
+          error: (auditError) => {
+            // log or notify audit submission error, but don't block UI
+            console.error('Audit API Error:', auditError);
+          }
+        });
+ 
         setTimeout(() => {
           this.successMessage = '';
         }, 5000);
@@ -436,17 +552,7 @@ export class NewsFormComponent implements OnInit {
         console.error('Error:', error);
       }
     });
-
-    // Submit to audit API (no accessToken needed)
-    this.newsService.submitAuditNews(newsSubmission).subscribe({
-      next: (response) => {
-        // Optional: log or handle success, but don't block main form
-      },
-      error: (error) => {
-        // Optional: log or handle audit error, but don't block main form
-        console.error('Audit API Error:', error);
-      }
-    });
+ 
   } catch (error) {
     this.loading = false;
     this.errorMessage = 'Error processing files';
@@ -454,31 +560,30 @@ export class NewsFormComponent implements OnInit {
   }
 }
 
+selectedFilesAsFileList(): FileList {
+  const dataTransfer = new DataTransfer();
+  this.selectedFiles.forEach(file => {
+    dataTransfer.items.add(file);
+  });
+  return dataTransfer.files;
+}
 
-  selectedFilesAsFileList(): FileList {
-    const dataTransfer = new DataTransfer();
-    this.selectedFiles.forEach(file => {
-      dataTransfer.items.add(file);
-    });
-    return dataTransfer.files;
-  }
+resetForm(): void {
+  this.newsForm.reset();
+  this.selectedFiles = [];
+  this.selectedFilesPreview = [];
+  this.submitted = false;
+  this.errorMessage = '';
+  this.successMessage = '';
+}
 
-  resetForm(): void {
-    this.newsForm.reset();
-    this.selectedFiles = [];
-    this.selectedFilesPreview = [];
-    this.submitted = false;
-    this.errorMessage = '';
-    this.successMessage = '';
-  }
-
-  closeAllDropdowns(): void {
-    this.showRegionDropdown = false;
-    this.showCountryDropdown = false;
-    this.showStateDropdown = false;
-    this.showCityDropdown = false;
-    this.showCategoryDropdown = false;
-    this.showSubCategoryDropdown = false;
-    this.showNewsTypeDropdown = false;
-  }
+closeAllDropdowns(): void {
+  this.showRegionDropdown = false;
+  this.showCountryDropdown = false;
+  this.showStateDropdown = false;
+  this.showCityDropdown = false;
+  this.showCategoryDropdown = false;
+  this.showSubCategoryDropdown = false;
+  this.showNewsTypeDropdown = false;
+}
 }

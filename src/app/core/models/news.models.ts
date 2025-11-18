@@ -60,7 +60,7 @@ export interface NewsSubmission {
 export interface NewsResponse {
   success: boolean;
   message: string;
-  newsId: string;
+  NewsId: string;
   mediaFolder: string;
   mediaCount: number;
   news: any;

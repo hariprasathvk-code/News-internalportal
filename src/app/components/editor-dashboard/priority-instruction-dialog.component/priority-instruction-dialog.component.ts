@@ -14,7 +14,6 @@ import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
       </thead>
       <tbody>
         <tr><td>-1</td><td>Highest Priority</td><td>Breaking or urgent news, must be shown first and very prominently.</td></tr>
-        <tr><td>0</td><td>Very High Priority</td><td>Important news, almost as urgent as breaking news.</td></tr>
         <tr><td>1</td><td>High Priority</td><td>Significant news deserving lots of attention.</td></tr>
         <tr><td>2</td><td>Medium Priority</td><td>Moderately important news, shown after high priority articles.</td></tr>
         <tr><td>3</td><td>Low Priority</td><td>Less critical news stories, shown after medium priority.</td></tr>

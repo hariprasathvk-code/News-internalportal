@@ -152,21 +152,21 @@ export class EditorDashboardComponent implements OnInit {
     this.summaryCards[2].value = pendingCount;
 
     // Published Today (articles approved today)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const publishedTodayCount = articles.filter(a => {
-      if (!a.ApprovedDate) return false;
-      const approvedDate = new Date(a.ApprovedDate);
-      approvedDate.setHours(0, 0, 0, 0);
-      return approvedDate.getTime() === today.getTime() && 
-             (a.Status === 'Approved' || a.Status === 'approved');
-    }).length;
-    this.summaryCards[3].value = publishedTodayCount;
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0);
+    // const publishedTodayCount = articles.filter(a => {
+    //   if (!a.ApprovedDate) return false;
+    //   const approvedDate = new Date(a.ApprovedDate);
+    //   approvedDate.setHours(0, 0, 0, 0);
+    //   return approvedDate.getTime() === today.getTime() && 
+    //          (a.Status === 'Approved' || a.Status === 'approved');
+    // }).length;
+    // this.summaryCards[3].value = publishedTodayCount;
 
     console.log('📊 Summary updated:', {
       total: this.summaryCards[0].value,
       pending: this.summaryCards[2].value,
-      publishedToday: this.summaryCards[3].value
+      //publishedToday: this.summaryCards[3].value
     });
   }
 
@@ -345,28 +345,72 @@ getCategoryLabel(id: number): string {
   //   });
   // }
 
-  private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+//   private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
+//   console.log('📤 Calling approve API with priority & lifecycle...');
+//   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
+//     next: (response) => {
+//       console.log('✅ Article approved successfully:', response);
+
+//       // ✅ Remove approved article from list immediately (optimistic update)
+//       this.articles = this.articles.filter(a => a.NewsId !== article.NewsId);
+      
+//       // ✅ Update summary cards with new counts
+//       this.updateSummaryCards(this.articles);
+
+//       // Show success snackbar
+//       this.snackBar.open(`
+//         ✅ Article Approved Successfully!
+//         Title: ${article.Title}
+//         Priority: ${priority}
+//         Lifecycle: ${lifecycle} minutes
+//       `, 'Close', { duration: 6000 });
+
+//       // Optional: Reload full list in background to sync
+//       this.loadSubmittedArticles();
+//     },
+//     error: (error) => {
+//       console.error('❌ Approve error:', error);
+//       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
+//     }
+//   });
+// }
+
+private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
   console.log('📤 Calling approve API with priority & lifecycle...');
   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
     next: (response) => {
-      console.log('✅ Article approved successfully:', response);
-
       // ✅ Remove approved article from list immediately (optimistic update)
       this.articles = this.articles.filter(a => a.NewsId !== article.NewsId);
-      
-      // ✅ Update summary cards with new counts
       this.updateSummaryCards(this.articles);
 
-      // Show success snackbar
-      this.snackBar.open(`
-        ✅ Article Approved Successfully!
+      // Show success snackbar for approve
+      this.snackBar.open(
+        `✅ Article Approved Successfully!
         Title: ${article.Title}
         Priority: ${priority}
-        Lifecycle: ${lifecycle} minutes
-      `, 'Close', { duration: 6000 });
+        Lifecycle: ${lifecycle} minutes`,
+        'Close', { duration: 6000 }
+      );
 
-      // Optional: Reload full list in background to sync
-      this.loadSubmittedArticles();
+      // Audit Table Update
+      this.newsApi.updateAuditStatus(article.NewsId, 'Approved').subscribe({
+        next: () => {
+          this.snackBar.open(
+            `✅ Audit record updated!`, 
+            'Close', { duration: 4000 }
+          );
+          // Always reload after audit update
+          this.loadSubmittedArticles();
+        },
+        error: () => {
+          this.snackBar.open(
+            `✅ Article Approved, ❌ Audit Table NOT updated!`, 
+            'Close', { duration: 4000 }
+          );
+          // Still reload even if audit fails
+          this.loadSubmittedArticles();
+        }
+      });
     },
     error: (error) => {
       console.error('❌ Approve error:', error);
@@ -374,6 +418,9 @@ getCategoryLabel(id: number): string {
     }
   });
 }
+
+ 
+
 
  
   
