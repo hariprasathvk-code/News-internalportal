@@ -53,6 +53,27 @@ export class NewsApiService {
     );
   }
 
+  updateAuditStatus(newsId: string, status: string): Observable<any> {
+  const token = localStorage.getItem('accessToken');
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+  return this.http.put(
+    `${environment.auditNewsApiUrl}/${newsId}/status`, // path per your API Gateway setup
+    { NewsId: newsId, Status: status},
+    { headers }
+  ).pipe(
+    catchError((error) => {
+      if (error.status === 200 || error.status === 204) {
+        return of({ success: true });
+      }
+      throw error;
+    })
+  );
+}
+
+
   // ✅ Updated reject method with remark
   rejectArticle(newsId: string, submittedDate: number, remark: string): Observable<any> {
     const token = localStorage.getItem('accessToken');
