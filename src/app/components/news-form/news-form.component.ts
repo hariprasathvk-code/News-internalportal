@@ -23,6 +23,7 @@ export class NewsFormComponent implements OnInit {
   loading = false;
   successMessage: string = '';
   errorMessage: string = '';
+  confirmSubmission: boolean = false;
 
   // All data
   allRegions: Region[] = [];
@@ -320,12 +321,20 @@ export class NewsFormComponent implements OnInit {
     this.selectedFiles.splice(index, 1);
     this.selectedFilesPreview.splice(index, 1);
   }
+  get isSubmitDisabled(): boolean {
+    return !this.confirmSubmission || this.newsForm.invalid || this.loading;
+  }
 
+  
   get f() {
     return this.newsForm.controls;
   }
 
 async onSubmit(): Promise<void> {
+  if (!this.confirmSubmission) {
+    this.errorMessage = 'Please confirm that you have reviewed all the information before submitting.';
+    return;
+  }
   this.submitted = true;
   this.errorMessage = '';
   this.successMessage = '';
@@ -366,6 +375,7 @@ async onSubmit(): Promise<void> {
         this.selectedFiles = [];
         this.selectedFilesPreview = [];
         this.submitted = false;
+        this.confirmSubmission = false;
        
         // Prepare audit submission with the returned NewsId
         const auditSubmission = {
@@ -391,7 +401,7 @@ async onSubmit(): Promise<void> {
       },
       error: (error) => {
         this.loading = false;
-        this.errorMessage =  'Failed to submit news';
+        this.errorMessage = error.error?.Message || 'Failed to submit news';
         console.error('Error:', error);
       }
     });

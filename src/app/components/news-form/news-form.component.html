@@ -290,17 +290,32 @@
         </div>
       </div>
     </div>
-
+<!-- ✅ ADD THIS NEW CONFIRMATION SECTION HERE -->
+    <div class="confirmation-section">
+      <div class="confirmation-checkbox">
+        <input 
+          type="checkbox" 
+          id="confirmSubmission" 
+          [(ngModel)]="confirmSubmission"
+          [ngModelOptions]="{standalone: true}">
+        <label for="confirmSubmission">
+          <span class="checkbox-text">
+            ✓ I confirm that I have reviewed all the information entered above and it is accurate
+          </span>
+        </label>
+      </div>
+    </div>
     <!-- Action Buttons -->
     <div class="form-actions">
-      <button 
+           <button 
         type="submit" 
         class="btn btn-primary"
-        [disabled]="loading"
+        [disabled]="isSubmitDisabled"
       >
         <span *ngIf="!loading">📤 Submit News</span>
         <span *ngIf="loading">⏳ Submitting...</span>
       </button>
+
       <button 
         type="button" 
         (click)="resetForm()"
