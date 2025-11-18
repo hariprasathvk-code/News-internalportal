@@ -232,11 +232,18 @@ export class EditorDashboardComponent implements OnInit {
   
   
   loadCategoryNews(categoryId: number) {
-    this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
-      next: res => this.selectedCategoryNews = res.news,
-      error: () => this.selectedCategoryNews = []
-    });
-  }
+  this.newsApi.getApprovedNewsByCategoryId(categoryId).subscribe({
+    next: res => this.selectedCategoryNews = res.news,
+    error: () => this.selectedCategoryNews = []
+  });
+}
+
+getCategoryLabel(id: number): string {
+  const cat = this.categories.find(c => c.value === id);
+  return cat ? cat.label : '';
+}
+
+
  
   checkAllWithAI() {
     if (this.isValidatingAll) { return; }

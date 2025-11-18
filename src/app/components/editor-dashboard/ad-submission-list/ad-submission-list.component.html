@@ -5,8 +5,11 @@
   </div>
 
   <div *ngIf="ads.length === 0; else hasAds" class="no-ads">
-    <p>📭 No advertisements found.</p>
-  </div>
+  <div class="ad-loading-spinner"></div>
+  <span class="ad-emoji">📭</span>
+  <p>Loading.....<br><span class="ad-small">Check back soon for new campaigns!</span></p>
+</div>
+
 
   <ng-template #hasAds>
     <div *ngFor="let ad of ads" class="ad-card">

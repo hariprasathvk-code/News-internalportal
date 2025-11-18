@@ -43,7 +43,6 @@
     </div>
 
     <div class="summary"><b>Summary:</b> {{ article.Summary }}</div>
-    <!-- UPDATED content with See More/See Less -->
     <div class="content"><b>Content:</b>
       <ng-container *ngIf="!isContentExpanded">
         {{ article.Content | slice:0:180 }}
@@ -60,7 +59,7 @@
     </div>
 
     <div class="actions">
-      <!-- ✅ Approve Button -->
+
       <button
         (click)="approveArticle(article)"
         class="approve-btn"
@@ -68,8 +67,7 @@
         <span *ngIf="!isApproving">✓ Approve</span>
         <span *ngIf="isApproving">⏳ Approving...</span>
       </button>
-      
-      <!-- ✅ NEW: Reject Button -->
+
       <button
         (click)="rejectArticle(article)"
         class="reject-btn"
