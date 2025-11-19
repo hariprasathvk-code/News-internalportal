@@ -18,9 +18,7 @@ import { ArticleDetail } from '../../core/models/article-detail.model';
 import { AdSubmission } from '../../core/models/ad-submission.model';
 import { ReportsComponent } from '../reports/reports.component';
 import { UserManagementComponent } from './user-management/user-management.component';
-import { FeedbackApiService } from '../../core/services/feedback-api.service';
-import { Feedback } from '../../core/models/feedback.model';
-import { FeedbackListComponent } from '../editor-dashboard/feedback-list/feedback-list.component';
+
 
 
  
@@ -39,7 +37,6 @@ import { FeedbackListComponent } from '../editor-dashboard/feedback-list/feedbac
     UserManagementComponent,
     ReportsComponent,
     AIInsightsComponent,
-    FeedbackListComponent,
     
     
   ],
@@ -53,11 +50,10 @@ export class EditorDashboardComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog); 
   private snackBar = inject(MatSnackBar);
-  private feedbackApi = inject(FeedbackApiService);
+  
  
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
-  feedbacks: Feedback[] = [];
   selectedSection: string = 'news';
   isValidatingAll = false;
  
@@ -115,30 +111,8 @@ export class EditorDashboardComponent implements OnInit {
       this.selectedCategory = null;
       this.selectedCategoryNews = [];
     }
-     else if (section === 'feedback') {
-    this.loadFeedbacks();    // <--- NEW
-  }
   }
   
-  loadFeedbacks() {
-  this.feedbackApi.getAllFeedbacks().subscribe({
-    next: (data) => {
-      this.feedbacks = data;
-      console.log('💬 Feedbacks loaded:', data);
-    },
-    error: (error) => {
-      console.error('❌ Error loading feedbacks:', error);
-      this.feedbacks = [];
-      this.snackBar.open('❌ Failed to load feedbacks', 'Close', {
-        duration: 5000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-        panelClass: ['error-snackbar']
-      });
-    }
-  });
-}
-
   loadAds() {
     this.adApi.getAds().subscribe({
       next: (data) => {
