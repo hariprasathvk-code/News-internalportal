@@ -454,48 +454,112 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
  
   
   // ✅ ADD THIS METHOD HERE
-  onRejectArticle(data: { article: ArticleDetail; remark: string }) {
-    console.log('🗑️ Rejecting article:', data.article.NewsId);
-    console.log('📝 Rejection remark:', data.remark);
+  // onRejectArticle(data: { article: ArticleDetail; remark: string }) {
+  //   console.log('🗑️ Rejecting article:', data.article.NewsId);
+  //   console.log('📝 Rejection remark:', data.remark);
 
-    this.newsApi.rejectArticle(
-      data.article.NewsId, 
-      data.article.SubmittedDate, 
-      data.remark
-    ).subscribe({
-      next: (response) => {
-        console.log('✅ Article rejected:', response);
+  //   this.newsApi.rejectArticle(
+  //     data.article.NewsId, 
+  //     data.article.SubmittedDate, 
+  //     data.remark
+  //   ).subscribe({
+  //     next: (response) => {
+  //       console.log('✅ Article rejected:', response);
         
-        this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
+  //       this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
         
-        this.snackBar.open(
-          `✅ Article "${data.article.Title}" rejected successfully`, 
-          'Close', 
-          {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-            panelClass: ['success-snackbar']
-          }
-        );
+  //       this.snackBar.open(
+  //         `✅ Article "${data.article.Title}" rejected successfully`, 
+  //         'Close', 
+  //         {
+  //           duration: 5000,
+  //           horizontalPosition: 'center',
+  //           verticalPosition: 'bottom',
+  //           panelClass: ['success-snackbar']
+  //         }
+  //       );
         
-        this.loadSubmittedArticles();
-      },
-      error: (error) => {
-        console.error('❌ Reject error:', error);
-        this.snackBar.open(
-          `❌ Rejection Failed: `, 
-          'Close', 
-          {
-            duration: 7000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-            panelClass: ['error-snackbar']
-          }
-        );
-      }
-    });
-  }
+  //       this.loadSubmittedArticles();
+  //     },
+  //     error: (error) => {
+  //       console.error('❌ Reject error:', error);
+  //       this.snackBar.open(
+  //         `❌ Rejection Failed: `, 
+  //         'Close', 
+  //         {
+  //           duration: 7000,
+  //           horizontalPosition: 'center',
+  //           verticalPosition: 'bottom',
+  //           panelClass: ['error-snackbar']
+  //         }
+  //       );
+  //     }
+  //   });
+  // }
+
+  onRejectArticle(data: { article: ArticleDetail; remark: string }) {
+  console.log('🗑️ Rejecting article:', data.article.NewsId);
+  console.log('📝 Rejection remark:', data.remark);
+
+  this.newsApi.rejectArticle(
+    data.article.NewsId, 
+    data.article.SubmittedDate, 
+    data.remark
+  ).subscribe({
+    next: (response) => {
+      console.log('✅ Article rejected:', response);
+      this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
+
+      // Show success snackbar for rejection
+      this.snackBar.open(
+        `✅ Article "${data.article.Title}" rejected successfully`, 
+        'Close', 
+        {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['success-snackbar']
+        }
+      );
+
+      // Audit Table Update (for Rejection)
+      this.newsApi.updateAuditStatus(data.article.NewsId, 'Rejected').subscribe({
+        next: () => {
+          this.snackBar.open(
+            `🗑️ Audit record updated for rejection!`,
+            'Close',
+            { duration: 4000 }
+          );
+          // Always reload after audit update
+          this.loadSubmittedArticles();
+        },
+        error: () => {
+          this.snackBar.open(
+            `🗑️ Article Rejected, ❌ Audit Table NOT updated!`,
+            'Close',
+            { duration: 4000 }
+          );
+          // Still reload even if audit fails
+          this.loadSubmittedArticles();
+        }
+      });
+    },
+    error: (error) => {
+      console.error('❌ Reject error:', error);
+      this.snackBar.open(
+        `❌ Rejection Failed: `,
+        'Close',
+        {
+          duration: 7000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['error-snackbar']
+        }
+      );
+    }
+  });
+}
+
  
   logout() {
     console.log('🚪 Logging out...');
