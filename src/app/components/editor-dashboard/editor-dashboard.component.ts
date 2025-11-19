@@ -351,58 +351,6 @@ getCategoryLabel(id: number): string {
     });
   }
  
-  // private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-  //   console.log('📤 Calling approve API with priority & lifecycle...');
-  //   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-  //     next: (response) => {
-  //       console.log('✅ Article approved successfully:', response);
- 
-  //       this.snackBar.open(`
-  //         ✅ Article Approved Successfully!
-  //         Title: ${article.Title}
-  //         Priority: ${priority}
-  //         Lifecycle: ${lifecycle} minutes
-  //       `, 'Close', { duration: 6000 });
- 
-  //       this.loadSubmittedArticles();
-        
-  //     },
-  //     error: (error) => {
-  //       console.error('❌ Approve error:', error);
-  //       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
-  //     }
-  //   });
-  // }
-
-//   private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-//   console.log('📤 Calling approve API with priority & lifecycle...');
-//   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-//     next: (response) => {
-//       console.log('✅ Article approved successfully:', response);
-
-//       // ✅ Remove approved article from list immediately (optimistic update)
-//       this.articles = this.articles.filter(a => a.NewsId !== article.NewsId);
-      
-//       // ✅ Update summary cards with new counts
-//       this.updateSummaryCards(this.articles);
-
-//       // Show success snackbar
-//       this.snackBar.open(`
-//         ✅ Article Approved Successfully!
-//         Title: ${article.Title}
-//         Priority: ${priority}
-//         Lifecycle: ${lifecycle} minutes
-//       `, 'Close', { duration: 6000 });
-
-//       // Optional: Reload full list in background to sync
-//       this.loadSubmittedArticles();
-//     },
-//     error: (error) => {
-//       console.error('❌ Approve error:', error);
-//       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
-//     }
-//   });
-// }
 
 private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
   console.log('📤 Calling approve API with priority & lifecycle...');
