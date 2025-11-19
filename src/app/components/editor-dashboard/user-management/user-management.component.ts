@@ -62,9 +62,9 @@ export class UserManagementComponent implements OnInit {
         const user = JSON.parse(userData);
         this.editorId = user.UserId || 'user-editor-1';
         this.newJournalist.EditorId = this.editorId;
-        console.log('✅ Editor ID loaded:', this.editorId);
+        
       } catch (error) {
-        console.error('❌ Error parsing userData:', error);
+        //console.error('❌ Error parsing userData:', error);
         this.editorId = 'user-editor-1';
         this.newJournalist.EditorId = this.editorId;
       }
@@ -82,17 +82,17 @@ export class UserManagementComponent implements OnInit {
       next: (users) => {
         this.journalists = users || [];
         this.isLoading = false;
-        console.log('✅ Loaded users:', users);
+        
         
         if (users && users.length > 0) {
           this.showSuccessSnackbar(`Loaded ${users.length} user(s)`);
         }
       },
       error: (error) => {
-        console.error('❌ Error loading users:', error);
+        //.error('❌ Error loading users:', error);
         this.journalists = [];
         this.isLoading = false;
-        this.showErrorSnackbar('Failed to load users: ' + (error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to load users: ' + ('Unknown error'));
       }
     });
   }
@@ -108,7 +108,7 @@ export class UserManagementComponent implements OnInit {
   setUserType(type: 'Journalist' | 'Advertiser') {
     this.selectedUserType = type;
     this.newJournalist.UserRole = type;
-    console.log('📝 User type changed to:', type);
+    
   }
 
   createJournalist() {
@@ -118,11 +118,10 @@ export class UserManagementComponent implements OnInit {
 
     this.isLoading = true;
     this.newJournalist.UserRole = this.selectedUserType;
-    console.log('📤 Creating user:', this.newJournalist);
-
+    
     this.userManagementService.createJournalist(this.newJournalist).subscribe({
       next: (response) => {
-        console.log('✅ User created:', response);
+        
         
         this.generatedPassword = response.generatedPassword;
         this.showPasswordModal = true;
@@ -138,15 +137,15 @@ export class UserManagementComponent implements OnInit {
         this.showSuccessSnackbar(`${this.selectedUserType} "${response.journalist?.FullName}" created successfully!`);
       },
       error: (error) => {
-        console.error('❌ Create error:', error);
+        //console.error('❌ Create error:', error);
         this.isLoading = false;
-        this.showErrorSnackbar('Failed to create user: ' + (error.error?.Message || error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to create user: ' + ('Unknown error'));
       }
     });
   }
 
   startEdit(journalist: Journalist) {
-    console.log('✏️ Editing user:', journalist);
+    
     this.editingJournalist = { ...journalist };
     this.showAddForm = false;
   }
@@ -158,7 +157,7 @@ export class UserManagementComponent implements OnInit {
     }
 
     this.isLoading = true;
-    console.log('💾 Saving user:', this.editingJournalist);
+    
 
     const updateData = {
       FullName: this.editingJournalist.FullName,
@@ -172,7 +171,7 @@ export class UserManagementComponent implements OnInit {
       updateData
     ).subscribe({
       next: (response) => {
-        console.log('✅ User updated:', response);
+        
         
         const index = this.journalists.findIndex(j => j.UserId === this.editingJournalist!.UserId);
         if (index !== -1) {
@@ -185,16 +184,16 @@ export class UserManagementComponent implements OnInit {
         this.showSuccessSnackbar('User updated successfully!');
       },
       error: (error) => {
-        console.error('❌ Update error:', error);
-        console.error('❌ Error details:', error.error);
+        //console.error('❌ Update error:', error);
+        //console.error('❌ Error details:', error.error);
         this.isLoading = false;
-        this.showErrorSnackbar('Failed to update user: ' + (error.error?.message || error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to update user: ' + ('Unknown error'));
       }
     });
   }
 
   cancelEdit() {
-    console.log('❌ Edit cancelled');
+    
     this.editingJournalist = null;
   }
 
@@ -204,8 +203,8 @@ export class UserManagementComponent implements OnInit {
       'Confirm Delete',
       {
         duration: 10000,
-        horizontalPosition: 'center', // ✅ CHANGED
-        verticalPosition: 'bottom',   // ✅ CHANGED
+        horizontalPosition: 'center', 
+        verticalPosition: 'bottom',   
         panelClass: ['delete-confirm-snackbar']
       }
     );
@@ -216,7 +215,7 @@ export class UserManagementComponent implements OnInit {
 
     snackBarRef.afterDismissed().subscribe(info => {
       if (!info.dismissedByAction) {
-        console.log('❌ Delete cancelled');
+        
         this.showInfoSnackbar('Delete cancelled');
       }
     });
@@ -224,7 +223,7 @@ export class UserManagementComponent implements OnInit {
 
   private performDelete(journalist: Journalist) {
     this.isLoading = true;
-    console.log('🗑️ Deleting user:', journalist.UserId);
+    
 
     this.userManagementService.deleteJournalist(
       journalist.UserId,
@@ -232,7 +231,7 @@ export class UserManagementComponent implements OnInit {
       journalist.UserRole
     ).subscribe({
       next: () => {
-        console.log('✅ User deleted');
+        
         
         this.journalists = this.journalists.filter(j => j.UserId !== journalist.UserId);
         
@@ -241,16 +240,16 @@ export class UserManagementComponent implements OnInit {
         this.showSuccessSnackbar(`User "${journalist.FullName}" deleted successfully`);
       },
       error: (error) => {
-        console.error('❌ Delete error:', error);
-        console.error('❌ Error details:', error.error);
+        //console.error('❌ Delete error:', error);
+        //console.error('❌ Error details:', error.error);
         this.isLoading = false;
-        this.showErrorSnackbar('Failed to delete user: ' + (error.error?.message || error.message || 'Unknown error'));
+        this.showErrorSnackbar('Failed to delete user: ' + ('Unknown error'));
       }
     });
   }
 
   closePasswordModal() {
-    console.log('🔒 Closing password modal');
+    
     this.showPasswordModal = false;
     this.generatedPassword = '';
   }
@@ -263,11 +262,11 @@ export class UserManagementComponent implements OnInit {
 
     navigator.clipboard.writeText(this.generatedPassword).then(
       () => {
-        console.log('✅ Password copied to clipboard');
+        
         this.showSuccessSnackbar('📋 Password copied to clipboard!');
       },
       (error) => {
-        console.error('❌ Failed to copy password:', error);
+        
         this.showErrorSnackbar('Failed to copy password. Please copy manually.');
       }
     );
@@ -309,12 +308,12 @@ export class UserManagementComponent implements OnInit {
     console.log('🔄 Form reset');
   }
 
-  // ✅ Updated Snackbar helper methods - ALL BOTTOM CENTER
+  
   private showSuccessSnackbar(message: string) {
     this.snackBar.open('✅ ' + message, 'Close', {
       duration: 5000,
-      horizontalPosition: 'center', // ✅ CHANGED
-      verticalPosition: 'bottom',   // ✅ CHANGED
+      horizontalPosition: 'center', 
+      verticalPosition: 'bottom',   
       panelClass: ['success-snackbar']
     });
   }
@@ -322,8 +321,8 @@ export class UserManagementComponent implements OnInit {
   private showErrorSnackbar(message: string) {
     this.snackBar.open('❌ ' + message, 'Close', {
       duration: 7000,
-      horizontalPosition: 'center', // ✅ CHANGED
-      verticalPosition: 'bottom',   // ✅ CHANGED
+      horizontalPosition: 'center', 
+      verticalPosition: 'bottom',   
       panelClass: ['error-snackbar']
     });
   }
@@ -331,8 +330,8 @@ export class UserManagementComponent implements OnInit {
   private showWarningSnackbar(message: string) {
     this.snackBar.open('⚠️ ' + message, 'Close', {
       duration: 5000,
-      horizontalPosition: 'center', // ✅ CHANGED
-      verticalPosition: 'bottom',   // ✅ CHANGED
+      horizontalPosition: 'center', 
+      verticalPosition: 'bottom',   
       panelClass: ['warning-snackbar']
     });
   }
@@ -340,8 +339,8 @@ export class UserManagementComponent implements OnInit {
   private showInfoSnackbar(message: string) {
     this.snackBar.open('ℹ️ ' + message, 'Close', {
       duration: 4000,
-      horizontalPosition: 'center', // ✅ CHANGED
-      verticalPosition: 'bottom',   // ✅ CHANGED
+      horizontalPosition: 'center', 
+      verticalPosition: 'bottom',   
       panelClass: ['info-snackbar']
     });
   }

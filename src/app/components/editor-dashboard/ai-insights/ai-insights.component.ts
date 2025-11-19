@@ -35,7 +35,7 @@ export class AIInsightsComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    console.log('📡 Loading AI Analytics...');
+    
 
     forkJoin({
       articles: this.aiAnalyticsService.getAIAnalytics(),
@@ -45,11 +45,10 @@ export class AIInsightsComponent implements OnInit {
         this.articleAnalytics = data.articles;
         this.adAnalytics = data.ads;
         this.isLoading = false;
-        console.log('✅ Articles Analytics:', data.articles);
-        console.log('✅ Ad Analytics:', data.ads);
+        
       },
       error: (error) => {
-        console.error('❌ Error loading AI analytics:', error);
+        //console.error('❌ Error loading AI analytics:', error);
         this.error = error.error?.message || 'Failed to load AI analytics';
         this.isLoading = false;
       }

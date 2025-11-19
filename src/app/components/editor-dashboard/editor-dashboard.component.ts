@@ -85,7 +85,7 @@ export class EditorDashboardComponent implements OnInit {
   selectedCategory: number | null = null;
   selectedCategoryNews: any[] = [];
   rejectedArticles: ArticleDetail[] = [];
-   isLoadingRejected = false; // ✅ ADD THIS
+   isLoadingRejected = false; 
  
   ngOnInit() {
     this.loadSubmittedArticles();
@@ -106,13 +106,13 @@ export class EditorDashboardComponent implements OnInit {
 
   onSidebarSection(section: string) {
     this.selectedSection = section;
-    console.log('📍 Section changed to:', section);
+    
 
     if (section === 'news') {
       this.loadSubmittedArticles();
     } else if (section === 'ads') {
       this.loadAds();
-    } else if (section === 'rejected') {  // ✅ NEW
+    } else if (section === 'rejected') {  
     this.loadRejectedArticles();
     }
     else if (section === 'feedback') {
@@ -132,13 +132,13 @@ export class EditorDashboardComponent implements OnInit {
     this.feedbackLoading = true;
     this.feedbackApi.getAllFeedbacks().subscribe({
       next: (data) => {
-        // Force as array to prevent *ngFor errors
+        
         this.feedbacks = Array.isArray(data) ? data : [];
         this.feedbackLoading = false;
-        console.log('Feedbacks loaded:', this.feedbacks);
+        
       },
       error: (err) => {
-        console.error('Failed to load feedbacks', err);
+        //console.error('Failed to load feedbacks', err);
         this.feedbacks = [];
         this.feedbackLoading = false;
       }
@@ -148,7 +148,7 @@ export class EditorDashboardComponent implements OnInit {
  leaderboardLoading = false;
 
 loadLeaderboard() {
-  console.log('Loading leaderboard...');
+  
   this.leaderboardLoading = true;
   this.leaderboardApi.getLeaderboard().subscribe({
     next: (data) => {
@@ -156,7 +156,7 @@ loadLeaderboard() {
       this.leaderboardLoading = false;
     },
     error: (err) => {
-      console.error('Leaderboard fetch error:', err);
+      //console.error('Leaderboard fetch error:', err);
       this.leaderboard = null;
       this.leaderboardLoading = false;
     }
@@ -168,7 +168,7 @@ loadLeaderboard() {
   loadAds() {
     this.adApi.getAds().subscribe({
       next: (data) => {
-        console.log('📢 Ads loaded:', data);
+        
         this.ads = data;
         this.summaryCards[1].value = data.length || 0;
       },
@@ -177,14 +177,15 @@ loadLeaderboard() {
       }
     });
   }
- // ✅ UPDATED: Load submitted articles with proper counts
+ 
+
   loadSubmittedArticles() {
     this.newsApi.getSubmittedArticles().subscribe({
       next: (data) => {
-        console.log('📰 Articles loaded:', data);
+        
         this.articles = data;
         
-        // ✅ Update summary cards with correct counts
+        
         this.updateSummaryCards(data);
       },
       error: (error) => {
@@ -193,12 +194,12 @@ loadLeaderboard() {
     });
   }
 
-  // ✅ NEW: Update summary cards based on article data
+  
   updateSummaryCards(articles: ArticleDetail[]) {
-    // Total News (all articles in NewsArticles table)
+    
     this.summaryCards[0].value = articles.length || 0;
 
-    // Pending Reviews (articles with status 'Submitted')
+    
     const pendingCount = articles.filter(a => 
       a.Status === 'Submitted' || 
       a.Status === 'submitted' || 
@@ -218,26 +219,26 @@ loadLeaderboard() {
     // }).length;
     // this.summaryCards[3].value = publishedTodayCount;
 
-    console.log('📊 Summary updated:', {
-      total: this.summaryCards[0].value,
-      pending: this.summaryCards[2].value,
-      //publishedToday: this.summaryCards[3].value
-    });
+    // console.log('📊 Summary updated:', {
+    //   total: this.summaryCards[0].value,
+    //   pending: this.summaryCards[2].value,
+    //   //publishedToday: this.summaryCards[3].value
+    // });
   }
 
-  // ✅ UPDATED: Load rejected articles and update count
+  
   loadRejectedArticles() {
     this.isLoadingRejected = true;
     
     this.newsApi.getRejectedArticles().subscribe({
       next: (data) => {
-        console.log('🗑️ Rejected articles loaded:', data);
+        
         this.rejectedArticles = data;
-        // Don't update pending reviews card with rejected count
+        
         this.isLoadingRejected = false;
       },
       error: (error) => {
-        console.error('❌ Error loading rejected articles:', error);
+        //console.error('❌ Error loading rejected articles:', error);
         this.isLoadingRejected = false;
         this.snackBar.open('❌ Failed to load rejected articles', 'Close', {
           duration: 5000,
@@ -284,7 +285,7 @@ getCategoryLabel(id: number): string {
  
     snackRef.onAction().subscribe(() => {
       this.isValidatingAll = true;
-      console.log('🤖 Starting AI validation for:', context);
+     
  
       const serviceCall =
         this.selectedSection === 'ads'
@@ -326,7 +327,7 @@ getCategoryLabel(id: number): string {
   }
  
   onValidateSingleArticle(article: ArticleDetail) {
-    console.log('🤖 Validating single article:', article.NewsId);
+    
  
     const snackRef = this.snackBar.open(
       `🤖 Validate this article with AI?\nTitle: ${article.Title}\nCheck content quality and update status.`,
@@ -337,7 +338,7 @@ getCategoryLabel(id: number): string {
     snackRef.onAction().subscribe(() => {
       this.aiValidation.validateSingleArticle(article.NewsId, article.SubmittedDate).subscribe({
         next: (response) => {
-          console.log('✅ Single article validation complete:', response);
+          
           this.snackBar.open(`
             ✅ AI Validation Complete!
             Status: ${response.status}
@@ -346,7 +347,7 @@ getCategoryLabel(id: number): string {
           this.loadSubmittedArticles();
         },
         error: (error) => {
-          console.error('❌ Single article validation error:', error);
+          //console.error('❌ Single article validation error:', error);
           this.snackBar.open(`❌ Validation Failed:`, 'Close', { duration: 6000 });
         }
       });
@@ -354,7 +355,7 @@ getCategoryLabel(id: number): string {
   }
  
   onApproveArticle(article: ArticleDetail) {
-    console.log('✅ Approve button clicked for:', article.Title);
+    
  
     const dialogRef = this.dialog.open(PriorityLifecycleDialogComponent, {
       width: '500px',
@@ -367,26 +368,24 @@ getCategoryLabel(id: number): string {
  
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('✅ Priority & Lifecycle values:', result);
-        console.log('   - Priority:', result.priority);
-        console.log('   - Lifecycle:', result.lifecycle, 'minutes');
+        
         this.approveArticleWithPriority(article, result.priority, result.lifecycle);
       } else {
-        console.log('❌ Dialog cancelled - article not approved');
+        console.log(' Dialog cancelled - article not approved');
       }
     });
   }
  
 
 private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-  console.log('📤 Calling approve API with priority & lifecycle...');
+  
   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
     next: (response) => {
-      // ✅ Remove approved article from list immediately (optimistic update)
+      
       this.articles = this.articles.filter(a => a.NewsId !== article.NewsId);
       this.updateSummaryCards(this.articles);
 
-      // Show success snackbar for approve
+      
       this.snackBar.open(
         `✅ Article Approved Successfully!
         Title: ${article.Title}
@@ -395,14 +394,14 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
         'Close', { duration: 6000 }
       );
 
-      // Audit Table Update
+      
       this.newsApi.updateAuditStatus(article.NewsId, 'Approved').subscribe({
         next: () => {
           this.snackBar.open(
             `✅ Audit record updated!`, 
             'Close', { duration: 4000 }
           );
-          // Always reload after audit update
+          
           this.loadSubmittedArticles();
         },
         error: () => {
@@ -410,13 +409,13 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
             `✅ Article Approved, ❌ Audit Table NOT updated!`, 
             'Close', { duration: 4000 }
           );
-          // Still reload even if audit fails
+          
           this.loadSubmittedArticles();
         }
       });
     },
     error: (error) => {
-      console.error('❌ Approve error:', error);
+      //console.error('❌ Approve error:', error);
       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
     }
   });
@@ -472,8 +471,7 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
   // }
 
   onRejectArticle(data: { article: ArticleDetail; remark: string }) {
-  console.log('🗑️ Rejecting article:', data.article.NewsId);
-  console.log('📝 Rejection remark:', data.remark);
+  
 
   this.newsApi.rejectArticle(
     data.article.NewsId, 
@@ -481,10 +479,10 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
     data.remark
   ).subscribe({
     next: (response) => {
-      console.log('✅ Article rejected:', response);
+      
       this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
 
-      // Show success snackbar for rejection
+      
       this.snackBar.open(
         `✅ Article "${data.article.Title}" rejected successfully`, 
         'Close', 
@@ -496,7 +494,7 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
         }
       );
 
-      // Audit Table Update (for Rejection)
+      
       this.newsApi.updateAuditStatus(data.article.NewsId, 'Rejected').subscribe({
         next: () => {
           this.snackBar.open(
@@ -504,7 +502,7 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
             'Close',
             { duration: 4000 }
           );
-          // Always reload after audit update
+          
           this.loadSubmittedArticles();
         },
         error: () => {
@@ -513,13 +511,13 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
             'Close',
             { duration: 4000 }
           );
-          // Still reload even if audit fails
+         
           this.loadSubmittedArticles();
         }
       });
     },
     error: (error) => {
-      console.error('❌ Reject error:', error);
+      //console.error('❌ Reject error:', error);
       this.snackBar.open(
         `❌ Rejection Failed: `,
         'Close',
@@ -536,7 +534,7 @@ private approveArticleWithPriority(article: ArticleDetail, priority: number, lif
 
  
   logout() {
-    console.log('🚪 Logging out...');
+    
     localStorage.clear();
     this.router.navigate(['/login']);
   }

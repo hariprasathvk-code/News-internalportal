@@ -27,7 +27,7 @@ export class ArticleRowComponent {
   isSummaryExpanded = false;
   isContentExpanded = false;
 
-  // ✅ Reject overlay state
+  //  Reject overlay state
   showRejectOverlay = false;
   rejectRemark = '';
   showRemarkError = false;
@@ -37,12 +37,12 @@ export class ArticleRowComponent {
     this.approve.emit(article);
   }
 
-  // ✅ Show reject overlay
+  // Show reject overlay
   rejectArticle(article: ArticleDetail) {
     this.showRejectOverlay = true;
   }
 
-  // ✅ Confirm rejection with remark
+  //  Confirm rejection with remark
   confirmReject() {
     if (this.rejectRemark.trim().length < 10) {
       this.showRemarkError = true;
@@ -59,7 +59,7 @@ export class ArticleRowComponent {
     });
   }
 
-  // ✅ Close overlay
+  //  Close overlay
   closeRejectOverlay() {
     this.showRejectOverlay = false;
     this.rejectRemark = '';

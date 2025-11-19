@@ -72,7 +72,7 @@ export class LoginComponent {
         } else if (userRole === UserRole.EDITOR) {
           console.log('✍️ Navigating to editor dashboard');
           this.router.navigate(['/editor-dashboard']);
-        } else if (userRole === UserRole.ADVERTISER) {  // ✅ NEW ROLE HANDLING
+        } else if (userRole === UserRole.ADVERTISER) {  
           console.log('💼 Navigating to advertiser dashboard');
           this.router.navigate(['/advertiser-dashboard']);
         } else {

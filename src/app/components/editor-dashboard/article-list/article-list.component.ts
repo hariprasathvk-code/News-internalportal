@@ -33,7 +33,7 @@ export class ArticleListComponent {
   onSaveArticle(article: ArticleDetail) {
     this.newsApi.updateArticle(article.NewsId, article).subscribe({
       next: () => {
-        console.log('✅ Article saved successfully');
+        
         this.snackBar.open('✅ Article saved successfully', 'Close', {
           duration: 3000,
           horizontalPosition: 'end',
@@ -42,7 +42,7 @@ export class ArticleListComponent {
         });
       },
       error: (err) => {
-        console.error('❌ Error saving article:', err);
+        //console.error('❌ Error saving article:', err);
         this.snackBar.open('❌ Failed to save article', 'Close', {
           duration: 3000,
           panelClass: ['error-snackbar']
@@ -59,10 +59,8 @@ export class ArticleListComponent {
     this.approveArticle.emit(article);
   }
 
-  // ✅ Handle rejection with remark
+  //  Handle rejection with remark
   onRejectArticle(data: { article: ArticleDetail; remark: string }) {
-    console.log('🗑️ Rejecting article:', data.article.NewsId);
-    console.log('📝 Rejection remark:', data.remark);
 
     this.newsApi.rejectArticle(
       data.article.NewsId, 
@@ -70,7 +68,6 @@ export class ArticleListComponent {
       data.remark
     ).subscribe({
       next: (response) => {
-        console.log('✅ Article rejected:', response);
         
         // Remove from list
         this.articles = this.articles.filter(a => a.NewsId !== data.article.NewsId);
@@ -89,7 +86,7 @@ export class ArticleListComponent {
         }
       },
       error: (error) => {
-        console.error('❌ Reject error:', error);
+        
         this.snackBar.open('❌ Failed to reject article', 'Close', {
           duration: 5000,
           horizontalPosition: 'end',
@@ -107,8 +104,6 @@ export class ArticleListComponent {
   }
 
   onRephraseArticle(article: ArticleDetail) {
-    console.log('🤖 Opening rephrase modal for:', article.Title);
-
     const dialogRef = this.dialog.open(RephraseModalComponent, {
       width: '900px',
       maxWidth: '95vw',
@@ -123,8 +118,7 @@ export class ArticleListComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result?.updated) {
-        console.log('✅ Article was updated with AI improvements');
-        console.log('📝 Changes:', result.changes);
+        
         
         if (result.changes.Title) {
           article.Title = result.changes.Title;
