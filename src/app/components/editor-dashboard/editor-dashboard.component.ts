@@ -18,6 +18,10 @@ import { ArticleDetail } from '../../core/models/article-detail.model';
 import { AdSubmission } from '../../core/models/ad-submission.model';
 import { ReportsComponent } from '../reports/reports.component';
 import { UserManagementComponent } from './user-management/user-management.component';
+import { FeedbackApiService } from '../../core/services/feedback-api.service';
+import { Feedback } from '../../core/models/feedback.model';
+import { FeedbackListComponent } from '../editor-dashboard/feedback-list/feedback-list.component';
+
 
  
 @Component({
@@ -35,6 +39,8 @@ import { UserManagementComponent } from './user-management/user-management.compo
     UserManagementComponent,
     ReportsComponent,
     AIInsightsComponent,
+    FeedbackListComponent,
+    
     
   ],
   templateUrl: './editor-dashboard.component.html',
@@ -47,9 +53,11 @@ export class EditorDashboardComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog); 
   private snackBar = inject(MatSnackBar);
+  private feedbackApi = inject(FeedbackApiService);
  
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
+  feedbacks: Feedback[] = [];
   selectedSection: string = 'news';
   isValidatingAll = false;
  
@@ -107,9 +115,30 @@ export class EditorDashboardComponent implements OnInit {
       this.selectedCategory = null;
       this.selectedCategoryNews = [];
     }
+     else if (section === 'feedback') {
+    this.loadFeedbacks();    // <--- NEW
   }
+  }
+  
+  loadFeedbacks() {
+  this.feedbackApi.getAllFeedbacks().subscribe({
+    next: (data) => {
+      this.feedbacks = data;
+      console.log('💬 Feedbacks loaded:', data);
+    },
+    error: (error) => {
+      console.error('❌ Error loading feedbacks:', error);
+      this.feedbacks = [];
+      this.snackBar.open('❌ Failed to load feedbacks', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['error-snackbar']
+      });
+    }
+  });
+}
 
- 
   loadAds() {
     this.adApi.getAds().subscribe({
       next: (data) => {
@@ -322,58 +351,6 @@ getCategoryLabel(id: number): string {
     });
   }
  
-  // private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-  //   console.log('📤 Calling approve API with priority & lifecycle...');
-  //   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-  //     next: (response) => {
-  //       console.log('✅ Article approved successfully:', response);
- 
-  //       this.snackBar.open(`
-  //         ✅ Article Approved Successfully!
-  //         Title: ${article.Title}
-  //         Priority: ${priority}
-  //         Lifecycle: ${lifecycle} minutes
-  //       `, 'Close', { duration: 6000 });
- 
-  //       this.loadSubmittedArticles();
-        
-  //     },
-  //     error: (error) => {
-  //       console.error('❌ Approve error:', error);
-  //       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
-  //     }
-  //   });
-  // }
-
-//   private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
-//   console.log('📤 Calling approve API with priority & lifecycle...');
-//   this.newsApi.approveArticle(article.NewsId, priority, lifecycle).subscribe({
-//     next: (response) => {
-//       console.log('✅ Article approved successfully:', response);
-
-//       // ✅ Remove approved article from list immediately (optimistic update)
-//       this.articles = this.articles.filter(a => a.NewsId !== article.NewsId);
-      
-//       // ✅ Update summary cards with new counts
-//       this.updateSummaryCards(this.articles);
-
-//       // Show success snackbar
-//       this.snackBar.open(`
-//         ✅ Article Approved Successfully!
-//         Title: ${article.Title}
-//         Priority: ${priority}
-//         Lifecycle: ${lifecycle} minutes
-//       `, 'Close', { duration: 6000 });
-
-//       // Optional: Reload full list in background to sync
-//       this.loadSubmittedArticles();
-//     },
-//     error: (error) => {
-//       console.error('❌ Approve error:', error);
-//       this.snackBar.open(`❌ Approval Failed`, 'Close', { duration: 6000 });
-//     }
-//   });
-// }
 
 private approveArticleWithPriority(article: ArticleDetail, priority: number, lifecycle: number) {
   console.log('📤 Calling approve API with priority & lifecycle...');

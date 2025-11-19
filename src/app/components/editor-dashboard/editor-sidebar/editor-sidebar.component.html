@@ -31,5 +31,9 @@
       <span class="icon">📊</span>
       <span class="label">Reports</span>
     </li>
+    <li [class.active]="selected === 'feedback'" (click)="setSection('feedback')"> <!-- NEW -->
+    <span class="icon">💬</span>
+    <span class="label">User Feedback</span>
+  </li>
   </ul>
 </nav>
