@@ -114,7 +114,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class AdService {
-  private baseUrl = environment.adsapiUrl || 'https://qrqrsk7iad.execute-api.us-east-2.amazonaws.com/prod/api';
+  private baseUrl = environment.adsapiUrl;
 
   constructor(private http: HttpClient) {}
 

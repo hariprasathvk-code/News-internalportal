@@ -27,6 +27,11 @@
       <span class="icon">📂</span>
       <span class="label">Category</span>
     </li>
+    <li [class.active]="selected === 'leaderboard'" (click)="setSection('leaderboard')">
+      <span class="icon">🏆</span>
+      <span class="label">Leaderboard</span>
+    </li>
+
     <li [class.active]="selected === 'reports'" (click)="setSection('reports')">
       <span class="icon">📊</span>
       <span class="label">Reports</span>

@@ -19,6 +19,10 @@ import { AdSubmission } from '../../core/models/ad-submission.model';
 import { ReportsComponent } from '../reports/reports.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 
+import { LeaderboardApiService } from '../../core/services/leaderboard-api.service';
+import { LeaderboardResponse } from '../../core/models/leaderboard.model';
+import { LeaderboardComponent } from '../../components/editor-dashboard/leaderboard/leaderboard.component';
+
  
 @Component({
   selector: 'app-editor-dashboard',
@@ -35,6 +39,7 @@ import { UserManagementComponent } from './user-management/user-management.compo
     UserManagementComponent,
     ReportsComponent,
     AIInsightsComponent,
+    LeaderboardComponent,
     
   ],
   templateUrl: './editor-dashboard.component.html',
@@ -47,9 +52,11 @@ export class EditorDashboardComponent implements OnInit {
   private router = inject(Router);
   private dialog = inject(MatDialog); 
   private snackBar = inject(MatSnackBar);
+  private leaderboardApi = inject(LeaderboardApiService);
  
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
+  leaderboard: LeaderboardResponse | null = null;
   selectedSection: string = 'news';
   isValidatingAll = false;
  
@@ -102,6 +109,9 @@ export class EditorDashboardComponent implements OnInit {
     } else if (section === 'rejected') {  // ✅ NEW
     this.loadRejectedArticles();
   }
+      else if(section === 'leaderboard') {
+        this.loadLeaderboard();
+      }
     
     else if (section === 'category') {
       this.selectedCategory = null;
@@ -109,7 +119,26 @@ export class EditorDashboardComponent implements OnInit {
     }
   }
 
- 
+ leaderboardLoading = false;
+
+loadLeaderboard() {
+  console.log('Loading leaderboard...');
+  this.leaderboardLoading = true;
+  this.leaderboardApi.getLeaderboard().subscribe({
+    next: (data) => {
+      this.leaderboard = data;
+      this.leaderboardLoading = false;
+    },
+    error: (err) => {
+      console.error('Leaderboard fetch error:', err);
+      this.leaderboard = null;
+      this.leaderboardLoading = false;
+    }
+  });
+}
+
+
+
   loadAds() {
     this.adApi.getAds().subscribe({
       next: (data) => {
