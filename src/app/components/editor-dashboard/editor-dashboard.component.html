@@ -185,6 +185,18 @@
       <div *ngIf="leaderboardLoading">Loading leaderboard data...</div>
       <app-leaderboard *ngIf="leaderboard" [data]="leaderboard"></app-leaderboard>
     </ng-container>
+    <ng-container *ngIf="selectedSection === 'feedback'">
+  <!-- Loading state -->
+  <div *ngIf="feedbackLoading" class="feedback-loading">
+    <span class="spinner"></span> Loading feedbacks...
+  </div>
+
+  <!-- Feedback List -->
+  <app-feedback-list
+    *ngIf="!feedbackLoading"
+    [feedbacks]="feedbacks">
+  </app-feedback-list>
+  </ng-container>
 
 
   </div>

@@ -698,3 +698,26 @@
     margin: 0;
   }
 }
+
+
+.feedback-loading {
+  padding: 2rem;
+  text-align: center;
+  color: #546e7a;
+  font-size: 1.2rem;
+}
+
+.spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 4px solid #d4e3ed;
+  border-top: 4px solid #0288d1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -22,7 +22,9 @@ import { UserManagementComponent } from './user-management/user-management.compo
 import { LeaderboardApiService } from '../../core/services/leaderboard-api.service';
 import { LeaderboardResponse } from '../../core/models/leaderboard.model';
 import { LeaderboardComponent } from '../../components/editor-dashboard/leaderboard/leaderboard.component';
-
+import { FeedbackApiService } from '../../core/services/feedback-api.service';
+import { Feedback } from '../../core/models/feedback.model';
+import { FeedbackListComponent } from './feedback-list/feedback-list.component';
  
 @Component({
   selector: 'app-editor-dashboard',
@@ -40,6 +42,7 @@ import { LeaderboardComponent } from '../../components/editor-dashboard/leaderbo
     ReportsComponent,
     AIInsightsComponent,
     LeaderboardComponent,
+    FeedbackListComponent
     
   ],
   templateUrl: './editor-dashboard.component.html',
@@ -53,10 +56,13 @@ export class EditorDashboardComponent implements OnInit {
   private dialog = inject(MatDialog); 
   private snackBar = inject(MatSnackBar);
   private leaderboardApi = inject(LeaderboardApiService);
- 
+  private feedbackApi = inject(FeedbackApiService);
+
   articles: ArticleDetail[] = [];
   ads: AdSubmission[] = [];
   leaderboard: LeaderboardResponse | null = null;
+  feedbacks: Feedback[] = [];
+  feedbackLoading: boolean = false;
   selectedSection: string = 'news';
   isValidatingAll = false;
  
@@ -108,7 +114,10 @@ export class EditorDashboardComponent implements OnInit {
       this.loadAds();
     } else if (section === 'rejected') {  // ✅ NEW
     this.loadRejectedArticles();
-  }
+    }
+    else if (section === 'feedback') {
+        this.loadFeedbacks();
+      }
       else if(section === 'leaderboard') {
         this.loadLeaderboard();
       }
@@ -117,6 +126,23 @@ export class EditorDashboardComponent implements OnInit {
       this.selectedCategory = null;
       this.selectedCategoryNews = [];
     }
+  }
+
+  loadFeedbacks() {
+    this.feedbackLoading = true;
+    this.feedbackApi.getAllFeedbacks().subscribe({
+      next: (data) => {
+        // Force as array to prevent *ngFor errors
+        this.feedbacks = Array.isArray(data) ? data : [];
+        this.feedbackLoading = false;
+        console.log('Feedbacks loaded:', this.feedbacks);
+      },
+      error: (err) => {
+        console.error('Failed to load feedbacks', err);
+        this.feedbacks = [];
+        this.feedbackLoading = false;
+      }
+    });
   }
 
  leaderboardLoading = false;

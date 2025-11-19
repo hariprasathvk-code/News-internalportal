@@ -6,6 +6,7 @@ export const environment = {
   adsapiUrl: "https://qrqrsk7iad.execute-api.us-east-2.amazonaws.com/prod/api",
   categoryApiUrl:"https://nzr7umplye.execute-api.eu-central-1.amazonaws.com/firstgoogletoken/category",
    auditNewsApiUrl: "https://bfk5qa79m0.execute-api.eu-west-1.amazonaws.com/dev/auditnews",
-   leaderboardUrl: "https://xs88681dsc.execute-api.us-east-2.amazonaws.com/prod/buisness" 
+   leaderboardUrl: "https://xs88681dsc.execute-api.us-east-2.amazonaws.com/prod/buisness",
+   feedbackUrl: "https://s723iodjm6.execute-api.ca-central-1.amazonaws.com/dev" 
 };
  

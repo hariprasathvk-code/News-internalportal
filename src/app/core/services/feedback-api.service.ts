@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { map } from 'rxjs';
 
 export interface Feedback {
   contactId: string;
@@ -19,6 +20,14 @@ export class FeedbackApiService {
   private apiUrl = environment.feedbackUrl;  // Replace with real API URL
 
   getAllFeedbacks(): Observable<Feedback[]> {
-    return this.http.get<Feedback[]>(`${this.apiUrl}`);
+    return this.http.get<any>(this.apiUrl).pipe(
+      map((resp: any) => {
+        // Parse the body if it's a string (Lambda proxy response)
+        let data = typeof resp.body === 'string' ? JSON.parse(resp.body) : resp;
+        
+        // Ensure it's an array
+        return Array.isArray(data) ? data : [];
+      })
+    );
   }
 }
